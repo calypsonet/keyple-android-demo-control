@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package org.cna.keyple.demo.control.activities
+package org.eclipse.keyple.demo.control.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -20,8 +20,8 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import org.cna.keyple.demo.control.R
-import org.cna.keyple.demo.control.models.KeypleSettings
+import org.eclipse.keyple.demo.control.R
+import org.eclipse.keyple.demo.control.models.KeypleSettings
 
 class SettingsActivity : AppCompatActivity() {
 

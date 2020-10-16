@@ -9,14 +9,16 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.cna.keyple.demo.control.models
+
+package org.eclipse.keyple.demo.control.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Parcelize
-data class CardReaderResponse(
-    val cardType: String,
-    val lastValidationsList: ArrayList<Validation>,
-    val titlesList: ArrayList<CardTitle>
+data class Validation(
+    val name: String,
+    val location: String,
+    val date: Date
 ): Parcelable

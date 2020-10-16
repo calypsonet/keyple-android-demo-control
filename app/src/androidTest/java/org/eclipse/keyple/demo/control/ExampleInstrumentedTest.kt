@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package org.cna.keyple.demo.control
+package org.eclipse.keyple.demo.control
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -31,6 +31,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("org.cna.keyple.demo.control", appContext.packageName)
+        assertEquals("org.eclipse.keyple.demo.control", appContext.packageName)
     }
 }

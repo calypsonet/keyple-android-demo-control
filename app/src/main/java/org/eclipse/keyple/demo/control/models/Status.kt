@@ -9,9 +9,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
-package org.cna.keyple.demo.control.models
+package org.eclipse.keyple.demo.control.models
 
-object KeypleSettings {
-    var location: String? = null
-    var validationPeriod: Int? = null
+enum class Status(val status: String) {
+    LOADING("loading"),
+    ERROR("error"),
+    TICKETS_FOUND("tickets_found"),
+    INVALID_CARD("invalid_card"),
+    EMPTY_CARD("empty_card"),
+    WRONG_CARD("wrong_card"),
+    DEVICE_CONNECTED("device_connected"),
+    SUCCESS("success");
 }

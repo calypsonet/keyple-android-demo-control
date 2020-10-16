@@ -5,7 +5,7 @@
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.cna.keyple.demo.control.activities.SettingsActivity">
+    tools:context="org.eclipse.keyple.demo.control.activities.SettingsActivity">
 
     <include layout="@layout/logo_toolbar" android:id="@+id/appBarLayout"/>
 

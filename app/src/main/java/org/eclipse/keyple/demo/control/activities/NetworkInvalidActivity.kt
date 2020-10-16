@@ -10,14 +10,14 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package org.cna.keyple.demo.control.activities
+package org.eclipse.keyple.demo.control.activities
 
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import org.cna.keyple.demo.control.R
-import org.cna.keyple.demo.control.models.CardReaderResponse
+import org.eclipse.keyple.demo.control.R
+import org.eclipse.keyple.demo.control.models.CardReaderResponse
 
 class NetworkInvalidActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -10,16 +10,16 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package org.cna.keyple.demo.control.adapters
+package org.eclipse.keyple.demo.control.adapters
 
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.title_recycler_row.view.*
 import kotlinx.android.synthetic.main.validation_recycler_row.view.title_name
-import org.cna.keyple.demo.control.R
-import org.cna.keyple.demo.control.inflate
-import org.cna.keyple.demo.control.models.CardTitle
+import org.eclipse.keyple.demo.control.R
+import org.eclipse.keyple.demo.control.inflate
+import org.eclipse.keyple.demo.control.models.CardTitle
 
 class TitlesRecyclerAdapter(
     private val titles: ArrayList<CardTitle>

@@ -9,16 +9,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  */
+package org.eclipse.keyple.demo.control.models
 
-package org.cna.keyple.demo.control.models
-
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-import java.util.*
-
-@Parcelize
-data class Validation(
-    val name: String,
-    val location: String,
-    val date: Date
-): Parcelable
+object KeypleSettings {
+    var location: String? = null
+    var validationPeriod: Int? = null
+}

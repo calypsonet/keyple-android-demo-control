@@ -10,7 +10,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package org.cna.keyple.demo.control.models
+package org.eclipse.keyple.demo.control.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

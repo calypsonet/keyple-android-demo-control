@@ -10,17 +10,17 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package org.cna.keyple.demo.control.activities
+package org.eclipse.keyple.demo.control.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_card_content.*
-import org.cna.keyple.demo.control.R
-import org.cna.keyple.demo.control.adapters.TitlesRecyclerAdapter
-import org.cna.keyple.demo.control.adapters.ValidationsRecyclerAdapter
-import org.cna.keyple.demo.control.models.CardReaderResponse
+import org.eclipse.keyple.demo.control.R
+import org.eclipse.keyple.demo.control.adapters.TitlesRecyclerAdapter
+import org.eclipse.keyple.demo.control.adapters.ValidationsRecyclerAdapter
+import org.eclipse.keyple.demo.control.models.CardReaderResponse
 
 class CardContentActivity : AppCompatActivity() {
     private lateinit var validationLinearLayoutManager: LinearLayoutManager
