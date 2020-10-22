@@ -12,15 +12,17 @@
 
 package org.eclipse.keyple.demo.control.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_card_content.*
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.adapters.TitlesRecyclerAdapter
 import org.eclipse.keyple.demo.control.adapters.ValidationsRecyclerAdapter
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
+import org.eclipse.keyple.demo.control.setDivider
+
 
 class CardContentActivity : AppCompatActivity() {
     private lateinit var validationLinearLayoutManager: LinearLayoutManager
@@ -47,6 +49,8 @@ class CardContentActivity : AppCompatActivity() {
         val cardContent: CardReaderResponse = intent.getParcelableExtra(NetworkInvalidActivity.CARD_CONTENT)
         validationsAdapter = ValidationsRecyclerAdapter(cardContent.lastValidationsList)
         lastValidationList.adapter = validationsAdapter
+        lastValidationList.setDivider(R.drawable.recycler_view_divider)
+
 
         titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
         titlesList.adapter = titlesAdapter

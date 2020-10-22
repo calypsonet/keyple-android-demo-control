@@ -1,3 +1,15 @@
+<!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+  ~
+  ~ SPDX-License-Identifier: EPL-2.0
+  -->
+
 <resources>
     <string name="app_name">Keyple Control</string>
     <string name="action_settings">Settings</string>
@@ -10,27 +22,35 @@
     <!-- Settings screen -->
     <string name="location_label">Set location</string>
     <string name="location_hint">E.g. Paris, Venise</string>
-    <string name="validation_period_label">Validation period (in min)</string>
-    <string name="validation_period_hint">E.g. 10</string>
+    <string name="validation_period_label">Validation period</string>
+    <string name="validation_period_hint">E.g. 10 min</string>
     <string name="time_label">Set time and date</string>
     <string name="start_label">Start</string>
+    <string name="start_control_label">Start Control</string>
+    <string name="control_info">Control information</string>
     <string name="msg_location_period_empty">Please fill in location and validation period</string>
 
     <!-- Home screen -->
     <string name="home_description">Open source API for SmartTicketing</string>
-    <string name="start_validation_label">Start validation</string>
+    <string name="start_validation_label">Start control</string>
     <string name="eclipse_foundation">Eclipse Foundation</string>
 
     <!-- Present screen -->
     <string name="present_support_label">Please present your contactless support</string>
+    <string name="valid">Valid</string>
+    <string name="invalid">Invalid</string>
 
     <!-- CardContent screen -->
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="present_again">Present again</string>
+    <string name="card_content_title_placeholder">Multi Trip</string>
+    <string name="card_content_description_placeholder">From JJ Month YYYY to JJ Month YYYY</string>
+    <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>
+    <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
 
     <!-- NetworkInvalid screen -->
-    <string name="card_invalid_title">Sorry, this card is not valid on this network</string>
+    <string name="card_invalid_title">Not valid on this network</string>
     <string name="card_invalid_desc">This is \"%s\".</string>
     <string name="card_invalid_default">Invalid card</string>
 </resources>

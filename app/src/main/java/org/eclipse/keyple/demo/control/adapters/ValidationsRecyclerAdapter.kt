@@ -40,9 +40,8 @@ class ValidationsRecyclerAdapter(
 
         fun bindItem(validation: Validation){
             this.validation = validation
-            val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.ENGLISH)
-            view.title_name.text = validation.name
-            view.location.text = validation.location
+            val formatter = SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", Locale.ENGLISH)
+            view.titleLocation.text = String.format("%s - %s", validation.name, validation.location)
             view.date.text = formatter.format(validation.date)
         }
     }

@@ -24,18 +24,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CardReaderActivity : AppCompatActivity() {
-    private val timer = Timer()
+    private lateinit var timer : Timer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_reader)
         setSupportActionBar(findViewById(R.id.toolbar))
-
-        timer.schedule(object : TimerTask() {
-            override fun run() {
-                runOnUiThread { onBackPressed() }
-            }
-        }, RETURN_DELAY_MS.toLong())
 
         // TODO: implement Keyple reader
 
@@ -54,7 +48,7 @@ class CardReaderActivity : AppCompatActivity() {
                 ),
                 arrayListOf(
                     CardTitle("Multi trip", "2 trips left", true),
-                    CardTitle("Season pass", "From 1st April 2020 to 1st August 2020", true)
+                    CardTitle("Season pass", "From 1st April 2020 to 1st August 2020", false)
                 )
             )
             intent.putExtra(CardContentActivity.CARD_CONTENT, cardResponse)
@@ -67,6 +61,21 @@ class CardReaderActivity : AppCompatActivity() {
             intent.putExtra(NetworkInvalidActivity.CARD_CONTENT, cardResponse)
             startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        timer = Timer() // After cancel, need to reinit Timer
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                runOnUiThread { onBackPressed() }
+            }
+        }, RETURN_DELAY_MS.toLong())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        timer.cancel()
     }
 
     companion object {

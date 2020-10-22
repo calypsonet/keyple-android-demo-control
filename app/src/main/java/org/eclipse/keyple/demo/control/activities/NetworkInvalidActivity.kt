@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.logo_toolbar.*
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
 
@@ -24,6 +25,7 @@ class NetworkInvalidActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_network_invalid)
         setSupportActionBar(findViewById(R.id.toolbar))
+        toolbarLogo.setImageResource(R.drawable.ic_logo_white)
 
         val cardContent: CardReaderResponse? = intent.getParcelableExtra(CARD_CONTENT)
         findViewById<TextView>(R.id.invalid_description).text =

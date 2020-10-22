@@ -1,0 +1,35 @@
+<!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+  ~
+  ~ SPDX-License-Identifier: EPL-2.0
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="47dp"
+    android:height="47dp"
+    android:viewportWidth="47"
+    android:viewportHeight="47">
+  <path
+      android:pathData="M2,23.5C2,35.3741 11.6259,45 23.5,45C35.3741,45 45,35.3741 45,23.5C45,11.6259 35.3741,2 23.5,2C11.6259,2 2,11.6259 2,23.5ZM42.2436,23.5C42.2436,33.8518 33.8518,42.2436 23.5,42.2436C13.1482,42.2436 4.7564,33.8518 4.7564,23.5C4.7564,13.1482 13.1482,4.7564 23.5,4.7564C33.8518,4.7564 42.2436,13.1482 42.2436,23.5Z"
+      android:fillColor="#B7003A"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M23.5,43.5C12.4543,43.5 3.5,34.5457 3.5,23.5H0.5C0.5,36.2025 10.7975,46.5 23.5,46.5V43.5ZM43.5,23.5C43.5,34.5457 34.5457,43.5 23.5,43.5V46.5C36.2025,46.5 46.5,36.2025 46.5,23.5H43.5ZM23.5,3.5C34.5457,3.5 43.5,12.4543 43.5,23.5H46.5C46.5,10.7975 36.2025,0.5 23.5,0.5V3.5ZM3.5,23.5C3.5,12.4543 12.4543,3.5 23.5,3.5V0.5C10.7975,0.5 0.5,10.7975 0.5,23.5H3.5ZM23.5,43.7436C34.6802,43.7436 43.7436,34.6802 43.7436,23.5H40.7436C40.7436,33.0234 33.0234,40.7436 23.5,40.7436V43.7436ZM3.2564,23.5C3.2564,34.6802 12.3198,43.7436 23.5,43.7436V40.7436C13.9766,40.7436 6.2564,33.0234 6.2564,23.5H3.2564ZM23.5,3.2564C12.3198,3.2564 3.2564,12.3198 3.2564,23.5H6.2564C6.2564,13.9766 13.9766,6.2564 23.5,6.2564V3.2564ZM43.7436,23.5C43.7436,12.3198 34.6802,3.2564 23.5,3.2564V6.2564C33.0234,6.2564 40.7436,13.9766 40.7436,23.5H43.7436Z"
+      android:fillColor="#B7003A"/>
+  <path
+      android:pathData="M15.3445,17.4264C14.8095,16.885 14.8146,16.0124 15.356,15.4774C15.8974,14.9424 16.77,14.9475 17.3051,15.4889L31.6555,30.0101C32.1905,30.5515 32.1854,31.4241 31.644,31.9591C31.1026,32.4941 30.23,32.489 29.6949,31.9476L15.3445,17.4264Z"
+      android:strokeWidth="3"
+      android:fillColor="#B7003A"
+      android:strokeColor="#B7003A"/>
+  <path
+      android:pathData="M31.6555,17.4264C32.1905,16.885 32.1854,16.0124 31.644,15.4774C31.1026,14.9424 30.23,14.9475 29.6949,15.4889L15.3445,30.0101C14.8095,30.5515 14.8146,31.4241 15.356,31.9591C15.8974,32.4941 16.77,32.489 17.3051,31.9476L31.6555,17.4264Z"
+      android:strokeWidth="3"
+      android:fillColor="#B7003A"
+      android:strokeColor="#B7003A"/>
+</vector>

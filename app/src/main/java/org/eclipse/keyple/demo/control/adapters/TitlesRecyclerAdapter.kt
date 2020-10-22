@@ -16,7 +16,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.title_recycler_row.view.*
-import kotlinx.android.synthetic.main.validation_recycler_row.view.title_name
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.inflate
 import org.eclipse.keyple.demo.control.models.CardTitle
@@ -39,8 +38,9 @@ class TitlesRecyclerAdapter(
 
         fun bindItem(title: CardTitle){
             this.title = title
-            view.title_name.text = title.name
-            view.title_description.text = title.description
+            view.titleName.text = title.name
+            view.titleDescription.text = title.description
+            view.validImg.setImageResource(if (title.valid) R.drawable.ic_tick else R.drawable.ic_fail)
         }
     }
 
