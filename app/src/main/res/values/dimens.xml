@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="big_text_size">22.7sp</dimen>
+    <dimen name="small_text_size">17.3sp</dimen>
+</resources>
