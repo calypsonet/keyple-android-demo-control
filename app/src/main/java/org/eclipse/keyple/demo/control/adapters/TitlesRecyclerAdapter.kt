@@ -15,7 +15,9 @@ package org.eclipse.keyple.demo.control.adapters
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.title_recycler_row.view.*
+import kotlinx.android.synthetic.main.title_recycler_row.view.titleDescription
+import kotlinx.android.synthetic.main.title_recycler_row.view.titleName
+import kotlinx.android.synthetic.main.title_recycler_row.view.validImg
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.inflate
 import org.eclipse.keyple.demo.control.models.CardTitle

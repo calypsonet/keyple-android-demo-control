@@ -13,8 +13,8 @@
 package org.eclipse.keyple.demo.control.models
 
 import android.os.Parcelable
+import java.util.Date
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Parcelize
 data class Validation(

@@ -16,12 +16,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
 import org.eclipse.keyple.demo.control.models.CardTitle
 import org.eclipse.keyple.demo.control.models.Validation
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CardReaderActivity : AppCompatActivity() {
     private lateinit var timer : Timer

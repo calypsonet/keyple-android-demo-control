@@ -16,7 +16,8 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_card_content.*
+import kotlinx.android.synthetic.main.activity_card_content.lastValidationList
+import kotlinx.android.synthetic.main.activity_card_content.titlesList
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.adapters.TitlesRecyclerAdapter
 import org.eclipse.keyple.demo.control.adapters.ValidationsRecyclerAdapter
@@ -35,7 +36,7 @@ class CardContentActivity : AppCompatActivity() {
         setContentView(R.layout.activity_card_content)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        findViewById<Button>(R.id.present_btn).setOnClickListener {
+        findViewById<Button>(R.id.presentBtn).setOnClickListener {
             onBackPressed();
         }
 

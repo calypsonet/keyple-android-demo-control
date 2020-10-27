@@ -11,14 +11,14 @@
     <include layout="@layout/logo_toolbar" android:id="@+id/appBarLayout"/>
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_top"
+        android:id="@+id/guidelineTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.20" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_bottom"
+        android:id="@+id/guidelineBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -34,7 +34,7 @@
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
         app:layout_constraintBottom_toTopOf="@+id/location_edit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline_top"
+        app:layout_constraintTop_toBottomOf="@id/guidelineTop"
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <EditText
@@ -92,7 +92,7 @@
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
         style="@style/whiteBtnText"
         android:background="@drawable/btn_blue"
-        app:layout_constraintBottom_toTopOf="@id/guideline_bottom"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/validation_period_edit" />
@@ -107,7 +107,7 @@
         app:layout_constraintBottom_toTopOf="@id/start_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline_bottom"
+        app:layout_constraintTop_toBottomOf="@id/guidelineBottom"
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <ImageButton

@@ -16,7 +16,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_home.controlInformation
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.models.KeypleSettings
 

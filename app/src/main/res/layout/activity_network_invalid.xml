@@ -24,7 +24,7 @@
         android:id="@+id/appBarLayout" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_top"
+        android:id="@+id/guidelineTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -59,7 +59,7 @@
         app:layout_constraintGuide_percent="0.7" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_bottom"
+        android:id="@+id/guidelineBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -75,7 +75,7 @@
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="@id/guideline_right_anim"
         app:layout_constraintStart_toStartOf="@id/guideline_left_anim"
-        app:layout_constraintTop_toTopOf="@id/guideline_top"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <TextView
@@ -102,14 +102,14 @@
         android:textSize="@dimen/small_text_size"
         android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/invalid_title"
-        app:layout_constraintBottom_toBottomOf="@id/guideline_bottom"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guideline_right_txt"
         app:layout_constraintStart_toStartOf="@id/guideline_left_txt"
         app:layout_constraintVertical_chainStyle="spread_inside"
         android:gravity="center" />
 
     <Button
-        android:id="@+id/present_btn"
+        android:id="@+id/presentBtn"
         android:text="@string/present_again"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
