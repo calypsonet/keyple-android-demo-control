@@ -21,6 +21,7 @@ import java.util.Timer
 import java.util.TimerTask
 import kotlinx.android.synthetic.main.activity_card_reader.invalid
 import kotlinx.android.synthetic.main.activity_card_reader.valid
+import kotlinx.android.synthetic.main.activity_card_reader.loadingAnimation
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
 import org.eclipse.keyple.demo.control.models.CardTitle
@@ -68,6 +69,7 @@ class CardReaderActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        loadingAnimation.playAnimation()
         timer = Timer() // After cancel, need to reinit Timer
         timer.schedule(object : TimerTask() {
             override fun run() {

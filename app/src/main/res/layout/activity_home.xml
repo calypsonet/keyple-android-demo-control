@@ -66,12 +66,23 @@
         android:layout_width="@dimen/home_control_width"
         android:layout_height="wrap_content"
         android:text="@string/control_info"
-        style="@style/bigRegularBlue"
+        style="@style/mediumRegularBlue"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/locationSelected" />
+
+    <TextView
+        android:id="@+id/locationSelected"
+        android:layout_width="@dimen/home_control_width"
+        android:layout_height="wrap_content"
+        android:text="@string/control_info"
+        style="@style/mediumBoldBlue"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/eclipse_logo"
-        android:layout_marginBottom="@dimen/home_element_margin"/>
+        android:layout_marginBottom="@dimen/home_element_margin" />
 
     <ImageView
         android:id="@+id/eclipse_logo"

@@ -11,6 +11,8 @@
   ~ SPDX-License-Identifier: EPL-2.0
   -->
 <resources>
+    <dimen name="splash_title">18sp</dimen>
+
     <dimen name="toolbar_margin_top">10dp</dimen>
     <dimen name="toolbar_logo_padding">4dp</dimen>
 
@@ -27,7 +29,7 @@
     <dimen name="settings_edit_margin_bottom">20dp</dimen>
     <dimen name="settings_start_ic_size">65dp</dimen>
     
-    <dimen name="home_text_width">200dp</dimen>
+    <dimen name="home_text_width">220dp</dimen>
     <dimen name="home_control_width">220dp</dimen>
     <dimen name="home_text_top_margin">10dp</dimen>
     <dimen name="home_element_margin">20dp</dimen>
