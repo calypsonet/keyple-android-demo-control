@@ -17,7 +17,7 @@
     <dimen name="smaller_text_size">15sp</dimen>
     <dimen name="smallest_text_size">12sp</dimen>
 
-    <dimen name="settings_start_ic_size">80dp</dimen>
+    <dimen name="settings_start_ic_size">120dp</dimen>
 
     <dimen name="home_start_btn_width">150dp</dimen>
     <dimen name="home_text_top_margin">20dp</dimen>

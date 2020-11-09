@@ -27,7 +27,7 @@
 
     <dimen name="settings_horizontal_padding">47dp</dimen>
     <dimen name="settings_edit_margin_bottom">20dp</dimen>
-    <dimen name="settings_start_ic_size">65dp</dimen>
+    <dimen name="settings_start_ic_size">100dp</dimen>
     
     <dimen name="home_text_width">220dp</dimen>
     <dimen name="home_control_width">220dp</dimen>

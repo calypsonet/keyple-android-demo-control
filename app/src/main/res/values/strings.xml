@@ -22,7 +22,7 @@
     <!-- Settings screen -->
     <string name="location_label">Set location</string>
     <string name="location_hint">E.g. Paris, Venise</string>
-    <string name="validation_period_label">Validation period</string>
+    <string name="validation_period_label">Validation period (min)</string>
     <string name="validation_period_hint">E.g. 10 min</string>
     <string name="time_label">Set time and date</string>
     <string name="start_label">Start</string>
