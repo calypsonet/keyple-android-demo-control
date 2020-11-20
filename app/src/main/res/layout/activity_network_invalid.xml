@@ -89,12 +89,12 @@
         app:layout_constraintTop_toBottomOf="@id/animation"
         app:layout_constraintEnd_toEndOf="@id/guideline_right_txt"
         app:layout_constraintStart_toStartOf="@id/guideline_left_txt"
-        app:layout_constraintBottom_toTopOf="@id/invalid_description"
+        app:layout_constraintBottom_toTopOf="@id/invalidDescription"
         app:layout_constraintVertical_chainStyle="spread_inside"
         android:gravity="center" />
 
     <TextView
-        android:id="@+id/invalid_description"
+        android:id="@+id/invalidDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/card_invalid_desc"

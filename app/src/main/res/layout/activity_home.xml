@@ -45,10 +45,10 @@
         style="@style/bigBoldBlue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/start_btn" />
+        app:layout_constraintBottom_toTopOf="@id/startBtn" />
 
     <ImageButton
-        android:id="@+id/start_btn"
+        android:id="@+id/startBtn"
         android:layout_width="@dimen/home_start_btn_width"
         android:layout_height="@dimen/home_start_btn_width"
         android:src="@drawable/ic_start"

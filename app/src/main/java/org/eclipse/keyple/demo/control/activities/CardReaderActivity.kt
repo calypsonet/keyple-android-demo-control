@@ -14,12 +14,13 @@ package org.eclipse.keyple.demo.control.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+import kotlinx.android.synthetic.main.activity_card_reader.invalid
+import kotlinx.android.synthetic.main.activity_card_reader.valid
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
 import org.eclipse.keyple.demo.control.models.CardTitle
@@ -36,7 +37,7 @@ class CardReaderActivity : AppCompatActivity() {
         // TODO: implement Keyple reader
 
         // TODO: remove when Keyple implemented
-        findViewById<Button>(R.id.valid).setOnClickListener {
+        valid.setOnClickListener {
             val intent = Intent(this, CardContentActivity::class.java)
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
             val cardResponse = CardReaderResponse("valid card",
@@ -56,7 +57,7 @@ class CardReaderActivity : AppCompatActivity() {
             intent.putExtra(CardContentActivity.CARD_CONTENT, cardResponse)
             startActivity(intent)
         }
-        findViewById<Button>(R.id.invalid).setOnClickListener {
+        invalid.setOnClickListener {
             val intent = Intent(this, NetworkInvalidActivity::class.java)
             val cardResponse =
                 CardReaderResponse("some invalid card", arrayListOf(), arrayListOf())

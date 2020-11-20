@@ -15,11 +15,12 @@ package org.eclipse.keyple.demo.control.activities
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_settings.locationEdit
+import kotlinx.android.synthetic.main.activity_settings.startBtn
+import kotlinx.android.synthetic.main.activity_settings.timeBtn
+import kotlinx.android.synthetic.main.activity_settings.validationPeriodEdit
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.models.KeypleSettings
 
@@ -30,13 +31,13 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        findViewById<Button>(R.id.time_btn).setOnClickListener {
+        timeBtn.setOnClickListener {
             startActivityForResult(Intent (Settings.ACTION_DATE_SETTINGS), 0);
         }
 
-        findViewById<ImageButton>(R.id.start_btn).setOnClickListener {
-            KeypleSettings.location = findViewById<EditText>(R.id.location_edit).text.toString()
-            val validationPeriod = findViewById<EditText>(R.id.validation_period_edit).text.toString()
+        startBtn.setOnClickListener {
+            KeypleSettings.location = locationEdit.text.toString()
+            val validationPeriod = validationPeriodEdit.text.toString()
             KeypleSettings.validationPeriod = if (validationPeriod.isBlank()) 0 else validationPeriod.toInt()
             if(KeypleSettings.location != null && KeypleSettings.validationPeriod != 0){
                 startActivity(Intent(this, HomeActivity::class.java))

@@ -32,13 +32,13 @@
         style="@style/mediumBoldBlue"
         android:layout_marginStart="@dimen/settings_horizontal_padding"
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        app:layout_constraintBottom_toTopOf="@+id/location_edit"
+        app:layout_constraintBottom_toTopOf="@+id/locationEdit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guidelineTop"
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <EditText
-        android:id="@+id/location_edit"
+        android:id="@+id/locationEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/settings_horizontal_padding"
@@ -62,12 +62,12 @@
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
         style="@style/mediumBoldBlue"
         android:text="@string/validation_period_label"
-        app:layout_constraintBottom_toTopOf="@id/validation_period_edit"
+        app:layout_constraintBottom_toTopOf="@id/validationPeriodEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/location_edit" />
+        app:layout_constraintTop_toBottomOf="@id/locationEdit" />
 
     <EditText
-        android:id="@+id/validation_period_edit"
+        android:id="@+id/validationPeriodEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/settings_horizontal_padding"
@@ -79,12 +79,12 @@
         android:hint="@string/validation_period_hint"
         android:inputType="number"
         style="@style/mediumRegularBlue"
-        app:layout_constraintBottom_toTopOf="@id/time_btn"
+        app:layout_constraintBottom_toTopOf="@id/timeBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/validation_period_label" />
 
     <Button
-        android:id="@+id/time_btn"
+        android:id="@+id/timeBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/time_label"
@@ -95,7 +95,7 @@
         app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/validation_period_edit" />
+        app:layout_constraintTop_toBottomOf="@id/validationPeriodEdit" />
 
     <TextView
         android:id="@+id/start_label"
@@ -104,14 +104,14 @@
         android:text="@string/start_label"
         style="@style/bigBoldBlue"
         android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
-        app:layout_constraintBottom_toTopOf="@id/start_btn"
+        app:layout_constraintBottom_toTopOf="@id/startBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guidelineBottom"
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <ImageButton
-        android:id="@+id/start_btn"
+        android:id="@+id/startBtn"
         android:layout_width="@dimen/settings_start_ic_size"
         android:layout_height="@dimen/settings_start_ic_size"
         android:src="@drawable/ic_start"
