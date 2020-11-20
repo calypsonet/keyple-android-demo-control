@@ -27,9 +27,7 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splashscreen)
 
-        /*
-         * Wait for Wizway Device to be connected
-         */Timer().schedule(object : TimerTask() {
+        Timer().schedule(object : TimerTask() {
             override fun run() {
                 if (!isFinishing) {
                     startActivity(Intent(applicationContext, SettingsActivity::class.java))
