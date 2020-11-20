@@ -1,0 +1,49 @@
+<!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+  ~
+  ~ SPDX-License-Identifier: EPL-2.0
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="480dp"
+    android:height="735dp"
+    android:viewportWidth="480"
+    android:viewportHeight="735">
+  <path
+      android:pathData="M0,0h480v735h-480z"
+      android:fillColor="#ffffff"/>
+  <path
+      android:pathData="M-34,767.089V476L284.003,767.089H-34Z"
+      android:fillColor="#93DDE0"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M509.389,83.558L496.943,267.667L330.318,82.467L509.389,83.558Z"
+      android:fillColor="#E47A27"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M133,86.9L-4,211L-4,-34L133,86.9Z"
+      android:fillColor="#B7003A"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M403.855,-19L497.5,75.5V-19L403.855,-19Z"
+      android:fillColor="#B7003A"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M357.178,-18.653L260,86H507L408.72,-19.84L357.178,-18.653Z"
+      android:fillColor="#93DDE0"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M67,511.5L-32,604L-32,419L67,511.5Z"
+      android:fillColor="#E47A27"
+      android:fillType="evenOdd"/>
+  <path
+      android:pathData="M524.791,745.599L524.791,567L353.097,745.277L524.791,745.599Z"
+      android:fillColor="#B7003A"
+      android:fillType="evenOdd"/>
+</vector>

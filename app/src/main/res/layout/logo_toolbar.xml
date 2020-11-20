@@ -16,13 +16,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:theme="@style/Theme.KeypleControl.AppBarOverlay">
+    android:background="@android:color/transparent"
+    app:elevation="0dp">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:popupTheme="@style/Theme.KeypleControl.PopupOverlay" />
+        android:background="@android:color/transparent"
+        android:layout_marginTop="@dimen/toolbar_margin_top">
+
+        <ImageView
+            android:id="@+id/toolbarLogo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_logo_blue"
+            android:scaleType="fitCenter"
+            android:paddingTop="@dimen/toolbar_logo_padding"
+            android:paddingBottom="@dimen/toolbar_logo_padding"/>
+    </androidx.appcompat.widget.Toolbar>
 
 </com.google.android.material.appbar.AppBarLayout>

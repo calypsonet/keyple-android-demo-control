@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+  ~
+  ~ SPDX-License-Identifier: EPL-2.0
+  -->
+
+<resources>
+
+    <style name="mediumBoldBlue">
+        <item name="fontFamily">@font/worksans_bold</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="mediumRegularBlue">
+        <item name="fontFamily">@font/worksans_regular</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="bigBoldBlue">
+        <item name="fontFamily">@font/worksans_bold</item>
+        <item name="android:textSize">@dimen/big_text_size</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="bigRegularBlue">
+        <item name="fontFamily">@font/worksans_regular</item>
+        <item name="android:textSize">@dimen/big_text_size</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="smallBoldBlue">
+        <item name="fontFamily">@font/worksans_bold</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="smallerRegularBlue">
+        <item name="fontFamily">@font/worksans_regular</item>
+        <item name="android:textSize">@dimen/smaller_text_size</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="smallestRegularBlue">
+        <item name="fontFamily">@font/worksans_regular</item>
+        <item name="android:textSize">@dimen/smallest_text_size</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="smallBoldBlack">
+        <item name="fontFamily">@font/worksans_bold</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="whiteBtnText">
+        <item name="fontFamily">@font/worksans_bold</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="blueBtnText">
+        <item name="fontFamily">@font/worksans_bold</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+</resources>

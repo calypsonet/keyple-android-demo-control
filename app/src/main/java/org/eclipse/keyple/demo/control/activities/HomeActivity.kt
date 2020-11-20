@@ -14,9 +14,11 @@ package org.eclipse.keyple.demo.control.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_home.controlInformation
+import kotlinx.android.synthetic.main.activity_home.startBtn
 import org.eclipse.keyple.demo.control.R
+import org.eclipse.keyple.demo.control.models.KeypleSettings
 
 class HomeActivity : AppCompatActivity() {
 
@@ -24,8 +26,9 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         setSupportActionBar(findViewById(R.id.toolbar))
+        controlInformation.text = String.format("%s\n%s", getString(R.string.control_info), KeypleSettings.location)
 
-        findViewById<ImageButton>(R.id.start_btn).setOnClickListener {
+        startBtn.setOnClickListener {
             startActivity(Intent(this, CardReaderActivity::class.java))
         }
     }

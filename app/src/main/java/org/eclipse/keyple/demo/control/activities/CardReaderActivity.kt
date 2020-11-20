@@ -14,33 +14,30 @@ package org.eclipse.keyple.demo.control.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
+import kotlinx.android.synthetic.main.activity_card_reader.invalid
+import kotlinx.android.synthetic.main.activity_card_reader.valid
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
 import org.eclipse.keyple.demo.control.models.CardTitle
 import org.eclipse.keyple.demo.control.models.Validation
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CardReaderActivity : AppCompatActivity() {
-    private val timer = Timer()
+    private lateinit var timer : Timer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_reader)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        timer.schedule(object : TimerTask() {
-            override fun run() {
-                runOnUiThread { onBackPressed() }
-            }
-        }, RETURN_DELAY_MS.toLong())
-
         // TODO: implement Keyple reader
 
         // TODO: remove when Keyple implemented
-        findViewById<Button>(R.id.valid).setOnClickListener {
+        valid.setOnClickListener {
             val intent = Intent(this, CardContentActivity::class.java)
             val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
             val cardResponse = CardReaderResponse("valid card",
@@ -54,19 +51,34 @@ class CardReaderActivity : AppCompatActivity() {
                 ),
                 arrayListOf(
                     CardTitle("Multi trip", "2 trips left", true),
-                    CardTitle("Season pass", "From 1st April 2020 to 1st August 2020", true)
+                    CardTitle("Season pass", "From 1st April 2020 to 1st August 2020", false)
                 )
             )
             intent.putExtra(CardContentActivity.CARD_CONTENT, cardResponse)
             startActivity(intent)
         }
-        findViewById<Button>(R.id.invalid).setOnClickListener {
+        invalid.setOnClickListener {
             val intent = Intent(this, NetworkInvalidActivity::class.java)
             val cardResponse =
                 CardReaderResponse("some invalid card", arrayListOf(), arrayListOf())
             intent.putExtra(NetworkInvalidActivity.CARD_CONTENT, cardResponse)
             startActivity(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        timer = Timer() // After cancel, need to reinit Timer
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                runOnUiThread { onBackPressed() }
+            }
+        }, RETURN_DELAY_MS.toLong())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        timer.cancel()
     }
 
     companion object {

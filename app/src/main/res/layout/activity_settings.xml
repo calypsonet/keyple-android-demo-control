@@ -5,30 +5,52 @@
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.eclipse.keyple.demo.control.activities.SettingsActivity">
+    tools:context="org.eclipse.keyple.demo.control.activities.SettingsActivity"
+    android:background="@drawable/ic_bg">
 
     <include layout="@layout/logo_toolbar" android:id="@+id/appBarLayout"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.60" />
 
     <TextView
         android:id="@+id/location_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/location_label"
-        app:layout_constraintBottom_toTopOf="@+id/location_edit"
-        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/mediumBoldBlue"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        app:layout_constraintBottom_toTopOf="@+id/locationEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        app:layout_constraintTop_toBottomOf="@id/guidelineTop"
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <EditText
-        android:id="@+id/location_edit"
-        android:layout_width="wrap_content"
+        android:id="@+id/locationEdit"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
         android:autofillHints="location"
         android:hint="@string/location_hint"
         android:inputType="text"
+        android:textColorHint="@color/blue"
+        app:backgroundTint="@color/blue"
+        style="@style/mediumRegularBlue"
         app:layout_constraintBottom_toTopOf="@id/validation_period_label"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/location_label" />
 
@@ -36,48 +58,65 @@
         android:id="@+id/validation_period_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        style="@style/mediumBoldBlue"
         android:text="@string/validation_period_label"
-        app:layout_constraintBottom_toTopOf="@id/validation_period_edit"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/validationPeriodEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/location_edit" />
+        app:layout_constraintTop_toBottomOf="@id/locationEdit" />
 
     <EditText
-        android:id="@+id/validation_period_edit"
-        android:layout_width="wrap_content"
+        android:id="@+id/validationPeriodEdit"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
         android:autofillHints="period"
+        android:textColorHint="@color/blue"
+        app:backgroundTint="@color/blue"
         android:hint="@string/validation_period_hint"
         android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@id/time_btn"
-        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/mediumRegularBlue"
+        app:layout_constraintBottom_toTopOf="@id/timeBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/validation_period_label" />
 
     <Button
-        android:id="@+id/time_btn"
-        android:layout_width="wrap_content"
+        android:id="@+id/timeBtn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/time_label"
-        app:layout_constraintBottom_toTopOf="@id/start_label"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        style="@style/whiteBtnText"
+        android:background="@drawable/btn_blue"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/validation_period_edit" />
+        app:layout_constraintTop_toBottomOf="@id/validationPeriodEdit" />
 
     <TextView
         android:id="@+id/start_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_label"
-        app:layout_constraintBottom_toTopOf="@id/start_btn"
+        style="@style/bigBoldBlue"
+        android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
+        app:layout_constraintBottom_toTopOf="@id/startBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/time_btn" />
+        app:layout_constraintTop_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintVertical_chainStyle="packed"/>
 
     <ImageButton
-        android:id="@+id/start_btn"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:id="@+id/startBtn"
+        android:layout_width="@dimen/settings_start_ic_size"
+        android:layout_height="@dimen/settings_start_ic_size"
+        android:src="@drawable/ic_start"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

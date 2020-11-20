@@ -13,25 +13,46 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="@dimen/card_title_item_height"
+    android:layout_marginBottom="@dimen/card_title_margin_bottom"
+    android:layout_marginStart="@dimen/content_title_padding"
+    android:layout_marginEnd="@dimen/content_title_padding"
+    android:elevation="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/btn_blue_light">
 
-    <TextView
-        android:id="@+id/title_name"
+    <ImageView
+        android:id="@+id/validImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/ic_tick"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="@dimen/card_title_image_margin_start"/>
+
+    <TextView
+        android:id="@+id/titleName"
+        android:layout_width="@dimen/card_title_text_width"
+        android:layout_height="wrap_content"
+        style="@style/smallBoldBlue"
+        android:gravity="center"
+        android:text="@string/card_content_title_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/title_description"/>
+        app:layout_constraintBottom_toTopOf="@id/titleDescription"/>
 
     <TextView
-        android:id="@+id/title_description"
-        android:layout_width="wrap_content"
+        android:id="@+id/titleDescription"
+        android:layout_width="@dimen/card_title_text_width"
         android:layout_height="wrap_content"
+        style="@style/smallerRegularBlue"
+        android:gravity="center"
+        android:text="@string/card_content_description_placeholder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_name"
+        app:layout_constraintTop_toBottomOf="@id/titleName"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

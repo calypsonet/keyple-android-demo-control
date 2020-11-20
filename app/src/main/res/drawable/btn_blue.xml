@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
   ~
   ~ See the NOTICE file(s) distributed with this work for additional information
@@ -9,10 +10,11 @@
   ~
   ~ SPDX-License-Identifier: EPL-2.0
   -->
-<resources>
-    <color name="white">#FFF</color>
-    <color name="black">#000</color>
-    <color name="orange">#E47A27</color>
-    <color name="blue">#1D87BB</color>
-    <color name="light_blue">#E8F3FB</color>
-</resources>
+
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/blue" />
+    <corners android:radius="5dp" />
+    <stroke android:width="1dip" android:color="@color/blue" />
+</shape>

@@ -13,9 +13,10 @@
 package org.eclipse.keyple.demo.control.activities
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_network_invalid.invalidDescription
+import kotlinx.android.synthetic.main.activity_network_invalid.presentBtn
+import kotlinx.android.synthetic.main.logo_toolbar.toolbarLogo
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
 
@@ -24,11 +25,12 @@ class NetworkInvalidActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_network_invalid)
         setSupportActionBar(findViewById(R.id.toolbar))
+        toolbarLogo.setImageResource(R.drawable.ic_logo_white)
 
         val cardContent: CardReaderResponse? = intent.getParcelableExtra(CARD_CONTENT)
-        findViewById<TextView>(R.id.invalid_description).text =
+        invalidDescription.text =
             String.format(getString(R.string.card_invalid_desc), cardContent?.cardType?: getString(R.string.card_invalid_default))
-        findViewById<Button>(R.id.present_btn).setOnClickListener {
+        presentBtn.setOnClickListener {
             onBackPressed();
         }
     }
