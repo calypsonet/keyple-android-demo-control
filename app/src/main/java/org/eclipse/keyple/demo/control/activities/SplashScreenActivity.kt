@@ -10,27 +10,34 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
+
 package org.eclipse.keyple.demo.control.activities
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_home.controlInformation
-import kotlinx.android.synthetic.main.activity_home.startBtn
-import kotlinx.android.synthetic.main.activity_home.locationSelected
+import java.util.Timer
+import java.util.TimerTask
 import org.eclipse.keyple.demo.control.R
-import org.eclipse.keyple.demo.control.models.KeypleSettings
 
-class HomeActivity : AppCompatActivity() {
+class SplashScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Make sure this is before calling super.onCreate
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
-        setSupportActionBar(findViewById(R.id.toolbar))
-        locationSelected.text = KeypleSettings.location
+        setContentView(R.layout.activity_splashscreen)
 
-        startBtn.setOnClickListener {
-            startActivity(Intent(this, CardReaderActivity::class.java))
-        }
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                if (!isFinishing) {
+                    startActivity(Intent(applicationContext, SettingsActivity::class.java))
+                    finish()
+                }
+            }
+        }, SPLASH_MAX_DELAY_MS.toLong())
+    }
+
+    companion object {
+        private const val SPLASH_MAX_DELAY_MS = 6000
     }
 }
