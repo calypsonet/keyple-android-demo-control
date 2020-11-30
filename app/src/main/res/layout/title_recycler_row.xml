@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
   ~
   ~ See the NOTICE file(s) distributed with this work for additional information
@@ -12,47 +11,50 @@
   -->
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/card_title_item_height"
-    android:layout_marginBottom="@dimen/card_title_margin_bottom"
     android:layout_marginStart="@dimen/content_title_padding"
     android:layout_marginEnd="@dimen/content_title_padding"
-    android:elevation="5dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/btn_blue_light">
+    android:layout_marginBottom="@dimen/card_title_margin_bottom"
+    android:background="@drawable/btn_blue_light"
+    android:elevation="5dp">
 
     <ImageView
         android:id="@+id/validImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/card_title_image_margin_start"
+        android:contentDescription="@null"
         android:src="@drawable/ic_tick"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="@dimen/card_title_image_margin_start"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/titleName"
-        android:layout_width="@dimen/card_title_text_width"
-        android:layout_height="wrap_content"
         style="@style/smallBoldBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/card_content_title_placeholder"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/titleDescription"
+        app:layout_constraintLeft_toRightOf="@+id/validImg"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/titleDescription"/>
+        tools:text="@string/card_content_title_placeholder" />
 
     <TextView
         android:id="@+id/titleDescription"
-        android:layout_width="@dimen/card_title_text_width"
-        android:layout_height="wrap_content"
         style="@style/smallerRegularBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/card_content_description_placeholder"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/validImg"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/titleName"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        tools:text="From 14 January 2021\n to 12 June 2021" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

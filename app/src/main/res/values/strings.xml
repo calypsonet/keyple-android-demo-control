@@ -11,8 +11,12 @@
   -->
 
 <resources>
-    <string name="app_name">Keyple Control</string>
+<!--    <string name="app_name">Keyple Control</string>-->
     <string name="action_settings">Settings</string>
+
+    <string name="please_wait">Please wait</string>
+    <string name="error_title">Error</string>
+    <string name="quit">Quitter</string>
 
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_card_reader">CardReaderActivity</string>
@@ -44,13 +48,19 @@
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="present_again">Present again</string>
-    <string name="card_content_title_placeholder">Multi Trip</string>
-    <string name="card_content_description_placeholder">From JJ Month YYYY to JJ Month YYYY</string>
-    <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>
-    <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
+    <string name="card_content_description_season_pass">From %s\n to %s</string>
+    <string name="card_content_description_multi_trip_zero">no trip left</string>
+    <string name="card_content_description_multi_trip_single">%d trip left</string>
+    <string name="card_content_description_multi_trip_multiple">%d trips left</string>
+    <string name="status_unspecified">An error occurred during card reading, please try again.</string>
 
     <!-- NetworkInvalid screen -->
     <string name="card_invalid_title">Not valid on this network</string>
-    <string name="card_invalid_desc">This is \"%s\".</string>
+    <string name="card_invalid_desc">This is a \"%s\" card.</string>
     <string name="card_invalid_default">Invalid card</string>
+
+    <!--    Test values-->
+    <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>
+    <string name="card_content_title_placeholder">Multi Trip</string>
+    <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
 </resources>

@@ -1,2 +1,4 @@
-include ':app'
 rootProject.name = "Keyple Control"
+
+include ':app'
+include ':keyple-parser'

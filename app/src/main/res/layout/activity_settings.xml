@@ -5,10 +5,12 @@
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.eclipse.keyple.demo.control.activities.SettingsActivity"
-    android:background="@drawable/ic_bg">
+    android:background="@drawable/ic_bg"
+    tools:context="org.eclipse.keyple.demo.control.activities.SettingsActivity">
 
-    <include layout="@layout/logo_toolbar" android:id="@+id/appBarLayout"/>
+    <include
+        android:id="@+id/appBarLayout"
+        layout="@layout/logo_toolbar" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineTop"
@@ -26,72 +28,67 @@
 
     <TextView
         android:id="@+id/location_label"
+        style="@style/mediumBoldBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/location_label"
-        style="@style/mediumBoldBlue"
         android:layout_marginStart="@dimen/settings_horizontal_padding"
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        app:layout_constraintBottom_toTopOf="@+id/locationEdit"
+        android:text="@string/location_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guidelineTop"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <EditText
-        android:id="@+id/locationEdit"
+    <Spinner
+        android:id="@+id/spinnerLocationList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/settings_horizontal_padding"
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
-        android:autofillHints="location"
-        android:hint="@string/location_hint"
-        android:inputType="text"
-        android:textColorHint="@color/blue"
-        app:backgroundTint="@color/blue"
-        style="@style/mediumRegularBlue"
+        android:background="@color/blue"
+        android:spinnerMode="dialog"
         app:layout_constraintBottom_toTopOf="@id/validation_period_label"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/location_label" />
 
     <TextView
         android:id="@+id/validation_period_label"
+        style="@style/mediumBoldBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        style="@style/mediumBoldBlue"
         android:text="@string/validation_period_label"
         app:layout_constraintBottom_toTopOf="@id/validationPeriodEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/locationEdit" />
+        app:layout_constraintTop_toBottomOf="@id/spinnerLocationList" />
 
     <EditText
         android:id="@+id/validationPeriodEdit"
+        style="@style/mediumRegularBlue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/settings_horizontal_padding"
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
         android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
         android:autofillHints="period"
-        android:textColorHint="@color/blue"
-        app:backgroundTint="@color/blue"
         android:hint="@string/validation_period_hint"
         android:inputType="number"
-        style="@style/mediumRegularBlue"
+        android:textColorHint="@color/blue"
+        app:backgroundTint="@color/blue"
         app:layout_constraintBottom_toTopOf="@id/timeBtn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/validation_period_label" />
 
     <Button
         android:id="@+id/timeBtn"
+        style="@style/whiteBtnText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/time_label"
         android:layout_marginStart="@dimen/settings_horizontal_padding"
         android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        style="@style/whiteBtnText"
         android:background="@drawable/btn_blue"
+        android:text="@string/time_label"
         app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -99,28 +96,28 @@
 
     <TextView
         android:id="@+id/start_label"
+        style="@style/bigBoldBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/start_label"
-        style="@style/bigBoldBlue"
         android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
+        android:text="@string/start_label"
         app:layout_constraintBottom_toTopOf="@id/startBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guidelineBottom"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <ImageButton
         android:id="@+id/startBtn"
         android:layout_width="@dimen/settings_start_ic_size"
         android:layout_height="@dimen/settings_start_ic_size"
-        android:src="@drawable/ic_start"
-        android:scaleType="fitXY"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/start_label"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/start_label"
-        android:contentDescription="@string/start_label"/>
+        app:layout_constraintTop_toBottomOf="@id/start_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
