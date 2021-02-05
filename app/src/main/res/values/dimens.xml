@@ -44,7 +44,7 @@
     <dimen name="content_last_validation_vertical_margin">10dp</dimen>
     <dimen name="content_last_validation_elevation">5dp</dimen>
     <dimen name="content_top_margin">20dp</dimen>
-    <dimen name="content_title_padding">42dp</dimen>
+    <dimen name="content_title_padding">30dp</dimen>
 
     <dimen name="card_title_item_height">90dp</dimen>
     <dimen name="card_title_image_margin_start">10dp</dimen>
