@@ -17,9 +17,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_card_reader.invalid
 import kotlinx.android.synthetic.main.activity_card_reader.loadingAnimation
-import kotlinx.android.synthetic.main.activity_card_reader.valid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -72,23 +70,6 @@ class CardReaderActivity : BaseActivity() {
         progress = ProgressDialog(this)
         progress.setMessage(getString(R.string.please_wait))
         progress.setCancelable(false)
-
-        /*
-         * Use cases (for test purposes)
-         */
-        valid.setOnClickListener {
-            val intent = Intent(this@CardReaderActivity, CardContentActivity::class.java)
-            val cardResponse = MockUtils.getMockedResult(this@CardReaderActivity, Status.TICKETS_FOUND)
-            intent.putExtra(CARD_CONTENT, cardResponse)
-            startActivity(intent)
-        }
-        invalid.setOnClickListener {
-            val intent = Intent(this, NetworkInvalidActivity::class.java)
-            val cardResponse =
-                MockUtils.getMockedResult(this@CardReaderActivity, Status.INVALID_CARD)
-            intent.putExtra(CARD_CONTENT, cardResponse)
-            startActivity(intent)
-        }
     }
 
     override fun onResume() {
