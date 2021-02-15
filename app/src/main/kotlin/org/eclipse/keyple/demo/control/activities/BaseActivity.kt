@@ -37,5 +37,4 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
     }
-
 }

@@ -216,42 +216,57 @@ class CardReaderActivity : BaseActivity() {
                 currentAppState = newAppState
                 when (readerEvent?.eventType) {
                     ReaderEvent.EventType.CARD_INSERTED, ReaderEvent.EventType.CARD_MATCHED -> {
-                        try {
+                        GlobalScope.launch {
+                            try {
 
-                            if (ticketingSession.analyzePoProfile()) {
-                                /*
-                                 * LAUNCH VALIDATION PROCEDURE
-                                 */
-                                val cardReaderResponse =
-                                    ticketingSession.launchControlProcedure(locationFileManager.getLocations())
-                                displayResult(cardReaderResponse)
+                                if (ticketingSession.analyzePoProfile()) {
+                                    /*
+                                     * LAUNCH CONTROL PROCEDURE
+                                     */
+                                    withContext(Dispatchers.Main){
+                                        progress.show()
+                                    }
+                                    val cardReaderResponse = withContext(Dispatchers.IO){
+                                        ticketingSession.launchControlProcedure(locationFileManager.getLocations())
+                                    }
+                                    withContext(Dispatchers.Main){
+                                        progress.dismiss()
+                                        displayResult(cardReaderResponse)
+                                    }
 
-                                /*
-                                 * LAUNCH PERSONALIZE PROCEDURE
-                                 */
-//                                val success = ticketingSession.launchPersonalizeProcedure(
-//                                    ContractPriorityEnum.SEASON_PASS)
-//                                val message = if(success == Status.SUCCESS){
-//                                    "Personalize successful"
-//                                }
-//                                else{
-//                                    "Personalize error !"
-//                                }
-//                                runOnUiThread {
-//                                    Toast.makeText(this@CardReaderActivity, message, Toast.LENGTH_SHORT).show()
-//                                }
-                            }
-                        } catch (e: IllegalStateException) {
-                            Timber.e(e)
-                            Timber.e("Load ERROR page after exception = ${e.message}")
-                            displayResult(
-                                CardReaderResponse(
-                                    Status.ERROR,
-                                    "some invalid card",
-                                    arrayListOf(),
-                                    arrayListOf()
+                                    /*
+                                     * LAUNCH PERSONALIZE PROCEDURE
+                                     */
+//                                    withContext(Dispatchers.Main){
+//                                        progress.show()
+//                                    }
+//                                    val message = withContext(Dispatchers.IO){
+//                                        val success = ticketingSession.launchPersonalizeProcedure(
+//                                            ContractPriorityEnum.MULTI_TRIP)
+//                                        if(success == Status.SUCCESS){
+//                                            "Personalize successful"
+//                                        }
+//                                        else{
+//                                            "Personalize error !"
+//                                        }
+//                                    }
+//                                    withContext(Dispatchers.Main){
+//                                        progress.dismiss()
+//                                        Toast.makeText(this@CardReaderActivity, message, Toast.LENGTH_SHORT).show()
+//                                    }
+                                }
+                            } catch (e: IllegalStateException) {
+                                Timber.e(e)
+                                Timber.e("Load ERROR page after exception = ${e.message}")
+                                displayResult(
+                                    CardReaderResponse(
+                                        Status.ERROR,
+                                        "some invalid card",
+                                        arrayListOf(),
+                                        arrayListOf()
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                     else -> {

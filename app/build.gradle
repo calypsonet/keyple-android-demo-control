@@ -67,6 +67,11 @@ android {
             resValue "string", "app_name", "Keyple Mock Sam Control"
             applicationIdSuffix ".mockSam"
         }
+        bluebird {
+            dimension 'device'
+            resValue "string", "app_name", "Keyple Bluebird Control"
+            applicationIdSuffix ".bluebird"
+        }
     }
 
     sourceSets {
@@ -77,6 +82,7 @@ android {
         copernic.java.srcDirs += 'src/copernic/kotlin'
         famoco.java.srcDirs += 'src/famoco/kotlin'
         mockSam.java.srcDirs += 'src/mockSam/kotlin'
+        bluebird.java.srcDirs += 'src/bluebird/kotlin'
     }
 
     androidExtensions {
@@ -107,6 +113,8 @@ dependencies {
     mockSamImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:$keyple_version"
 
     copernicImplementation "org.eclipse.keyple:keyple-android-plugin-coppernic-ask:$coppernic_plugin_version"
+
+    bluebirdImplementation "org.eclipse.keyple:keyple-android-plugin-bluebird:$bluebird_plugin_version"
 
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

@@ -59,6 +59,9 @@
     <string name="card_invalid_desc">This is a \"%s\" card.</string>
     <string name="card_invalid_default">Invalid card</string>
 
+    <!--    Dialog-->
+    <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
+
     <!--    Test values-->
     <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>
     <string name="card_content_title_placeholder">Multi Trip</string>

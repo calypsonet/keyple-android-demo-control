@@ -38,8 +38,10 @@ class SettingsActivity : BaseActivity() {
 
         //Init location spinner
         val locations = locationFileManager.getLocations()
-        mLocationAdapter = ArrayAdapter(this,
-            R.layout.spinner_item_location, R.id.spinner_item_text, locations)
+        mLocationAdapter = ArrayAdapter(
+            this,
+            R.layout.spinner_item_location, R.id.spinner_item_text, locations
+        )
         spinnerLocationList.adapter = mLocationAdapter
 
         timeBtn.setOnClickListener {
@@ -49,7 +51,8 @@ class SettingsActivity : BaseActivity() {
         startBtn.setOnClickListener {
             KeypleSettings.location = spinnerLocationList.selectedItem as Location
             val validationPeriod = validationPeriodEdit.text.toString()
-            KeypleSettings.validationPeriod = if (validationPeriod.isBlank()) 0 else validationPeriod.toInt()
+            KeypleSettings.validationPeriod =
+                if (validationPeriod.isBlank()) 0 else validationPeriod.toInt()
             if (KeypleSettings.location != null && KeypleSettings.validationPeriod != 0) {
                 startActivity(Intent(this, HomeActivity::class.java))
             } else {

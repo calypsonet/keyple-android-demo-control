@@ -23,6 +23,7 @@ import java.util.ArrayList
  */
 object PermissionHelper {
 
+
     const val MY_PERMISSIONS_REQUEST_ALL = 1000
 
     fun isPermissionGranted(activity: Activity, permission: String): Boolean {
@@ -33,18 +34,11 @@ object PermissionHelper {
     }
 
     fun checkPermission(context: Activity, permissions: Array<String>): Boolean {
-        val permissionDenied =
-            ArrayList<String>()
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    permission
-                ) == PackageManager.PERMISSION_DENIED
-            ) {
-                permissionDenied.add(permission)
-            }
+        val permissionDenied = permissions.filter {
+            !isPermissionGranted(context, it)
         }
-        if (!permissionDenied.isEmpty()) {
+
+        if (permissionDenied.isNotEmpty()) {
             var position = 0
             val permissionsToAsk =
                 arrayOfNulls<String>(permissionDenied.size)

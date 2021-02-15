@@ -29,7 +29,8 @@ object FileHelper {
 
     fun createDirectory(path: String, name: String): Boolean {
         val file = File(path, name)
-        return file.mkdir()
+        val created = file.mkdir()
+        return created
     }
 
     fun createFile(dirPath: String, name: String, content: String): Boolean {

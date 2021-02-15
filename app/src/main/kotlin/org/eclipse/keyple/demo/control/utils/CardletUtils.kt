@@ -152,7 +152,7 @@ object CardletUtils {
                 getEmptyFile()
             ),
             eventData = mutableListOf(getEventMultiTrip()),
-            counterData = getCounter(3)
+            counterData = getCounter(10)
         )
     }
 }

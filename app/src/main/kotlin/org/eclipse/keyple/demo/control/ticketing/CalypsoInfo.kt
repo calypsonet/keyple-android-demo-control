@@ -36,6 +36,7 @@ object CalypsoInfo {
     /** AID Intercode * */
     const val AID_HIS_STRUCTURE_13H = "315449432e49434132"
     const val AID_HIS_STRUCTURE_5H = "315449432e49434131"
+//    const val AID_NAVIGO = "A0000004040125090101"
 
     /** AID NORMALIZED IDF * */
     const val AID_NORMALIZED_IDF = "A0000004040125090101"

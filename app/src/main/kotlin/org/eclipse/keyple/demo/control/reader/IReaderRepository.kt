@@ -36,6 +36,8 @@ interface IReaderRepository {
     fun clear()
 
     fun isMockedResponse(): Boolean = false
+
+    fun getPermissions(): Array<String>? = null
 }
 
 data class PoReaderProtocol(val readerProtocolName: String, val applicationProtocolName: String)
