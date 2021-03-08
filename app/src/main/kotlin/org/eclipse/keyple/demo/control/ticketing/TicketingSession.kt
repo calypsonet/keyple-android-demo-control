@@ -87,12 +87,13 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         cardSelection = CardSelectionsService(MultiSelectionProcessing.FIRST_MATCH)
 
         /* Select Calypso */
+        val aidToSelect = AID_HIS_STRUCTURE_5H
         val poSelectionRequest = PoSelection(
             PoSelector.builder()
                 .cardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
                 .aidSelector(
                     CardSelector.AidSelector.builder()
-                        .aidToSelect(AID_HIS_STRUCTURE_5H).build()
+                        .aidToSelect(aidToSelect).build()
                 )
                 .invalidatedPo(PoSelector.InvalidatedPo.REJECT).build()
         )
@@ -237,7 +238,6 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
     }
 
 
-
     /**
      * Launch the control procedure of the current PO
      *
@@ -249,11 +249,11 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         CalypsoSamCommandException::class,
         ControlException::class
     )
-    fun launchControlProcedure(locations: List<Location>): CardReaderResponse {
+    fun launchControlProcedure(locations: List<Location>): CardReaderResponse? {
         return ControlProcedure().launch(
             calypsoPo = calypsoPo,
             samReader = samReader,
-            ticketingSession = this,
+            ticketingSession = this@TicketingSession,
             locations = locations
         )
     }
