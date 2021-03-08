@@ -54,22 +54,22 @@ android {
         }
         copernic {
             dimension 'device'
-            resValue "string", "app_name", "Keyple Copernic Control"
+            resValue "string", "app_name", "Keyple Control Copernic"
             applicationIdSuffix ".copernic"
         }
         famoco {
             dimension 'device'
-            resValue "string", "app_name", "Keyple Famoco Control"
+            resValue "string", "app_name", "Keyple Control Famoco"
             applicationIdSuffix ".famoco"
         }
         mockSam {
             dimension "device"
-            resValue "string", "app_name", "Keyple Mock Sam Control"
+            resValue "string", "app_name", "Keyple Control Mock Sam"
             applicationIdSuffix ".mockSam"
         }
         bluebird {
             dimension 'device'
-            resValue "string", "app_name", "Keyple Bluebird Control"
+            resValue "string", "app_name", "Keyple Control Bluebird"
             applicationIdSuffix ".bluebird"
         }
     }
@@ -134,6 +134,10 @@ dependencies {
     implementation('com.github.devnied:bit-lib4j:1.4.5') {
         exclude group: 'org.slf4j'
     }
+
+    implementation "org.slf4j:slf4j-api:$slf4j_api_version"
+    implementation "com.jakewharton.timber:timber:$timber_version" //Android
+    implementation "com.arcao:slf4j-timber:$slf4j_timber_version@aar" //SLF4J binding for Timber
 
 
     // Dagger dependencies
