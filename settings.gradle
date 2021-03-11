@@ -2,3 +2,6 @@ rootProject.name = "Keyple Control"
 
 include ':app'
 include ':keyple-parser'
+include ':flowbird-plugin'
+
+project(':flowbird-plugin').projectDir = new File(settingsDir, '../keyple-android-plugin-flowbird/keyple-plugins/flowbird')
