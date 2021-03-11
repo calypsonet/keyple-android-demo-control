@@ -15,6 +15,7 @@ package org.calypsonet.keyple.demo.control.activities
 import android.Manifest
 import android.os.Bundle
 import dagger.android.support.DaggerAppCompatActivity
+import org.calypsonet.keyple.demo.control.data.CardReaderApi
 import org.calypsonet.keyple.demo.control.data.LocationFileManager
 import org.calypsonet.keyple.demo.control.utils.PermissionHelper
 import javax.inject.Inject
@@ -26,8 +27,10 @@ import javax.inject.Inject
 abstract class BaseActivity : DaggerAppCompatActivity() {
 
     @Inject
-    lateinit var locationFileManager: LocationFileManager
+    lateinit var cardReaderApi: CardReaderApi
 
+    @Inject
+    lateinit var locationFileManager: LocationFileManager
     protected var isStoragePermissionGranted: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {

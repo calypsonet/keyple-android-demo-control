@@ -29,7 +29,7 @@ interface ITicketingSession {
     fun processDefaultSelection(selectionResponse: AbstractDefaultSelectionsResponse?): CardSelectionsResult
     fun checkStructure(): Boolean
     fun checkStartupInfo(): Boolean
-    fun launchControlProcedure(locations: List<Location>): CardReaderResponse?
+    fun launchControlProcedure(locations: List<Location>): CardReaderResponse
     fun checkSamAndOpenChannel(samReader: Reader): CardResource<CalypsoSam>
     fun getSecuritySettings(samResource: CardResource<CalypsoSam>?): PoSecuritySettings?
 }

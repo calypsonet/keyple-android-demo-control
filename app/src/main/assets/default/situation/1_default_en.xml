@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<situations>
+    <situation id="customer.media.hunting.all"                   message=""                             media="huntingAll"/>
+    <situation id="customer.media.hunting.degraded.only.cless"   message=""                             media="huntingClessOnly"/>
+    <situation id="customer.media.hunting.degraded.only.barcode" message=""                             media="huntingBarcodeOnly"/>
+    <situation id="customer.media.hunting.none"                  message=""                             media="huntingNone"/>
+    <situation id="customer.media.validation.cless.granted"      message=""                             media="successCless"/>
+    <situation id="customer.media.validation.barcode.granted"    message=""                             media="successBarcode"/>
+    <situation id="customer.media.validation.cless.denied"       message=""                             media="errorCless"  />
+    <situation id="customer.media.validation.barcode.denied"     message=""                             media="errorBarcode"  />
+    <situation id="customer.media.site.auth.granted"             message=""                             media="authSuccess"  />
+    <situation id="customer.media.site.auth.denied"              message=""                             media="authDenied"  />
+
+    <situation id="customer.media.service.nominal"    message=""                                        media="nominalState"/>
+    <situation id="customer.media.service.degraded"   message=""                                        media="degradedState"/>
+    <situation id="customer.media.service.closed"     message=""                                        media="serviceClosed"/>
+    <situation id="customer.media.maintenance"        message=""                                        media="maintenance"/>
+    <situation id="customer.media.outoforder"         message=""                                        media="outoforder"/>
+</situations>
+

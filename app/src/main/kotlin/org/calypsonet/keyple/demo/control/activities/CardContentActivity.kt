@@ -25,6 +25,7 @@ import org.calypsonet.keyple.demo.control.adapters.TitlesRecyclerAdapter
 import org.calypsonet.keyple.demo.control.adapters.ValidationsRecyclerAdapter
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.setDivider
+import timber.log.Timber
 
 class CardContentActivity : BaseActivity() {
     private lateinit var validationLinearLayoutManager: LinearLayoutManager
@@ -70,6 +71,15 @@ class CardContentActivity : BaseActivity() {
         }
         else{
             lastValidationListContainer.visibility = View.GONE
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (cardReaderApi.readersInitialized) {
+            cardReaderApi.stopNfcDetection()
+            Timber.d("stopNfcDetection")
         }
     }
 }

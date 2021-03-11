@@ -63,19 +63,12 @@ import timber.log.Timber
 class ControlProcedure {
 
     fun launch(
+        now: DateTime,
         calypsoPo: CalypsoPo,
         samReader: Reader?,
         ticketingSession: ITicketingSession,
         locations: List<Location>
     ): CardReaderResponse {
-        val now = DateTime.now()
-//        val now = DateTime()
-//            .withTimeAtStartOfDay()
-//            .withYear(2021)
-//            .withMonthOfYear(1)
-//            .withDayOfMonth(14)
-//            .withHourOfDay(15)
-//            .withMinuteOfHour(30)
 
         val poReader = ticketingSession.poReader
         val poTypeName = ticketingSession.poTypeName

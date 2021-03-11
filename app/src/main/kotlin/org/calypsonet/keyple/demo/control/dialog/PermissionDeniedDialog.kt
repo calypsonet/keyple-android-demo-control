@@ -19,9 +19,6 @@ import androidx.fragment.app.DialogFragment
 import org.calypsonet.keyple.demo.control.R
 
 /**
- *
- *  created on 25/02/2021
- *
  *  @author youssefamrani
  */
 

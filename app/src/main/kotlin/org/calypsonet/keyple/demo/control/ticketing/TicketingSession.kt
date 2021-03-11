@@ -47,6 +47,7 @@ import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CAL
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_NAVIGO_05h
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_OTHER
 import org.calypsonet.keyple.demo.control.ticketing.procedure.ControlProcedure
+import org.joda.time.DateTime
 import timber.log.Timber
 import java.util.EnumMap
 import javax.inject.Inject
@@ -58,6 +59,8 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
     private var calypsoPoIndex05h = 0
     private var calypsoPoIndex32h = 0
     private var navigoCardIndex05h = 0
+
+    private var now = DateTime.now()
 
     private lateinit var calypsoPo: CalypsoPo
 
@@ -214,12 +217,13 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
         CalypsoSamCommandException::class,
         ControlException::class
     )
-    override fun launchControlProcedure(locations: List<Location>): CardReaderResponse? {
+    override fun launchControlProcedure(locations: List<Location>): CardReaderResponse {
         return ControlProcedure().launch(
             calypsoPo = calypsoPo,
             samReader = samReader,
             ticketingSession = this@TicketingSession,
-            locations = locations
+            locations = locations,
+            now = now
         )
     }
 

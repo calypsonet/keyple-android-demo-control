@@ -13,6 +13,7 @@ package org.calypsonet.keyple.demo.control.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_home.locationSelected
 import kotlinx.android.synthetic.main.activity_home.startBtn
@@ -27,8 +28,19 @@ class HomeActivity : BaseActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         locationSelected.text = KeypleSettings.location?.toString() ?: ""
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         startBtn.setOnClickListener {
             startActivity(Intent(this, CardReaderActivity::class.java))
         }
+    }
+
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        if(menuItem.itemId == android.R.id.home){
+            finish()
+        }
+
+        return super.onOptionsItemSelected(menuItem)
     }
 }

@@ -67,6 +67,11 @@ android {
             resValue "string", "app_name", "Keyple Control Bluebird"
             applicationIdSuffix ".bluebird"
         }
+        flowbird {
+            dimension 'device'
+            resValue "string", "app_name", "Keyple Flowbird Control"
+            applicationIdSuffix ".flowbird"
+        }
     }
 
     sourceSets {
@@ -78,6 +83,7 @@ android {
         famoco.java.srcDirs += 'src/famoco/kotlin'
         mockSam.java.srcDirs += 'src/mockSam/kotlin'
         bluebird.java.srcDirs += 'src/bluebird/kotlin'
+        flowbird.java.srcDirs += 'src/flowbird/kotlin'
     }
 
     androidExtensions {
@@ -111,6 +117,8 @@ dependencies {
 
     bluebirdImplementation "org.eclipse.keyple:keyple-android-plugin-bluebird:$bluebird_plugin_version"
 
+    flowbirdImplementation "org.eclipse.keyple:keyple-android-plugin-flowbird:$flowbird_plugin_version"
+
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
@@ -124,6 +132,11 @@ dependencies {
 
     //Joda Time
     implementation "joda-time:joda-time:2.8.1"
+
+    //logging
+    implementation "org.slf4j:slf4j-api:$slf4j_api_version"
+    implementation "com.jakewharton.timber:timber:$timber_version" //Android
+    implementation "com.arcao:slf4j-timber:$slf4j_timber_version@aar" //SLF4J binding for Timber
 
     // Devnied - Byte Utils
     implementation('com.github.devnied:bit-lib4j:1.4.5') {

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translations>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.start_up.message">Please wait...</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.start_up.message">Esperar...</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.start_up.message">Patientez...</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.start_up.message">Prego Attendere...</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.out_of_order.message">Out of order</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.out_of_order.message">Fuera de servicio</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.out_of_order.message">Hors service</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.out_of_order.message">Fuori Servizio</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.out_of_order.title">OOS</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.out_of_order.title">FDS</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.out_of_order.title">HS</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.out_of_order.title">FS</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.in_maintenance.message">Maintenance in progress...</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.in_maintenance.message">Mantenimiento en curso...</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.in_maintenance.message">Maintenance en cours...</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.in_maintenance.message">Manutenzione in corso...</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.selection.title">Present your media</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.selection.title">Título de transporte</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.selection.title">Présentez votre titre de transport</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.selection.title">Avvicina il Titolo di Viaggio</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.display.selection.title">    Present your\n       media</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.display.selection.title">     Título de\n     transporte</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.display.selection.title">   Présentez votre\n titre de transport</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.display.selection.title">   Avvicina il\n Titolo di Viaggio</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.selection.language">Language</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.selection.language">Idiomas</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.selection.language">Langues</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.selection.language">Lingua</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.selection.information">About</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.selection.information">Acerca de</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.selection.information">A-propos</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.selection.information">Circa</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.language.title">Languages</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.language.title">Idiomas</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.language.title">Langues</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.language.title">Lingua</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.language.en">English</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.language.en">English</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.language.en">English</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.language.en">English</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.language.es">Español</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.language.es">Español</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.language.es">Español</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.language.es">Español</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.language.fr">Français</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.language.fr">Français</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.language.fr">Français</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.language.fr">Français</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.language.it">Italiano</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.language.it">Italiano</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.language.it">Italiano</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.language.it">Italiano</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.title">The AXIO TOUCH</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.title">El AXIO TOUCH</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.title">L'AXIO TOUCH</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.title">L'AXIO TOUCH</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.hardware">Hardware</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.hardware">Hardware</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.hardware">Hardware</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.hardware">Hardware</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.hardware.info0">Power supply 9-48V</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.hardware.info0">Alimentación 9-48V</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.hardware.info0">Alimentation électrique</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.hardware.info0">Alimentazione 9-48V</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.hardware.info1">Clock frequency 800MHz-1GHz</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.hardware.info1">CPU Frequencia 800MHz-1GHz</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.hardware.info1">Frequence d'horloge 800Mhz-1Ghz</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.hardware.info1">Frequenza CPU 800Mhz-1Ghz</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.hardware.info2">1 Gb RAM - 2Gb to 64Gb Flash, extendable</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.hardware.info2">1 Gb RAM - 2Gb a 64Gb Flash, extensible</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.hardware.info2">1 Gb RAM - 2Gb à 64Gb Flash, extensible</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.hardware.info2">1 Gb RAM - 2Gb à 64Gb Flash, aggiornabile</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.hardware.info3">4 SAM</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.hardware.info3">4 SAM</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.hardware.info3">4 SAM</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.hardware.info3">4 SAM</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.hardware.info4">5.7in Colour Display - Touchscreen - Portrait mode</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.hardware.info4">5.7in Pantalla en color - Táctil - Retrato</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.hardware.info4">Affichage: Ecran tactile, Couleur, Affichage en mode portrait </translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.hardware.info4">Display a Colori 5,7in - Touchscreen - Portrait </translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.hardware.info5">Audio: Buzzer, audio messages (MPEG)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.hardware.info5">Audio: Buzzer, mensajes audio (MPEG)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.hardware.info5">Audio: Buzzer, messages audio (MPEG)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.hardware.info5">Audio: Buzzer, messaggi audio (MPEG)</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.hardware.info6">EMV level 2 Contactless payment library</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.hardware.info6">EMV level 2 Pago sin contacto soporte</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.hardware.info6">EMV level 2 Lirairie de paiement sans contact</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.hardware.info6">EMV level 2 Libreria per pagamenti con carte bancarie</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.software">Software</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.software">Software</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.software">Software</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.software">Software</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.software.info0">Android 5.1 (Lollipop)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.software.info0">Android 5.1 (Lollipop)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.software.info0">Android 5.1 (Lollipop)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.software.info0">Android 5.1 (Lollipop)</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.software.info1">Web-Capable (HTML5/CSS/JS)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.software.info1">Web-Capable (HTML5/CSS/JS)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.software.info1">Web-Capable (HTML5/CSS/JS)</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.software.info1">Web-Capable (HTML5/CSS/JS)</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.slogan">Smart cities on the move</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.slogan">Smart cities en movimiento</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.slogan">La smart city en mouvement</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.slogan">La smart city in movimento</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.company.info0">Global leaders </translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.company.info0">Líderes mundiales </translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.company.info0">Leader mondial</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.company.info0">Leader mondiale</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.company.info1">Intelligent Transportation Solutions</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.company.info1">Soluciones de Transporte Inteligente</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.company.info1">Solution pour le transport intelligent</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.company.info1">Soluzione per il trasporto intelligente</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.parkeon.company.info2">Smart City</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.parkeon.company.info2">Ciudades en movimiento</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.parkeon.company.info2">Villes Intelligentes</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.parkeon.company.info2">Smart City</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.printingProgress">Printing in progress</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.printingProgress">impresión en progreso</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.printingProgress">Impression en cours</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.printingProgress">Stampa in Corso</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.information.paymentInProgress">Processando...</translation>
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.information.paymentInProgress">Payment In Progress</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.information.paymentInProgress">Paiement en cours</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.information.paymentInProgress">Pagamento in Corso</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.selection.print">Print</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.selection.print">Imprimir</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.selection.print">Imprimer</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.selection.print">Stampa</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.selection.speak">Speak</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.selection.speak">Habla</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.selection.speak">Parler</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.selection.speak">Parlare</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.navbar.home">Back</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.navbar.home">Atrás</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.navbar.home">Retour</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.navbar.home">Indietro</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.result.OK">Have a good trip</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.result.OK">Buen viaje</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.result.OK">Bon voyage</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.result.OK">Buon Viaggio</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.result.message">%(type)s '%(id)s' presented on %(peripheral)s</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.result.message">%(type)s '%(id)s' presentado sobre %(peripheral)s</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.result.message">%(type)s '%(id)s' présenté sur %(peripheral)s</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.result.message">%(type)s '%(id)s' avvicinare a %(peripheral)s</translation>
+
+    <translation domain="KeypleFlowbirdDomain" language="en" id="customer.result.KO">Invalid contract</translation>
+    <translation domain="KeypleFlowbirdDomain" language="es" id="customer.result.KO">Contrato inválido</translation>
+    <translation domain="KeypleFlowbirdDomain" language="fr" id="customer.result.KO">Contrat invalide</translation>
+    <translation domain="KeypleFlowbirdDomain" language="it" id="customer.result.KO">Contratto non Valido</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.peripherals">Peripherals</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.peripherals">Périphériques</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.peripherals">Dispositivi</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.validationPeripherals">Validation Peripherals</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.validationPeripherals">Périphériques de Validation</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.validationPeripherals">Dispositivi di Validazione</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.cless">Contactless</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.cless">Sans-contact</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.cless">Contactless</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.barcode">Barcode reader</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.barcode">Lecteur QRCode</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.barcode">Barcode reader</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.barcode.autonomous">Autonomous Barcode reader</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.barcode.autonomous">Lecteur QRCode autonome</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.barcode.autonomous">Lettore di codici a barre autonomo</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.leds">LEDs</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.leds">LEDs</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.leds">LEDs</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.backoffice">Backoffice</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.backoffice">Backoffice</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.leds">LEDs</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.magnetic">Magnetic reader</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.magnetic">Lecteur magnétique</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.magnetic">Lettore Magnetico</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.magnetic.encode">Encode magnetic tickets</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.magnetic.encode">Encodage des tickets magnétiques</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.magnetic.encode">Scrivere biglietti magnetici</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.magnetic.layout">Magnetic ticket layout</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.magnetic.layout">Modèle ticket magnétique</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.magnetic.layout">Layout biglietti magnetici</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.title.demo.dashboard">Demo Dashboard</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.title.demo.dashboard">Tableau de Bord Demo</translation>
+    <translation domain="maintenance" language="it" id="maintenance.title.demo.dashboard">Demo</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.a1000">A1000</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.a1000">A1000</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.a1000">A1000</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.validationMode">Validation mode</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.validationMode">Mode de validation</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.validationMode">Modalità di Validazione</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.validationConfiguration">Validation Configuration</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.validationConfiguration">Configuration pour la Validation</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.validationConfiguration">Configurazione per la Validazione</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.validationDuration">Validation duration</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.validationDuration">Durée de validation</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.validationDuration">Durata della Validazione</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.huntMode">Hunt mode</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.huntMode">Mode de chasse</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.huntMode">Hunt mode</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.textToSpeech">Text to speech</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.textToSpeech">Voix de synthèse</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.textToSpeech">Voce sintetica</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.customer.timezone">Timezone</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.customer.timezone">Fuseau horaire</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.customer.timezone">Fuso Orario</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.customer.language">Main language</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.customer.language">Langue principale</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.customer.language">Lingua di Default</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.customer.languages">Possible languages</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.customer.languages">Langues possibles</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.customer.languages">Altri Linguggi</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.title.customer.configuration.locale">Locale configuration</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.title.customer.configuration.locale">Localisation</translation>
+    <translation domain="maintenance" language="it" id="maintenance.title.customer.configuration.locale">Configurazione Locale</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.title.customer.features">Features</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.title.customer.features">Options</translation>
+    <translation domain="maintenance" language="it" id="maintenance.title.customer.features">Opzioni</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.title.customer.configuration.features">Features configuration</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.title.customer.configuration.features">Configuration Options</translation>
+    <translation domain="maintenance" language="it" id="maintenance.title.customer.configuration.features">Opzioni di Configurazione</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.maintenance.language">Maintenance language</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.maintenance.language">Langue maintenance</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.maintenance.language">Linguaggio Manutenzione</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.title.customer.configuration.alternate.durations">Alternate hunt durations</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.title.customer.configuration.alternate.durations">Durée chasse alternée</translation>
+    <translation domain="maintenance" language="it" id="maintenance.title.customer.configuration.alternate.durations">Alternate hunt durations</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.printer">Printer</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.printer">Imprimante</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.printer">Stampante</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.textDisplay">External display</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.textDisplay">Affichage externe</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.textDisplay">Dysplay Esterno</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.textDisplayDelay">Display delay</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.testDisplayDelay">Délai d'affichage</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.textDisplayDelay">Display delay</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.qrcodeContent">QR Code content</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.qrcodeContent">Contenu QR Code</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.qrcodeContent">QR Code Opzioni</translation>
+
+    <translation domain="maintenance" language="en" id="maintenance.labels.features.qrcodeCecLevel">QR Code CEC Level</translation>
+    <translation domain="maintenance" language="fr" id="maintenance.labels.features.qrcodeCecLevel">Niveau Correction QR Code</translation>
+    <translation domain="maintenance" language="it" id="maintenance.labels.features.qrcodeCecLevel">QR Code CEC Level</translation>
+
+   <translation domain="maintenance" language="en" id="maintenance.title.customer.configuration.device">Device configuration</translation>
+   <translation domain="maintenance" language="fr" id="maintenance.title.customer.configuration.device">Equipement</translation>
+
+   <translation domain="maintenance" language="en" id="maintenance.labels.customer.deviceId">ID</translation>
+   <translation domain="maintenance" language="fr" id="maintenance.labels.customer.deviceId">ID</translation>
+
+   <translation domain="maintenance" language="en" id="maintenance.labels.customer.location">Location</translation>
+   <translation domain="maintenance" language="fr" id="maintenance.labels.customer.location">Lieu</translation>
+
+</translations>
+
+
