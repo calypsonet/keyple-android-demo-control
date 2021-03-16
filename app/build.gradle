@@ -44,7 +44,7 @@ android {
     productFlavors {
         omapi {
             dimension 'device'
-            resValue "string", "app_name", "Keyple OMAPI Control"
+            resValue "string", "app_name", "Keyple Control OMAPI"
             applicationIdSuffix ".omapi"
         }
         copernic {

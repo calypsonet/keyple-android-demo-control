@@ -179,7 +179,8 @@ class CardReaderActivity : BaseActivity() {
                 }
 
                 Timber.i("PO Type = ${ticketingSession.poTypeName}")
-                if (CalypsoInfo.PO_TYPE_NAME_CALYPSO != ticketingSession.poTypeName) {
+                if (CalypsoInfo.PO_TYPE_NAME_CALYPSO != ticketingSession.poTypeName &&
+                    CalypsoInfo.PO_TYPE_NAME_NAVIGO != ticketingSession.poTypeName) {
                     val cardType = ticketingSession.poTypeName ?: "an unknown card"
                     val error = String.format(
                         getString(R.string.card_invalid_desc),

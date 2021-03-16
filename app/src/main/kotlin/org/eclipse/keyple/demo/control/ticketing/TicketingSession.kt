@@ -106,11 +106,12 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         /*
          * NAVIGO
          */
-        val navigoCardSelectionRequest = GenericSeSelectionRequest(
+        val navigoCardSelectionRequest = PoSelection(
             PoSelector.builder()
                 .cardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
                 .aidSelector(
-                    CardSelector.AidSelector.builder().aidToSelect(AID_NORMALIZED_IDF).build()
+                    CardSelector.AidSelector.builder()
+                        .aidToSelect(AID_NORMALIZED_IDF).build()
                 )
                 .invalidatedPo(PoSelector.InvalidatedPo.REJECT).build()
         )
@@ -136,6 +137,7 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         (poReader as ObservableReader).setDefaultSelectionRequest(
             cardSelection.defaultSelectionsRequest, ObservableReader.NotificationMode.ALWAYS
         )
+
     }
 
     fun processDefaultSelection(selectionResponse: AbstractDefaultSelectionsResponse?): CardSelectionsResult {
@@ -148,7 +150,10 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
                     calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
                     poTypeName = PO_TYPE_NAME_CALYPSO
                 }
-                navigoCardIndex -> poTypeName = PO_TYPE_NAME_NAVIGO
+                navigoCardIndex -> {
+                    calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
+                    poTypeName = PO_TYPE_NAME_NAVIGO
+                }
                 bankingCardIndex -> poTypeName = PO_TYPE_NAME_BANKING
                 else -> poTypeName = PO_TYPE_NAME_OTHER
             }
