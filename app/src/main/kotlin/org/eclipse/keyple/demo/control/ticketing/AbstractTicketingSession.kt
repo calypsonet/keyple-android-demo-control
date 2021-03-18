@@ -47,7 +47,10 @@ abstract class AbstractTicketingSession protected constructor(
         protected set
     protected var currentPoSN: ByteArray? = null
 
-    protected var calypsoPoIndex = 0
+    protected var calypsoPoIndex05h = 0
+    protected var calypsoPoIndex32h = 0
+    protected var navigoCardIndex = 0
+    protected var bankingCardIndex = 0
 
     protected lateinit var efEnvironmentHolder: ElementaryFile
     protected lateinit var efEventLog: ElementaryFile
@@ -68,22 +71,22 @@ abstract class AbstractTicketingSession protected constructor(
         return sb.toString()
     }
 
-    fun processSelectionsResult(selectionsResult: CardSelectionsResult) {
-        val selectionIndex = selectionsResult.smartCards.keys.first()
-
-        if (selectionIndex == calypsoPoIndex) {
-            calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
-            poTypeName = "CALYPSO"
-            efEnvironmentHolder = calypsoPo.getFileBySfi(CalypsoInfo.SFI_EnvironmentAndHolder)
-            efEventLog = calypsoPo.getFileBySfi(CalypsoInfo.SFI_EventLog)
-            efCounter = calypsoPo.getFileBySfi(CalypsoInfo.SFI_Counter)
-            efContractParser = calypsoPo.getFileBySfi(CalypsoInfo.SFI_Contracts)
-            efContractListParser = calypsoPo.getFileBySfi(CalypsoInfo.SFI_ContractList)
-        } else {
-            poTypeName = "OTHER"
-        }
-        Timber.i("PO type = $poTypeName")
-    }
+//    fun processSelectionsResult(selectionsResult: CardSelectionsResult) {
+//        val selectionIndex = selectionsResult.smartCards.keys.first()
+//
+//        if (selectionIndex == calypsoPoIndex05h) {
+//            calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
+//            poTypeName = "CALYPSO"
+//            efEnvironmentHolder = calypsoPo.getFileBySfi(CalypsoInfo.SFI_EnvironmentAndHolder)
+//            efEventLog = calypsoPo.getFileBySfi(CalypsoInfo.SFI_EventLog)
+//            efCounter = calypsoPo.getFileBySfi(CalypsoInfo.SFI_Counter)
+//            efContractParser = calypsoPo.getFileBySfi(CalypsoInfo.SFI_Contracts)
+//            efContractListParser = calypsoPo.getFileBySfi(CalypsoInfo.SFI_ContractList)
+//        } else {
+//            poTypeName = "OTHER"
+//        }
+//        Timber.i("PO type = $poTypeName")
+//    }
 
     val poIdentification: String
         get() = (calypsoPo.applicationSerialNumber + ", " +

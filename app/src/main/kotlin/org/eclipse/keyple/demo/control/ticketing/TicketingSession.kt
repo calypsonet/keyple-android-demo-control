@@ -38,10 +38,12 @@ import org.eclipse.keyple.demo.control.models.Location
 import org.eclipse.keyple.demo.control.models.Status
 import org.eclipse.keyple.demo.control.reader.IReaderRepository
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.AID_BANKING
+import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.AID_HIS_STRUCTURE_32H
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.AID_HIS_STRUCTURE_5H
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.AID_NORMALIZED_IDF
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_BANKING
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO
+import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_05H
+import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_32H
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_NAVIGO
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_OTHER
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_1
@@ -67,9 +69,6 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         samReader = readerRepository.getSamReader()
     }
 
-    private var navigoCardIndex = 0
-    private var bankingCardIndex = 0
-
     /*
      * Should be instanciated through the ticketing session mananger
     */
@@ -87,6 +86,10 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         cardSelection = CardSelectionsService(MultiSelectionProcessing.FIRST_MATCH)
 
         /* Select Calypso */
+
+        /*
+         * Structure 05h
+         */
         val aidToSelect = AID_HIS_STRUCTURE_5H
         val poSelectionRequest = PoSelection(
             PoSelector.builder()
@@ -101,7 +104,25 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         /*
          * Add the selection case to the current selection
          */
-        calypsoPoIndex = cardSelection.prepareSelection(poSelectionRequest)
+        calypsoPoIndex05h = cardSelection.prepareSelection(poSelectionRequest)
+
+        /*
+         * Structure 32h
+         */
+        val poSelectionRequest32h = PoSelection(
+            PoSelector.builder()
+                .cardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
+                .aidSelector(
+                    CardSelector.AidSelector.builder()
+                        .aidToSelect(AID_HIS_STRUCTURE_32H).build()
+                )
+                .invalidatedPo(PoSelector.InvalidatedPo.REJECT).build()
+        )
+
+        /*
+         * Add the selection case to the current selection
+         */
+        calypsoPoIndex32h = cardSelection.prepareSelection(poSelectionRequest32h)
 
         /*
          * NAVIGO
@@ -146,9 +167,13 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
             cardSelection.processDefaultSelectionsResponse(selectionResponse)
         if (selectionsResult.hasActiveSelection()) {
             when (selectionsResult.smartCards.keys.first()) {
-                calypsoPoIndex -> {
+                calypsoPoIndex05h -> {
                     calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
-                    poTypeName = PO_TYPE_NAME_CALYPSO
+                    poTypeName = PO_TYPE_NAME_CALYPSO_05H
+                }
+                calypsoPoIndex32h -> {
+                    calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
+                    poTypeName = PO_TYPE_NAME_CALYPSO_32H
                 }
                 navigoCardIndex -> {
                     calypsoPo = selectionsResult.activeSmartCard as CalypsoPo

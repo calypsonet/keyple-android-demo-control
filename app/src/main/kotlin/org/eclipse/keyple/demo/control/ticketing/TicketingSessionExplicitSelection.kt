@@ -64,7 +64,7 @@ class TicketingSessionExplicitSelection(readerRepository: IReaderRepository) :
         /*
          * Add the selection case to the current selection (we could have added other cases here)
          */
-        calypsoPoIndex = cardSelection.prepareSelection(poSelectionRequest)
+        calypsoPoIndex05h = cardSelection.prepareSelection(poSelectionRequest)
         return cardSelection.processExplicitSelections(poReader)
     }
 
