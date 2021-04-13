@@ -17,6 +17,7 @@ import android.provider.Settings
 import android.text.Editable
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_settings.app_version
 import kotlinx.android.synthetic.main.activity_settings.spinnerLocationList
 import kotlinx.android.synthetic.main.activity_settings.startBtn
 import kotlinx.android.synthetic.main.activity_settings.timeBtn
@@ -59,6 +60,8 @@ class SettingsActivity : BaseActivity() {
                 Toast.makeText(this, R.string.msg_location_period_empty, Toast.LENGTH_LONG).show()
             }
         }
+
+        app_version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
 
         if (BuildConfig.DEBUG) {
             validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("90")
