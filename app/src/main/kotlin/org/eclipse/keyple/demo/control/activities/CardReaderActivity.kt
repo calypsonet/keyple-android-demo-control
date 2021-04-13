@@ -233,27 +233,6 @@ class CardReaderActivity : BaseActivity() {
                                         progress.dismiss()
                                         displayResult(cardReaderResponse)
                                     }
-
-                                    /*
-                                     * LAUNCH PERSONALIZE PROCEDURE
-                                     */
-//                                    withContext(Dispatchers.Main){
-//                                        progress.show()
-//                                    }
-//                                    val message = withContext(Dispatchers.IO){
-//                                        val success = ticketingSession.launchPersonalizeProcedure(
-//                                            ContractPriorityEnum.MULTI_TRIP)
-//                                        if(success == Status.SUCCESS){
-//                                            "Personalize successful"
-//                                        }
-//                                        else{
-//                                            "Personalize error !"
-//                                        }
-//                                    }
-//                                    withContext(Dispatchers.Main){
-//                                        progress.dismiss()
-//                                        Toast.makeText(this@CardReaderActivity, message, Toast.LENGTH_SHORT).show()
-//                                    }
                                 }
                             } catch (e: IllegalStateException) {
                                 Timber.e(e)

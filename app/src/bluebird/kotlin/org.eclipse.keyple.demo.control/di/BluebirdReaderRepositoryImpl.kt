@@ -63,9 +63,9 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
 
     @Throws(KeypleException::class)
     override suspend fun initPoReader(): Reader? {
-        val askPlugin =
+        val bluebirdPlugin =
             SmartCardService.getInstance().getPlugin(BluebirdPluginFactory.pluginName)
-        val poReader = askPlugin?.getReader(BluebirdContactlessReader.READER_NAME)
+        val poReader = bluebirdPlugin?.getReader(BluebirdContactlessReader.READER_NAME)
         poReader?.let {
 
             it.activateProtocol(
