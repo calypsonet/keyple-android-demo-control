@@ -12,6 +12,7 @@
   -->
 <resources>
     <dimen name="splash_title">18sp</dimen>
+    <dimen name="version">11sp</dimen>
 
     <dimen name="toolbar_margin_top">10dp</dimen>
     <dimen name="toolbar_logo_padding">4dp</dimen>

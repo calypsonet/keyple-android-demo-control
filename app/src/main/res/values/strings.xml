@@ -17,6 +17,7 @@
     <string name="please_wait">Please wait</string>
     <string name="error_title">Error</string>
     <string name="quit">Quitter</string>
+    <string name="version">version %s</string>
 
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_activity_card_reader">CardReaderActivity</string>
