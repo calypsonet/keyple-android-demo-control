@@ -11,8 +11,8 @@
  ********************************************************************************/
 package org.eclipse.keyple.demo.control.ticketing
 
+import org.eclipse.keyple.core.service.KeypleCardCommunicationException
 import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.exception.KeypleReaderException
 
 interface ITicketingSession {
     val poReader: Reader?
@@ -21,7 +21,7 @@ interface ITicketingSession {
     fun analyzePoProfile(): Boolean
     val poIdentification: String?
 
-    @Throws(KeypleReaderException::class)
+    @Throws(KeypleCardCommunicationException::class)
     fun loadTickets(ticketNumber: Int): Int
     fun notifySeProcessed()
 

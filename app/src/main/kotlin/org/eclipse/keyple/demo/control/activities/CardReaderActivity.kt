@@ -22,9 +22,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.eclipse.keyple.core.service.event.ObservableReader
-import org.eclipse.keyple.core.service.event.ReaderEvent
-import org.eclipse.keyple.core.service.exception.KeyplePluginInstantiationException
+import org.eclipse.keyple.core.service.ReaderEvent
+import org.eclipse.keyple.core.service.spi.ReaderObserverSpi
 import org.eclipse.keyple.demo.control.R
 import org.eclipse.keyple.demo.control.data.CardReaderApi
 import org.eclipse.keyple.demo.control.di.scopes.ActivityScoped
@@ -90,13 +89,7 @@ class CardReaderActivity : BaseActivity() {
                         readersInitialized = true
                         handleAppEvents(AppState.WAIT_CARD, null)
                         cardReaderApi.startNfcDetection()
-                    } catch (e: KeyplePluginInstantiationException) {
-                        Timber.e(e)
-                        withContext(Dispatchers.Main) {
-                            dismissProgress()
-                            showNoProxyReaderDialog(e)
-                        }
-                    } catch (e: IllegalStateException) {
+                    } catch (e: Exception) {
                         Timber.e(e)
                         withContext(Dispatchers.Main) {
                             dismissProgress()
@@ -158,7 +151,7 @@ class CardReaderActivity : BaseActivity() {
                 Timber.i("Process default selection...")
 
                 val seSelectionResult =
-                    ticketingSession.processDefaultSelection(readerEvent.defaultSelectionsResponse)
+                    ticketingSession.processDefaultSelection(readerEvent.cardSelectionResponses)
 
                 if (!seSelectionResult.hasActiveSelection()) {
                     Timber.e("PO Not selected")
@@ -179,7 +172,8 @@ class CardReaderActivity : BaseActivity() {
                 }
 
                 Timber.i("PO Type = ${ticketingSession.poTypeName}")
-                if (CalypsoInfo.PO_TYPE_NAME_CALYPSO != ticketingSession.poTypeName) {
+                if (CalypsoInfo.PO_TYPE_NAME_CALYPSO_05H != ticketingSession.poTypeName &&
+                    CalypsoInfo.PO_TYPE_NAME_NAVIGO != ticketingSession.poTypeName) {
                     val cardType = ticketingSession.poTypeName ?: "an unknown card"
                     val error = String.format(
                         getString(R.string.card_invalid_desc),
@@ -339,15 +333,16 @@ class CardReaderActivity : BaseActivity() {
         const val CARD_CONTENT = "cardContent"
     }
 
-    private inner class PoObserver : ObservableReader.ReaderObserver {
-        override fun update(event: ReaderEvent) {
-            Timber.i("New ReaderEvent received :${event.eventType.name}")
-            if (event.eventType == ReaderEvent.EventType.CARD_MATCHED &&
+    private inner class PoObserver : ReaderObserverSpi {
+
+        override fun onReaderEvent(readerEvent: ReaderEvent) {
+            Timber.i("New ReaderEvent received :${readerEvent.eventType.name}")
+            if (readerEvent.eventType == ReaderEvent.EventType.CARD_MATCHED &&
                 cardReaderApi.isMockedResponse()
             ) {
                 launchMockedEvents()
             } else {
-                handleAppEvents(currentAppState, event)
+                handleAppEvents(currentAppState, readerEvent)
             }
         }
     }

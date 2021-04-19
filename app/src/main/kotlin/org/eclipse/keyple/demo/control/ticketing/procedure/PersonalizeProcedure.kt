@@ -12,12 +12,11 @@
 
 package org.eclipse.keyple.demo.control.ticketing.procedure
 
-import org.eclipse.keyple.calypso.command.po.exception.CalypsoPoCommandException
-import org.eclipse.keyple.calypso.command.sam.exception.CalypsoSamCommandException
-import org.eclipse.keyple.calypso.transaction.CalypsoPo
-import org.eclipse.keyple.calypso.transaction.PoTransaction
-import org.eclipse.keyple.calypso.transaction.exception.CalypsoPoTransactionException
-import org.eclipse.keyple.core.card.selection.CardResource
+import org.eclipse.keyple.card.calypso.po.PoSmartCard
+import org.eclipse.keyple.card.calypso.sam.SamRevision
+import org.eclipse.keyple.card.calypso.transaction.CalypsoPoTransactionException
+import org.eclipse.keyple.card.calypso.transaction.PoTransactionService
+import org.eclipse.keyple.core.card.ProxyReader
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.demo.control.exception.NoSamException
 import org.eclipse.keyple.demo.control.models.Status
@@ -41,7 +40,7 @@ class PersonalizeProcedure {
 
     fun launch(
         contractType: ContractPriorityEnum,
-        calypsoPo: CalypsoPo,
+        calypsoPo: PoSmartCard,
         samReader: Reader?,
         ticketingSession: AbstractTicketingSession
     ): Status {
@@ -57,20 +56,22 @@ class PersonalizeProcedure {
         try {
             val poTransaction =
                 if (samReader != null) {
+                    val samCardResourceProfileExtension =
+                        ticketingSession.calypsoCardExtensionProvider.createSamCardResourceProfileExtension()
+                    samCardResourceProfileExtension.setSamRevision(SamRevision.C1)
 
-                    PoTransaction(
-                        CardResource(poReader, calypsoPo),
-                        ticketingSession.getSecuritySettings(
-                            ticketingSession.checkSamAndOpenChannel(
-                                samReader
-                            )
-                        )
+                    ticketingSession.calypsoCardExtensionProvider.createPoSecuredTransaction(
+                        poReader,
+                        calypsoPo,
+                        ticketingSession.getSecuritySettings(),
+                        samCardResourceProfileExtension,
+                        samReader as ProxyReader
                     )
                 } else {
                     throw NoSamException()
                 }
 
-            poTransaction.processOpening(PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_PERSO)
+            poTransaction.processOpening(PoTransactionService.SessionAccessLevel.SESSION_LVL_PERSO)
 
             /*
              * Environment
@@ -138,16 +139,14 @@ class PersonalizeProcedure {
             return Status.SUCCESS
         } catch (e: CalypsoPoTransactionException) {
             Timber.e(e)
-        } catch (e: CalypsoPoCommandException) {
-            Timber.e(e)
-        } catch (e: CalypsoSamCommandException) {
+        } catch (e: Exception) {
             Timber.e(e)
         }
 
         return Status.ERROR
     }
 
-    private fun printCounterValues(poTransaction: PoTransaction, calypsoPo: CalypsoPo){
+    private fun printCounterValues(poTransaction: PoTransactionService, calypsoPo: PoSmartCard){
 
         poTransaction.prepareReadCounterFile(
             SFI_Counter_0A,

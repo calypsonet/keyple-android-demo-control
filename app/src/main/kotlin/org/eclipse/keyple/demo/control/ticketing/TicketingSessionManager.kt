@@ -11,14 +11,12 @@
  ********************************************************************************/
 package org.eclipse.keyple.demo.control.ticketing
 
-import org.eclipse.keyple.core.service.exception.KeypleReaderException
-import org.eclipse.keyple.core.service.exception.KeypleReaderNotFoundException
 import org.eclipse.keyple.demo.control.reader.IReaderRepository
 import timber.log.Timber
 
 class TicketingSessionManager(private val ticketingSessions: ArrayList<ITicketingSession> = ArrayList()) {
 
-    @Throws(KeypleReaderException::class)
+    @Throws(Exception::class)
     fun createTicketingSession(
         readerRepository: IReaderRepository,
         explicitSelection: Boolean = false
@@ -35,13 +33,13 @@ class TicketingSessionManager(private val ticketingSessions: ArrayList<ITicketin
         return ticketingSession
     }
 
-    @Throws(KeypleReaderNotFoundException::class)
+    @Throws(Exception::class)
     fun destroyAll() {
         Timber.d("Destroy all TicketingSession")
         ticketingSessions.clear()
     }
 
-    @Throws(KeypleReaderNotFoundException::class)
+    @Throws(Exception::class)
     fun destroyTicketingSession(poReaderName: String): Boolean {
         Timber.d("Destroy a the TicketingSession for reader $poReaderName")
         for (ticketingSession in ticketingSessions) {

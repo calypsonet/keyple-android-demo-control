@@ -13,13 +13,12 @@ package org.eclipse.keyple.demo.control.data
 
 import android.app.Activity
 import fr.devnied.bitlib.BytesUtils
+import org.eclipse.keyple.core.card.ReaderCommunicationException
+import org.eclipse.keyple.core.service.KeyplePluginException
+import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.SmartCardService
-import org.eclipse.keyple.core.service.event.ObservableReader
-import org.eclipse.keyple.core.service.exception.KeypleException
-import org.eclipse.keyple.core.service.exception.KeyplePluginInstantiationException
-import org.eclipse.keyple.core.service.exception.KeyplePluginNotFoundException
-import org.eclipse.keyple.core.service.exception.KeypleReaderIOException
+import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.eclipse.keyple.core.service.spi.ReaderObserverSpi
 import org.eclipse.keyple.demo.control.di.scopes.AppScoped
 import org.eclipse.keyple.demo.control.reader.IReaderRepository
 import org.eclipse.keyple.demo.control.ticketing.CardContent
@@ -40,17 +39,17 @@ class CardReaderApi @Inject constructor(
     private var ticketingSession: TicketingSession? = null
 
     @Throws(
-        KeyplePluginInstantiationException::class,
+        KeyplePluginException::class,
         IllegalStateException::class,
-        KeyplePluginNotFoundException::class
+        Exception::class
     )
-    suspend fun init(observer: ObservableReader.ReaderObserver?, activity: Activity) {
+    suspend fun init(observer: ReaderObserverSpi?, activity: Activity) {
         /*
          * Register plugin
          */
         try {
             readerRepository.registerPlugin(activity)
-        } catch (e: KeypleException) {
+        } catch (e: Exception) {
             Timber.e(e)
             throw IllegalStateException(e.message)
         }
@@ -61,13 +60,13 @@ class CardReaderApi @Inject constructor(
         val poReader: Reader?
         try {
             poReader = readerRepository.initPoReader()
-        } catch (e: KeyplePluginNotFoundException) {
-            Timber.e(e)
-            throw IllegalStateException("PoReader with name AndroidCoppernicAskPlugin was not found")
-        } catch (e: KeypleReaderIOException) {
+        } catch (e: KeyplePluginException) {
             Timber.e(e)
             throw IllegalStateException(e.message)
-        } catch (e: KeypleException) {
+        } catch (e: ReaderCommunicationException) {
+            Timber.e(e)
+            throw IllegalStateException(e.message)
+        } catch (e: Exception) {
             Timber.e(e)
             throw IllegalStateException(e.message)
         }
@@ -78,7 +77,9 @@ class CardReaderApi @Inject constructor(
         var samReaders: Map<String, Reader>? = null
         try {
             samReaders = readerRepository.initSamReaders()
-        } catch (e: KeyplePluginNotFoundException) {
+        } catch (e: KeyplePluginException) {
+            Timber.e(e)
+        } catch (e: Exception) {
             Timber.e(e)
         }
         if (samReaders.isNullOrEmpty()) {
@@ -110,8 +111,10 @@ class CardReaderApi @Inject constructor(
         try {
             // notify reader that se detection has been switched off
             (readerRepository.poReader as ObservableReader).stopCardDetection()
-        } catch (e: KeyplePluginNotFoundException) {
+        } catch (e: KeyplePluginException) {
             Timber.e(e, "NFC Plugin not found")
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
@@ -119,14 +122,15 @@ class CardReaderApi @Inject constructor(
         return ticketingSession
     }
 
-    fun onDestroy(observer: ObservableReader.ReaderObserver?) {
+    fun onDestroy(observer: ReaderObserverSpi?) {
         readerRepository.clear()
         if (observer != null && readerRepository.poReader != null) {
             (readerRepository.poReader as ObservableReader).removeObserver(observer)
         }
 
-        SmartCardService.getInstance().plugins.forEach {
-            SmartCardService.getInstance().unregisterPlugin(it.key)
+        val smartCardService = SmartCardServiceProvider.getService()
+        smartCardService.plugins.forEach {
+            smartCardService.unregisterPlugin(it.key)
         }
 
         ticketingSession = null

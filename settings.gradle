@@ -2,3 +2,6 @@ rootProject.name = "Keyple Control"
 
 include ':app'
 include ':keyple-parser'
+include ':bluebird-plugin'
+
+project(':bluebird-plugin').projectDir = new File(settingsDir, '../../workspace_calypsonet/keyple-android-plugin-bluebird/keyple-plugins/bluebird')

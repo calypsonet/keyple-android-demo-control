@@ -12,12 +12,11 @@
 
 package org.eclipse.keyple.demo.control.ticketing.procedure
 
-import org.eclipse.keyple.calypso.command.po.exception.CalypsoPoCommandException
-import org.eclipse.keyple.calypso.command.sam.exception.CalypsoSamCommandException
-import org.eclipse.keyple.calypso.transaction.CalypsoPo
-import org.eclipse.keyple.calypso.transaction.PoTransaction
-import org.eclipse.keyple.calypso.transaction.exception.CalypsoPoTransactionException
-import org.eclipse.keyple.core.card.selection.CardResource
+import org.eclipse.keyple.card.calypso.po.PoSmartCard
+import org.eclipse.keyple.card.calypso.sam.SamRevision
+import org.eclipse.keyple.card.calypso.transaction.CalypsoPoTransactionException
+import org.eclipse.keyple.card.calypso.transaction.PoTransactionService
+import org.eclipse.keyple.core.card.ProxyReader
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.demo.control.exception.EnvironmentControlException
 import org.eclipse.keyple.demo.control.exception.EnvironmentControlExceptionKey
@@ -61,7 +60,7 @@ import timber.log.Timber
 class ControlProcedure {
 
     fun launch(
-        calypsoPo: CalypsoPo,
+        calypsoPo: PoSmartCard,
         samReader: Reader?,
         ticketingSession: AbstractTicketingSession,
         locations: List<Location>
@@ -89,29 +88,49 @@ class ControlProcedure {
                          * Step 1.1 - If SAM available, Open a Validation session reading the environment record, set inTransactionFlag to true and go to point 2.
                          */
                         inTransactionFlag = true
-                        val cardResource = ticketingSession.checkSamAndOpenChannel(samReader)
-                        PoTransaction(
-                            CardResource(ticketingSession.poReader, calypsoPo),
-                            ticketingSession.getSecuritySettings(cardResource)
+
+                        val samCardResourceProfileExtension =
+                            ticketingSession.calypsoCardExtensionProvider.createSamCardResourceProfileExtension()
+                        samCardResourceProfileExtension.setSamRevision(SamRevision.C1)
+
+                        ticketingSession.calypsoCardExtensionProvider.createPoSecuredTransaction(
+                            poReader,
+                            calypsoPo,
+                            ticketingSession.getSecuritySettings(),
+                            samCardResourceProfileExtension,
+                            samReader as ProxyReader
                         )
                     } else {
                         /*
                          * Step 1.2 - Else, read the environment record.
                          */
                         inTransactionFlag = false
-                        PoTransaction(CardResource(poReader, calypsoPo))
+                        ticketingSession.calypsoCardExtensionProvider.createPoUnsecuredTransaction(
+                            poReader,
+                            calypsoPo
+                        )
                     }
                 } catch (e: IllegalStateException) {
                     Timber.w(e)
                     inTransactionFlag = false
-                    PoTransaction(CardResource(poReader, calypsoPo))
+                    ticketingSession.calypsoCardExtensionProvider.createPoUnsecuredTransaction(
+                        poReader,
+                        calypsoPo
+                    )
+                } catch (e: Exception) {
+                    Timber.w(e)
+                    inTransactionFlag = false
+                    ticketingSession.calypsoCardExtensionProvider.createPoUnsecuredTransaction(
+                        poReader,
+                        calypsoPo
+                    )
                 }
 
             if (inTransactionFlag) {
                 /*
                  * Open a transaction to read/write the Calypso PO
                  */
-                poTransaction.processOpening(PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_DEBIT)
+                poTransaction.processOpening(PoTransactionService.SessionAccessLevel.SESSION_LVL_DEBIT)
             }
 
             /*
@@ -379,13 +398,10 @@ class ControlProcedure {
         } catch (e: EnvironmentControlException) {
             Timber.e(e)
             errorMessage = e.message
-        } catch (e: CalypsoSamCommandException) {
-            Timber.e(e)
-            errorMessage = e.message
-        } catch (e: CalypsoPoCommandException) {
-            Timber.e(e)
-            errorMessage = e.message
         } catch (e: CalypsoPoTransactionException) {
+            Timber.e(e)
+            errorMessage = e.message
+        } catch (e: Exception) {
             Timber.e(e)
             errorMessage = e.message
         }

@@ -96,20 +96,24 @@ dependencies {
     implementation 'com.airbnb.android:lottie:3.4.4'
 
     //Keyple
-    implementation "org.eclipse.keyple:keyple-java-core:$keyple_version"
-    implementation "org.eclipse.keyple:keyple-java-calypso:$keyple_version"
+    implementation "org.eclipse.keyple:keyple-java-commons-api:$keyple_version_2_0"
+    implementation "org.eclipse.keyple:keyple-java-service:$keyple_version_2_0_0"
+    implementation "org.eclipse.keyple:keyple-java-utils:$keyple_version_2_0_0"
+    implementation "org.eclipse.keyple:keyple-java-card-api:$keyple_version_2_0"
+    implementation "org.eclipse.keyple:keyple-java-card-calypso:$keyple_version_2_0_0"
 
-    omapiImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:$keyple_version"
-    omapiImplementation "org.eclipse.keyple:keyple-android-plugin-omapi:$keyple_version"
+    omapiImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:$keyple_version_1"
+    omapiImplementation "org.eclipse.keyple:keyple-android-plugin-omapi:$keyple_version_1"
 
-    famocoImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:$keyple_version"
+    famocoImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:$keyple_version_1"
     famocoImplementation "org.eclipse.keyple:keyple-android-plugin-famoco-se-communication:$famoco_plugin_version"
 
-    mockSamImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:$keyple_version"
+    mockSamImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:$keyple_version_1"
 
     copernicImplementation "org.eclipse.keyple:keyple-android-plugin-coppernic-ask:$coppernic_plugin_version"
 
-    bluebirdImplementation "org.eclipse.keyple:keyple-android-plugin-bluebird:$bluebird_plugin_version"
+//    bluebirdImplementation "org.eclipse.keyple:keyple-android-plugin-bluebird:$bluebird_plugin_version"
+    bluebirdImplementation project(":bluebird-plugin")
 
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
@@ -124,6 +128,10 @@ dependencies {
 
     //Joda Time
     implementation "joda-time:joda-time:2.8.1"
+
+    // Google GSON
+    implementation "com.google.code.gson:gson:2.8.6"
+
 
     // Devnied - Byte Utils
     implementation('com.github.devnied:bit-lib4j:1.4.5') {
