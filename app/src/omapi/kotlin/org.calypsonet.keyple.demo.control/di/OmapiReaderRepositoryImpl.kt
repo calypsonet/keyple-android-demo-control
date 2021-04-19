@@ -12,34 +12,30 @@
 package org.calypsonet.keyple.demo.control.di
 
 import android.app.Activity
-import android.content.Context
 import android.media.MediaPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
-import org.eclipse.keyple.core.plugin.AbstractLocalReader
+import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.core.service.KeyplePluginException
+import org.eclipse.keyple.core.service.ObservableReader
+import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.SmartCardService
-import org.eclipse.keyple.core.service.event.ObservableReader
-import org.eclipse.keyple.core.service.event.ReaderObservationExceptionHandler
-import org.eclipse.keyple.core.service.exception.KeypleException
-import org.eclipse.keyple.core.service.exception.KeyplePluginInstantiationException
-import org.eclipse.keyple.core.service.util.ContactCardCommonProtocols
-import org.eclipse.keyple.core.service.util.ContactlessCardCommonProtocols
+import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
+import org.eclipse.keyple.core.util.protocol.ContactlessCardCommonProtocol
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPlugin
-import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactory
-import org.eclipse.keyple.plugin.android.nfc.AndroidNfcProtocolSettings
+import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactory
-import org.eclipse.keyple.plugin.android.omapi.PLUGIN_NAME
+import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
+import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
 import timber.log.Timber
 import javax.inject.Inject
 
 class OmapiReaderRepositoryImpl @Inject constructor(
-    private val applicationContext: Context,
-    private val readerObservationExceptionHandler: ReaderObservationExceptionHandler
+    private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
 ) :
     IReaderRepository {
 
@@ -47,56 +43,56 @@ class OmapiReaderRepositoryImpl @Inject constructor(
     lateinit var errorMedia: MediaPlayer
 
     override var poReader: Reader? = null
-    override var samReaders: MutableMap<String, Reader> = mutableMapOf()
+    override var samReaders: MutableList<Reader> = mutableListOf()
 
-    @Throws(KeypleException::class)
+    @Throws(KeyplePluginException::class)
     override fun registerPlugin(activity: Activity) {
 
         successMedia = MediaPlayer.create(activity, R.raw.success)
         errorMedia = MediaPlayer.create(activity, R.raw.error)
 
-        SmartCardService.getInstance().registerPlugin(
-            AndroidNfcPluginFactory(
-                activity,
-                readerObservationExceptionHandler
-            )
-        )
+        val smartCardService = SmartCardServiceProvider.getService()
         try {
-            AndroidOmapiPluginFactory(applicationContext) {
-                SmartCardService.getInstance().registerPlugin(it)
+
+            val nfcPluginFactory = AndroidNfcPluginFactoryProvider(activity).getFactory()
+            smartCardService.registerPlugin(nfcPluginFactory)
+
+            AndroidOmapiPluginFactoryProvider(activity) {
+                SmartCardServiceProvider.getService().registerPlugin(it)
             }
-        } catch (e: KeyplePluginInstantiationException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    @Throws(KeypleException::class)
+
+    override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(AndroidNfcPlugin.PLUGIN_NAME)
+
+    override fun getSamRegex(): String = ""
+
+    @Throws(KeyplePluginException::class)
     override suspend fun initPoReader(): Reader? {
-        val readerPlugin = SmartCardService.getInstance().getPlugin(AndroidNfcPlugin.PLUGIN_NAME)
-        poReader = readerPlugin.readers[AndroidNfcReader.READER_NAME]
+        val readerPlugin = SmartCardServiceProvider.getService().getPlugin(AndroidNfcPlugin.PLUGIN_NAME)
+        poReader = readerPlugin.getReader(AndroidNfcReader.READER_NAME)
 
         poReader?.let {
-            val androidNfcReader = it as AndroidNfcReader
-            Timber.d("Initialize SEProxy with Android Plugin")
-
-            // define task as an observer for ReaderEvents
-            Timber.d("PO (NFC) reader name: ${it.name}")
-
-            androidNfcReader.presenceCheckDelay = 100
-            androidNfcReader.noPlateformSound = false
-            androidNfcReader.skipNdefCheck = false
 
             // with this protocol settings we activate the nfc for ISO1443_4 protocol
-            (poReader as ObservableReader).activateProtocol(
+            it.activateProtocol(
                 getContactlessIsoProtocol().readerProtocolName,
                 getContactlessIsoProtocol().applicationProtocolName
             )
         }
+
+        (poReader as ObservableReader).setReaderObservationExceptionHandler(
+            readerObservationExceptionHandler
+        )
+
         return poReader
     }
 
-    @Throws(KeypleException::class)
-    override suspend fun initSamReaders(): Map<String, Reader> {
+    @Throws(KeyplePluginException::class)
+    override suspend fun initSamReaders(): List<Reader> {
         /*
          * Wait until OMAPI sam readers are available.
          * If we do not wait, no retries are made after calling 'SmartCardService.getInstance().getPlugin(PLUGIN_NAME).readers'
@@ -106,9 +102,9 @@ class OmapiReaderRepositoryImpl @Inject constructor(
         runBlocking {
             delay(250)
         }
-
         for (x in 1..MAX_TRIES) {
-            samReaders = SmartCardService.getInstance().getPlugin(PLUGIN_NAME).readers
+            val readerPlugin = SmartCardServiceProvider.getService().getPlugin(AndroidNfcPlugin.PLUGIN_NAME)
+            samReaders = readerPlugin.readers.toMutableList()
             if (samReaders.isEmpty()) {
                 Timber.d("No readers found in OMAPI Keyple Plugin")
                 Timber.d("Retrying in 1 second")
@@ -119,7 +115,7 @@ class OmapiReaderRepositoryImpl @Inject constructor(
             }
         }
         samReaders.forEach {
-            (it.value as AbstractLocalReader).activateProtocol(
+            it.activateProtocol(
                 getSamReaderProtocol(),
                 getSamReaderProtocol()
             )
@@ -130,7 +126,15 @@ class OmapiReaderRepositoryImpl @Inject constructor(
 
     override fun getSamReader(): Reader? {
         return if (samReaders.isNotEmpty()) {
-            samReaders.values.first()
+            val filteredByName = samReaders.filter {
+                it.name == AndroidOmapiReader.READER_NAME_SIM_1
+            }
+
+            return if (filteredByName.isNullOrEmpty()) {
+                samReaders.first()
+            } else {
+                filteredByName.first()
+            }
         } else {
             null
         }
@@ -138,23 +142,19 @@ class OmapiReaderRepositoryImpl @Inject constructor(
 
     override fun getContactlessIsoProtocol(): PoReaderProtocol {
         return PoReaderProtocol(
-            ContactlessCardCommonProtocols.ISO_14443_4.name,
-            AndroidNfcProtocolSettings.getSetting(ContactlessCardCommonProtocols.ISO_14443_4.name)
+            ContactlessCardCommonProtocol.ISO_14443_4.name,
+            ContactlessCardCommonProtocol.ISO_14443_4.name
         )
     }
 
-    override fun getSamReaderProtocol(): String {
-        return ContactCardCommonProtocols.ISO_7816_3.name
-    }
+    override fun getSamReaderProtocol(): String? = null
 
     override fun clear() {
         samReaders.forEach {
-            (it.value as AbstractLocalReader).deactivateProtocol(getSamReaderProtocol())
+            it.deactivateProtocol(getSamReaderProtocol())
         }
 
-        poReader?.let {
-            (poReader as ObservableReader).deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
-        }
+        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         successMedia.stop()
         successMedia.release()
@@ -171,6 +171,28 @@ class OmapiReaderRepositoryImpl @Inject constructor(
     override fun displayResultFailed(): Boolean {
         errorMedia.start()
         return true
+    }
+
+    override fun getReaderConfiguratorSpi(): ReaderConfiguratorSpi {
+        return ReaderConfigurator()
+    }
+
+    /**
+     * Reader configurator used by the card resource service to setup the SAM reader with the required
+     * settings.
+     */
+    internal class ReaderConfigurator : ReaderConfiguratorSpi {
+        /** {@inheritDoc}  */
+        override fun setupReader(reader: Reader) {
+            // Configure the reader with parameters suitable for contactless operations.
+            try {
+                reader.getExtension(AndroidOmapiReader::class.java)
+            } catch (e: Exception) {
+                Timber.e(
+                    "Exception raised while setting up the reader ${reader.name} : ${e.message}"
+                )
+            }
+        }
     }
 
     companion object {

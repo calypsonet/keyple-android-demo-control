@@ -78,8 +78,6 @@ class IntercodeCardletParser:
             contracts = contracts,
             events = events
         )
-
-        return null
     }
 
     override fun parse(content: ByteArray): IntercodeCardlet? = null

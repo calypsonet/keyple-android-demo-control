@@ -25,10 +25,9 @@ package org.calypsonet.keyple.demo.control.di
 
 import dagger.Module
 import dagger.Provides
-import org.calypsonet.keyple.demo.control.di.FlowbirdReaderRepositoryImpl
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.eclipse.keyple.core.service.event.ReaderObservationExceptionHandler
+import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import timber.log.Timber
 
 @Suppress("unused")
@@ -38,7 +37,7 @@ class ReaderModule {
     @Provides
     @AppScoped
     fun provideReaderRepository(
-        readerObservationExceptionHandler: ReaderObservationExceptionHandler
+        readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
     ): IReaderRepository =
         FlowbirdReaderRepositoryImpl(
             readerObservationExceptionHandler
@@ -46,8 +45,8 @@ class ReaderModule {
 
     @Provides
     @AppScoped
-    fun provideReaderObservationExceptionHandler(): ReaderObservationExceptionHandler =
-        ReaderObservationExceptionHandler { pluginName, readerName, e ->
+    fun provideReaderObservationExceptionHandler(): CardReaderObservationExceptionHandlerSpi =
+        CardReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
             Timber.e("An unexpected reader error occurred: $pluginName:$readerName : $e")
         }
 }

@@ -12,13 +12,6 @@
 
 package org.calypsonet.keyple.demo.control.ticketing.procedure
 
-import org.eclipse.keyple.calypso.command.po.exception.CalypsoPoCommandException
-import org.eclipse.keyple.calypso.command.sam.exception.CalypsoSamCommandException
-import org.eclipse.keyple.calypso.transaction.CalypsoPo
-import org.eclipse.keyple.calypso.transaction.PoTransaction
-import org.eclipse.keyple.calypso.transaction.exception.CalypsoPoTransactionException
-import org.eclipse.keyple.core.card.selection.CardResource
-import org.eclipse.keyple.core.service.Reader
 import org.calypsonet.keyple.demo.control.exception.ControlException
 import org.calypsonet.keyple.demo.control.exception.EnvironmentControlException
 import org.calypsonet.keyple.demo.control.exception.EnvironmentControlExceptionKey
@@ -37,6 +30,7 @@ import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_1
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_2
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_3
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_4
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Contracts
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0A
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0B
@@ -45,6 +39,10 @@ import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0D
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EnvironmentAndHolder
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventLog
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
+import org.calypsonet.terminal.calypso.WriteAccessLevel
+import org.calypsonet.terminal.calypso.card.CalypsoCard
+import org.eclipse.keyple.card.calypso.CalypsoExtensionService
+import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.parser.keyple.ContractStructureParser
 import org.eclipse.keyple.parser.keyple.CounterStructureParser
 import org.eclipse.keyple.parser.keyple.EnvironmentHolderStructureParser
@@ -64,7 +62,7 @@ class ControlProcedure {
 
     fun launch(
         now: DateTime,
-        calypsoPo: CalypsoPo,
+        calypsoCard: CalypsoCard,
         samReader: Reader?,
         ticketingSession: ITicketingSession,
         locations: List<Location>
@@ -77,6 +75,9 @@ class ControlProcedure {
         var errorTitle: String? = null
         var validation: Validation? = null
         var status: Status = Status.ERROR
+
+        val calypsoCardExtensionProvider = CalypsoExtensionService.getInstance()
+
         try {
             var inTransactionFlag: Boolean //true if a SAM is available and a secure session have been opened
             val poTransaction =
@@ -86,22 +87,38 @@ class ControlProcedure {
                          * Step 1.1 - If SAM available, Open a Validation session reading the environment record, set inTransactionFlag to true and go to point 2.
                          */
                         inTransactionFlag = true
-                        val cardResource = ticketingSession.checkSamAndOpenChannel(samReader)
-                        PoTransaction(
-                            CardResource(ticketingSession.poReader, calypsoPo),
-                            ticketingSession.getSecuritySettings(cardResource)
+
+                        ticketingSession.setupCardResourceService(SAM_PROFILE_NAME)
+
+                        calypsoCardExtensionProvider.createCardTransaction(
+                            poReader,
+                            calypsoCard,
+                            ticketingSession.getSecuritySettings()
                         )
                     } else {
                         /*
                          * Step 1.2 - Else, read the environment record.
                          */
                         inTransactionFlag = false
-                        PoTransaction(CardResource(poReader, calypsoPo))
+                        calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
+                            poReader,
+                            calypsoCard
+                        )
                     }
                 } catch (e: IllegalStateException) {
                     Timber.w(e)
                     inTransactionFlag = false
-                    PoTransaction(CardResource(poReader, calypsoPo))
+                    calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
+                        poReader,
+                        calypsoCard
+                    )
+                } catch (e: Exception) {
+                    Timber.w(e)
+                    inTransactionFlag = false
+                    calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
+                        poReader,
+                        calypsoCard
+                    )
                 }
 
             /*
@@ -116,17 +133,17 @@ class ControlProcedure {
                 /*
                  * Open a transaction to read/write the Calypso PO and read the Environment file
                  */
-                poTransaction.processOpening(PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_DEBIT)
+                poTransaction.processOpening(WriteAccessLevel.DEBIT)
             }
             else{
                 /*
                  * Read the Environment file
                  */
-                poTransaction.processPoCommands()
+                poTransaction.processCardCommands()
             }
 
             val efEnvironmentHolder =
-                calypsoPo.getFileBySfi(SFI_EnvironmentAndHolder)
+                calypsoCard.getFileBySfi(SFI_EnvironmentAndHolder)
             val env = EnvironmentHolderStructureParser().parse(efEnvironmentHolder.data.content)
 
             /*
@@ -159,9 +176,9 @@ class ControlProcedure {
                 SFI_EventLog,
                 RECORD_NUMBER_1.toInt()
             )
-            poTransaction.processPoCommands()
+            poTransaction.processCardCommands()
 
-            val efEventLog = calypsoPo.getFileBySfi(SFI_EventLog)
+            val efEventLog = calypsoCard.getFileBySfi(SFI_EventLog)
             val event = EventStructureParser().parse(efEventLog.data.content)
 
             /*
@@ -229,9 +246,9 @@ class ControlProcedure {
                 SFI_Contracts,
                 RECORD_NUMBER_3.toInt()
             )
-            poTransaction.processPoCommands()
+            poTransaction.processCardCommands()
 
-            val efContractParser = calypsoPo.getFileBySfi(SFI_Contracts)
+            val efContractParser = calypsoCard.getFileBySfi(SFI_Contracts)
             val contracts = mutableMapOf<Int, ContractStructureDto>()
             efContractParser.data.allRecordsContent.forEach {
                 /*
@@ -339,9 +356,9 @@ class ControlProcedure {
                                 counterSfi,
                                 RECORD_NUMBER_1.toInt()
                             )
-                            poTransaction.processPoCommands()
+                            poTransaction.processCardCommands()
 
-                            val efCounter = calypsoPo.getFileBySfi(counterSfi)
+                            val efCounter = calypsoCard.getFileBySfi(counterSfi)
                             val counterContent = efCounter.data.allRecordsContent[1]!!
 
                             CounterStructureParser().parse(counterContent).counterValue
@@ -385,16 +402,9 @@ class ControlProcedure {
                 lastValidationsList = validationList,
                 titlesList = displayedContract
             )
-        } catch (e: CalypsoSamCommandException) {
+        } catch (e: EnvironmentControlException) {
             Timber.e(e)
             errorMessage = e.message
-        } catch (e: CalypsoPoCommandException) {
-            Timber.e(e)
-            errorMessage = e.message
-        } catch (e: CalypsoPoTransactionException) {
-            Timber.e(e)
-            errorMessage = e.message
-            status = Status.ERROR
         } catch (e: EventControlException) {
             Timber.e(e)
             errorMessage = e.message
@@ -408,6 +418,7 @@ class ControlProcedure {
             Timber.e(e)
             errorTitle = e.title
             errorMessage = e.message
+            status = Status.ERROR
         } catch (e: Exception) {
             Timber.e(e)
             errorMessage = e.message

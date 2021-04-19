@@ -30,30 +30,35 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
-import org.eclipse.keyple.coppernic.ask.plugin.Cone2ContactReader
-import org.eclipse.keyple.coppernic.ask.plugin.Cone2ContactlessReader
-import org.eclipse.keyple.coppernic.ask.plugin.Cone2PluginFactory
-import org.eclipse.keyple.coppernic.ask.plugin.ParagonSupportedContactProtocols
-import org.eclipse.keyple.coppernic.ask.plugin.ParagonSupportedContactlessProtocols
-import org.eclipse.keyple.core.plugin.AbstractLocalReader
-import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.SmartCardService
-import org.eclipse.keyple.core.service.event.ReaderObservationExceptionHandler
-import org.eclipse.keyple.core.service.exception.KeypleException
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.coppernic.ask.plugin.Cone2ContactReader
+import org.eclipse.keyple.coppernic.ask.plugin.Cone2ContactlessReader
+import org.eclipse.keyple.coppernic.ask.plugin.Cone2Plugin
+import org.eclipse.keyple.coppernic.ask.plugin.Cone2PluginFactory
+import org.eclipse.keyple.coppernic.ask.plugin.Cone2PluginFactoryProvider
+import org.eclipse.keyple.coppernic.ask.plugin.ParagonSupportedContactProtocols
+import org.eclipse.keyple.coppernic.ask.plugin.ParagonSupportedContactlessProtocols
+import org.eclipse.keyple.core.service.KeyplePluginException
+import org.eclipse.keyple.core.service.ObservableReader
+import org.eclipse.keyple.core.service.Plugin
+import org.eclipse.keyple.core.service.Reader
+import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
+import timber.log.Timber
 import javax.inject.Inject
 
-class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationContext: Context, private val readerObservationExceptionHandler: ReaderObservationExceptionHandler) :
+class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationContext: Context, private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi) :
     IReaderRepository {
 
     lateinit var successMedia: MediaPlayer
     lateinit var errorMedia: MediaPlayer
 
     override var poReader: Reader? = null
-    override var samReaders: MutableMap<String, Reader> = mutableMapOf()
+    override var samReaders: MutableList<Reader> = mutableListOf()
 
-    @Throws(KeypleException::class)
+    @Throws(KeyplePluginException::class)
     override fun registerPlugin(activity: Activity) {
         runBlocking {
 
@@ -62,16 +67,19 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
 
             val pluginFactory: Cone2PluginFactory?
             pluginFactory = withContext(Dispatchers.IO) {
-                Cone2PluginFactory.init(applicationContext, readerObservationExceptionHandler)
+                Cone2PluginFactoryProvider.getFactory(applicationContext)
             }
-            SmartCardService.getInstance().registerPlugin(pluginFactory)
+
+            SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
         }
     }
 
-    @Throws(KeypleException::class)
+    override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(Cone2Plugin.PLUGIN_NAME)
+
+    @Throws(KeyplePluginException::class)
     override suspend fun initPoReader(): Reader? {
         val askPlugin =
-            SmartCardService.getInstance().getPlugin(Cone2PluginFactory.pluginName)
+            SmartCardServiceProvider.getService().getPlugin(Cone2Plugin.PLUGIN_NAME)
         val poReader = askPlugin?.getReader(Cone2ContactlessReader.READER_NAME)
         poReader?.let {
 
@@ -80,22 +88,26 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
                 getContactlessIsoProtocol().applicationProtocolName
             )
 
+            (poReader as ObservableReader).setReaderObservationExceptionHandler(
+                readerObservationExceptionHandler
+            )
+
             this.poReader = poReader
         }
 
         return poReader
     }
 
-    @Throws(KeypleException::class)
-    override suspend fun initSamReaders(): Map<String, Reader> {
+    @Throws(KeyplePluginException::class)
+    override suspend fun initSamReaders(): List<Reader> {
         val askPlugin =
-            SmartCardService.getInstance().getPlugin(Cone2PluginFactory.pluginName)
+            SmartCardServiceProvider.getService().getPlugin(Cone2Plugin.PLUGIN_NAME)
         samReaders = askPlugin?.readers?.filter {
-            !it.value.isContactless
-        }?.toMutableMap() ?: mutableMapOf()
+            !it.isContactless
+        }?.toMutableList() ?: mutableListOf()
 
         samReaders.forEach {
-            (it.value as AbstractLocalReader).activateProtocol(
+            it.activateProtocol(
                 getSamReaderProtocol(),
                 getSamReaderProtocol()
             )
@@ -106,13 +118,13 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
     override fun getSamReader(): Reader? {
         return if (samReaders.isNotEmpty()) {
             val filteredByName = samReaders.filter {
-                it.value.name == SAM_READER_1_NAME
+                it.name == SAM_READER_1_NAME
             }
 
             return if (filteredByName.isNullOrEmpty()) {
-                samReaders.values.first()
+                samReaders.first()
             } else {
-                filteredByName.values.first()
+                filteredByName.first()
             }
         } else {
             null
@@ -128,11 +140,15 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
 
     override fun getSamReaderProtocol(): String = ParagonSupportedContactProtocols.INNOVATRON_HIGH_SPEED_PROTOCOL.name
 
+    override fun getSamRegex(): String = SAM_READER_NAME_REGEX
+
+    override fun getReaderConfiguratorSpi(): ReaderConfiguratorSpi = ReaderConfigurator()
+
     override fun clear() {
         poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         samReaders.forEach {
-            (it.value as AbstractLocalReader).deactivateProtocol(
+            it.deactivateProtocol(
                 getSamReaderProtocol()
             )
         }
@@ -158,5 +174,25 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
         private const val SAM_READER_SLOT_1 = "1"
         const val SAM_READER_1_NAME =
             "${Cone2ContactReader.READER_NAME}_$SAM_READER_SLOT_1"
+
+        const val SAM_READER_NAME_REGEX = ".*ContactReader_1"
+    }
+
+    /**
+     * Reader configurator used by the card resource service to setup the SAM reader with the required
+     * settings.
+     */
+    internal class ReaderConfigurator : ReaderConfiguratorSpi {
+        /** {@inheritDoc}  */
+        override fun setupReader(reader: Reader) {
+            // Configure the reader with parameters suitable for contactless operations.
+            try {
+                reader.getExtension(Cone2ContactReader::class.java)
+            } catch (e: Exception) {
+                Timber.e(
+                    "Exception raised while setting up the reader ${reader.name} : ${e.message}"
+                )
+            }
+        }
     }
 }

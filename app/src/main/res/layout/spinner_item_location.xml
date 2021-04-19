@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:textColor="@color/blue"
-        android:textSize="20sp"
+        android:textSize="@dimen/medium_text_size"
         tools:text="Paris - 1" />
 
     <ImageView
