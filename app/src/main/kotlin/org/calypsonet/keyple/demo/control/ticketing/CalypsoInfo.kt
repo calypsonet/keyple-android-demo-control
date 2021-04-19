@@ -44,8 +44,6 @@ object CalypsoInfo {
     /** AID BANKING * */
     const val AID_BANKING = "325041592e5359532e4444463031"
 
-
-
     /*********************************
      *           Card types
      *********************************/
@@ -86,4 +84,13 @@ object CalypsoInfo {
         "01 01 0F BF 0F DD 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
     const val DATA_EVENT_1 =
         "01 0F BF 03 48 00 00 00 01 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
+
+
+    /*********************************
+     *      Security Settings
+     *********************************/
+
+    const val SAM_PROFILE_NAME = "SAM C1"
+
+    const val SAM_READER_NAME_REGEX = ".*ContactReader"
 }

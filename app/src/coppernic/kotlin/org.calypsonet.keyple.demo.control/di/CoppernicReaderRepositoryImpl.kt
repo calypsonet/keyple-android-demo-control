@@ -68,6 +68,8 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
         }
     }
 
+    override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
+
     @Throws(KeypleException::class)
     override suspend fun initPoReader(): Reader? {
         val askPlugin =

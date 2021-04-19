@@ -29,6 +29,9 @@ import dagger.Provides
 import org.eclipse.keyple.core.service.event.ReaderObservationExceptionHandler
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
+import org.eclipse.keyple.core.service.spi.ReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.demo.control.di.scopes.AppScoped
+import org.eclipse.keyple.demo.control.reader.IReaderRepository
 import timber.log.Timber
 
 @Suppress("unused")
@@ -39,7 +42,7 @@ class ReaderModule {
     @AppScoped
     fun provideReaderRepository(
         context: Context,
-        readerObservationExceptionHandler: ReaderObservationExceptionHandler
+        readerObservationExceptionHandler: ReaderObservationExceptionHandlerSpi
     ): IReaderRepository =
         BluebirdReaderRepositoryImpl(
             readerObservationExceptionHandler
@@ -47,8 +50,9 @@ class ReaderModule {
 
     @Provides
     @AppScoped
-    fun provideReaderObservationExceptionHandler(): ReaderObservationExceptionHandler =
-        ReaderObservationExceptionHandler { pluginName, readerName, e ->
+    fun provideReaderObservationExceptionHandler(): ReaderObservationExceptionHandlerSpi =
+        ReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
             Timber.e("An unexpected reader error occurred: $pluginName:$readerName : $e")
+            e.printStackTrace()
         }
 }

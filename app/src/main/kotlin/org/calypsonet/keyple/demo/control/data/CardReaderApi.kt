@@ -12,6 +12,10 @@
 package org.calypsonet.keyple.demo.control.data
 
 import android.app.Activity
+import fr.devnied.bitlib.BytesUtils
+import org.eclipse.keyple.core.card.ReaderCommunicationException
+import org.eclipse.keyple.core.service.KeyplePluginException
+import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardService
 import org.eclipse.keyple.core.service.event.ObservableReader
@@ -23,6 +27,16 @@ import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
 import org.calypsonet.keyple.demo.control.ticketing.TicketingSession
+import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.eclipse.keyple.core.service.spi.ReaderObserverSpi
+import org.eclipse.keyple.demo.control.di.scopes.AppScoped
+import org.eclipse.keyple.demo.control.reader.IReaderRepository
+import org.eclipse.keyple.demo.control.ticketing.CardContent
+import org.eclipse.keyple.demo.control.ticketing.TicketingSession
+import org.eclipse.keyple.demo.control.ticketing.TicketingSessionManager
+import org.eclipse.keyple.demo.control.utils.CardletUtils
+import org.eclipse.keyple.parser.dto.CardletInputDto
+import org.eclipse.keyple.parser.model.CardletDto
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,17 +50,17 @@ class CardReaderApi @Inject constructor(
     var readersInitialized = false
 
     @Throws(
-        KeyplePluginInstantiationException::class,
+        KeyplePluginException::class,
         IllegalStateException::class,
-        KeyplePluginNotFoundException::class
+        Exception::class
     )
-    suspend fun init(observer: ObservableReader.ReaderObserver?, activity: Activity) {
+    suspend fun init(observer: ReaderObserverSpi?, activity: Activity) {
         /*
          * Register plugin
          */
         try {
             readerRepository.registerPlugin(activity)
-        } catch (e: KeypleException) {
+        } catch (e: Exception) {
             Timber.e(e)
             throw IllegalStateException(e.message)
         }
@@ -57,13 +71,13 @@ class CardReaderApi @Inject constructor(
         val poReader: Reader?
         try {
             poReader = readerRepository.initPoReader()
-        } catch (e: KeyplePluginNotFoundException) {
-            Timber.e(e)
-            throw IllegalStateException("PoReader with name AndroidCoppernicAskPlugin was not found")
-        } catch (e: KeypleReaderIOException) {
+        } catch (e: KeyplePluginException) {
             Timber.e(e)
             throw IllegalStateException(e.message)
-        } catch (e: KeypleException) {
+        } catch (e: ReaderCommunicationException) {
+            Timber.e(e)
+            throw IllegalStateException(e.message)
+        } catch (e: Exception) {
             Timber.e(e)
             throw IllegalStateException(e.message)
         }
@@ -71,10 +85,12 @@ class CardReaderApi @Inject constructor(
         /*
          * Init SAM reader
          */
-        var samReaders: Map<String, Reader>? = null
+        var samReaders: List<Reader>? = null
         try {
             samReaders = readerRepository.initSamReaders()
-        } catch (e: KeyplePluginNotFoundException) {
+        } catch (e: KeyplePluginException) {
+            Timber.e(e)
+        } catch (e: Exception) {
             Timber.e(e)
         }
         if (samReaders.isNullOrEmpty()) {
@@ -103,8 +119,10 @@ class CardReaderApi @Inject constructor(
         try {
             // notify reader that se detection has been switched off
             (readerRepository.poReader as ObservableReader).stopCardDetection()
-        } catch (e: KeyplePluginNotFoundException) {
+        } catch (e: KeyplePluginException) {
             Timber.e(e, "NFC Plugin not found")
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
@@ -112,7 +130,7 @@ class CardReaderApi @Inject constructor(
         return ticketingSession
     }
 
-    fun onDestroy(observer: ObservableReader.ReaderObserver?) {
+    fun onDestroy(observer: ReaderObserverSpi?) {
         readersInitialized = false
 
         readerRepository.clear()
@@ -120,8 +138,9 @@ class CardReaderApi @Inject constructor(
             (readerRepository.poReader as ObservableReader).removeObserver(observer)
         }
 
-        SmartCardService.getInstance().plugins.forEach {
-            SmartCardService.getInstance().unregisterPlugin(it.key)
+        val smartCardService = SmartCardServiceProvider.getService()
+        smartCardService.plugins.forEach {
+            smartCardService.unregisterPlugin(it.name)
         }
 
         ticketingSession = null

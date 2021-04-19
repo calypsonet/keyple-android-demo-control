@@ -99,13 +99,7 @@ class CardReaderActivity : BaseActivity() {
                         cardReaderApi.readersInitialized = true
                         handleAppEvents(AppState.WAIT_CARD, null)
                         cardReaderApi.startNfcDetection()
-                    } catch (e: KeyplePluginInstantiationException) {
-                        Timber.e(e)
-                        withContext(Dispatchers.Main) {
-                            dismissProgress()
-                            showNoProxyReaderDialog(e)
-                        }
-                    } catch (e: IllegalStateException) {
+                    } catch (e: Exception) {
                         Timber.e(e)
                         withContext(Dispatchers.Main) {
                             dismissProgress()
@@ -158,7 +152,7 @@ class CardReaderActivity : BaseActivity() {
                 Timber.i("Process default selection...")
 
                 val seSelectionResult =
-                    ticketingSession.processDefaultSelection(readerEvent.defaultSelectionsResponse)
+                    ticketingSession.processDefaultSelection(readerEvent.scheduledCardSelectionsResponse)
 
                 if (!seSelectionResult.hasActiveSelection()) {
                     Timber.e("PO Not selected")
@@ -353,15 +347,16 @@ class CardReaderActivity : BaseActivity() {
         const val CARD_CONTENT = "cardContent"
     }
 
-    private inner class PoObserver : ObservableReader.ReaderObserver {
-        override fun update(event: ReaderEvent) {
-            Timber.i("New ReaderEvent received :${event.eventType.name}")
-            if (event.eventType == ReaderEvent.EventType.CARD_MATCHED &&
+    private inner class PoObserver : ReaderObserverSpi {
+
+        override fun onReaderEvent(readerEvent: ReaderEvent) {
+            Timber.i("New ReaderEvent received :${readerEvent.eventType.name}")
+            if (readerEvent.eventType == ReaderEvent.EventType.CARD_MATCHED &&
                 cardReaderApi.isMockedResponse()
             ) {
                 launchMockedEvents()
             } else {
-                handleAppEvents(currentAppState, event)
+                handleAppEvents(currentAppState, readerEvent)
             }
         }
     }
