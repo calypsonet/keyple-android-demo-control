@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+  ~
+  ~ SPDX-License-Identifier: EPL-2.0
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_bg"
+    tools:context="org.eclipse.keyple.demo.control.activities.CardReaderActivity">
+
+    <include
+        android:id="@+id/appBarLayout"
+        layout="@layout/logo_toolbar" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.70" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.20" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.80" />
+
+    <TextView
+        android:id="@+id/homeDescription"
+        style="@style/bigRegularBlue"
+        android:layout_width="@dimen/home_text_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/home_text_top_margin"
+        android:gravity="center"
+        android:text="@string/home_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loadingAnimation"
+        android:layout_width="@dimen/reading_animation_size"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/present_txt"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:lottie_fileName="anim_card_scan.json"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/present_txt"
+        style="@style/bigBoldBlue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/present_support_label"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintLeft_toLeftOf="@id/guidelineLeft"
+        app:layout_constraintRight_toRightOf="@id/guidelineRight"
+        app:layout_constraintTop_toBottomOf="@id/loadingAnimation" />
+
+    <ImageView
+        android:id="@+id/eclipse_logo"
+        android:layout_width="@dimen/eclipse_logo_width"
+        android:layout_height="@dimen/eclipse_logo_height"
+        android:layout_marginBottom="@dimen/home_element_margin"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/eclipse_foundation"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_logo_eclipse"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

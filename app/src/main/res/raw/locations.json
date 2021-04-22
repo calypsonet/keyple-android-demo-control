@@ -1,0 +1,54 @@
+[
+  {
+    "id": 0,
+    "name": "Paris"
+  },
+  {
+    "id": 1,
+    "name": "Marseille"
+  },
+  {
+    "id": 2,
+    "name": "Lyon"
+  },
+  {
+    "id": 3,
+    "name": "Toulouse"
+  },
+  {
+    "id": 4,
+    "name": "Nice"
+  },
+  {
+    "id": 5,
+    "name": "Nantes"
+  },
+  {
+    "id": 6,
+    "name": "Montpellier"
+  },
+  {
+    "id": 7,
+    "name": "Strasbourg"
+  },
+  {
+    "id": 8,
+    "name": "Bordeaux"
+  },
+  {
+    "id": 9,
+    "name": "Lille"
+  },
+  {
+    "id": 10,
+    "name": "Rennes"
+  },
+  {
+    "id": 11,
+    "name": "Reims"
+  },
+  {
+    "id": 12,
+    "name": "Saint-Etienne"
+  }
+]

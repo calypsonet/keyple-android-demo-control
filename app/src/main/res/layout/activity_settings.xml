@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_bg"
+    tools:context="org.eclipse.keyple.demo.control.activities.SettingsActivity">
+
+    <include
+        android:id="@+id/appBarLayout"
+        layout="@layout/logo_toolbar" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.60" />
+
+    <TextView
+        android:id="@+id/location_label"
+        style="@style/mediumBoldBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        android:text="@string/location_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guidelineTop"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <Spinner
+        android:id="@+id/spinnerLocationList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        android:background="@color/blue"
+        android:spinnerMode="dialog"
+        app:layout_constraintBottom_toTopOf="@id/validation_period_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location_label" />
+
+    <TextView
+        android:id="@+id/validation_period_label"
+        style="@style/mediumBoldBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        android:text="@string/validation_period_label"
+        app:layout_constraintBottom_toTopOf="@id/validationPeriodEdit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinnerLocationList" />
+
+    <EditText
+        android:id="@+id/validationPeriodEdit"
+        style="@style/mediumRegularBlue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
+        android:autofillHints="period"
+        android:hint="@string/validation_period_hint"
+        android:inputType="number"
+        android:textColorHint="@color/blue"
+        app:backgroundTint="@color/blue"
+        app:layout_constraintBottom_toTopOf="@id/timeBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/validation_period_label" />
+
+    <Button
+        android:id="@+id/timeBtn"
+        style="@style/whiteBtnText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/settings_horizontal_padding"
+        android:layout_marginEnd="@dimen/settings_horizontal_padding"
+        android:background="@drawable/btn_blue"
+        android:text="@string/time_label"
+        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/validationPeriodEdit" />
+
+    <TextView
+        android:id="@+id/start_label"
+        style="@style/bigBoldBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/settings_edit_margin_bottom"
+        android:text="@string/start_label"
+        app:layout_constraintBottom_toTopOf="@id/startBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ImageButton
+        android:id="@+id/startBtn"
+        android:layout_width="@dimen/settings_start_ic_size"
+        android:layout_height="@dimen/settings_start_ic_size"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/start_label"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/start_label" />
+
+    <TextView
+        android:id="@+id/app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/version"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        android:textSize="@dimen/version"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

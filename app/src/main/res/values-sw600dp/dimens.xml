@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+  ~
+  ~ See the NOTICE file(s) distributed with this work for additional information
+  ~ regarding copyright ownership.
+  ~
+  ~ This program and the accompanying materials are made available under the terms of the
+  ~ Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+  ~
+  ~ SPDX-License-Identifier: EPL-2.0
+  -->
+
+<resources>
+    <dimen name="toolbar_margin_top">40dp</dimen>
+
+    <dimen name="big_text_size">27sp</dimen>
+    <dimen name="medium_text_size">23sp</dimen>
+    <dimen name="small_text_size">20sp</dimen>
+    <dimen name="smaller_text_size">15sp</dimen>
+    <dimen name="smallest_text_size">13sp</dimen>
+
+    <dimen name="settings_start_ic_size">150dp</dimen>
+
+    <dimen name="home_text_width">280dp</dimen>
+
+    <dimen name="reading_animation_size">250dp</dimen>
+
+    <dimen name="eclipse_logo_width">183dp</dimen>
+    <dimen name="eclipse_logo_height">72dp</dimen>
+</resources>
