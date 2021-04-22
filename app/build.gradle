@@ -15,7 +15,7 @@ android {
         multiDexEnabled true
         targetSdkVersion 29
         versionCode 1
-        versionName "20210413"
+        versionName "2021.04"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
