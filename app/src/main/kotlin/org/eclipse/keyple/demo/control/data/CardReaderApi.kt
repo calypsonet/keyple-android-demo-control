@@ -74,7 +74,7 @@ class CardReaderApi @Inject constructor(
         /*
          * Init SAM reader
          */
-        var samReaders: Map<String, Reader>? = null
+        var samReaders: List<Reader>? = null
         try {
             samReaders = readerRepository.initSamReaders()
         } catch (e: KeyplePluginException) {
@@ -130,7 +130,7 @@ class CardReaderApi @Inject constructor(
 
         val smartCardService = SmartCardServiceProvider.getService()
         smartCardService.plugins.forEach {
-            smartCardService.unregisterPlugin(it.key)
+            smartCardService.unregisterPlugin(it.name)
         }
 
         ticketingSession = null

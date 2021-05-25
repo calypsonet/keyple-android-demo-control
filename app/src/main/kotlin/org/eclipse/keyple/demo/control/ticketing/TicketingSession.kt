@@ -24,6 +24,7 @@ import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.selection.CardSelectionResult
 import org.eclipse.keyple.core.service.selection.CardSelector
 import org.eclipse.keyple.core.service.selection.MultiSelectionProcessing
+import org.eclipse.keyple.core.service.selection.ScheduledCardSelectionsResponse
 import org.eclipse.keyple.demo.control.di.scopes.AppScoped
 import org.eclipse.keyple.demo.control.exception.ControlException
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
@@ -131,10 +132,10 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         )
     }
 
-    fun processDefaultSelection(selectionResponse: List<KeypleCardSelectionResponse>): CardSelectionResult {
+    fun processDefaultSelection(selectionResponse: ScheduledCardSelectionsResponse): CardSelectionResult {
         Timber.i("selectionResponse = $selectionResponse")
         val selectionsResult =
-            cardSelection.processCardSelectionResponses(selectionResponse)
+            cardSelection.parseScheduledCardSelectionsResponse(selectionResponse)
 
         if (selectionsResult.hasActiveSelection()) {
             when (selectionsResult.smartCards.keys.first()) {

@@ -151,7 +151,7 @@ class CardReaderActivity : BaseActivity() {
                 Timber.i("Process default selection...")
 
                 val seSelectionResult =
-                    ticketingSession.processDefaultSelection(readerEvent.cardSelectionResponses)
+                    ticketingSession.processDefaultSelection(readerEvent.scheduledCardSelectionsResponse)
 
                 if (!seSelectionResult.hasActiveSelection()) {
                     Timber.e("PO Not selected")

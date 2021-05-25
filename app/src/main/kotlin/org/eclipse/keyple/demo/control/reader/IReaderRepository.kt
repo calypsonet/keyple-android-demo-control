@@ -18,13 +18,13 @@ import org.eclipse.keyple.core.service.Reader
 interface IReaderRepository {
 
     var poReader: Reader?
-    var samReaders: MutableMap<String, Reader>
+    var samReaders: MutableList<Reader>
 
     fun registerPlugin(activity: Activity)
 
     suspend fun initPoReader(): Reader?
 
-    suspend fun initSamReaders(): Map<String, Reader>
+    suspend fun initSamReaders(): List<Reader>
 
     fun getSamReader(): Reader?
     fun getContactlessIsoProtocol(): PoReaderProtocol?

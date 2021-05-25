@@ -49,7 +49,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     IReaderRepository {
 
     override var poReader: Reader? = null
-    override var samReaders: MutableMap<String, Reader> = mutableMapOf()
+    override var samReaders: MutableList<Reader> = mutableListOf()
 
     @Throws(KeyplePluginException::class)
     override fun registerPlugin(activity: Activity) {
@@ -86,15 +86,15 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     }
 
     @Throws(KeyplePluginException::class)
-    override suspend fun initSamReaders(): Map<String, Reader> {
+    override suspend fun initSamReaders(): List<Reader> {
         val bluebirdPlugin =
             SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
         samReaders = bluebirdPlugin?.readers?.filter {
-            !it.value.isContactless
-        }?.toMutableMap() ?: mutableMapOf()
+            !it.isContactless
+        }?.toMutableList() ?: mutableListOf()
 
         samReaders.forEach { reader ->
-            reader.value.activateProtocol(
+            reader.activateProtocol(
                 getSamReaderProtocol(),
                 getSamReaderProtocol()
             )
@@ -105,13 +105,13 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun getSamReader(): Reader? {
         return if (samReaders.isNotEmpty()) {
             val filteredByName = samReaders.filter {
-                it.value.name == BluebirdContactReader.READER_NAME
+                it.name == BluebirdContactReader.READER_NAME
             }
 
             return if (filteredByName.isNullOrEmpty()) {
-                samReaders.values.first()
+                samReaders.first()
             } else {
-                filteredByName.values.first()
+                filteredByName.first()
             }
         } else {
             null
@@ -136,7 +136,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
         poReader?.deactivateProtocol(getContactlessIsoProtocol()!!.readerProtocolName)
 
         samReaders.forEach {
-            it.value.deactivateProtocol(
+            it.deactivateProtocol(
                 getSamReaderProtocol()
             )
         }
