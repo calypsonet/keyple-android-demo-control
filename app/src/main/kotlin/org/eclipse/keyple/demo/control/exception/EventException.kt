@@ -11,9 +11,9 @@
  */
 package org.eclipse.keyple.demo.control.exception
 
-class EventControlException(key: EventControlExceptionKey) : ControlException(key.value)
+class EventControlException(val key: EventControlExceptionKey) : ControlException(key.title, key.message)
 
-enum class EventControlExceptionKey constructor(val key: Int, val value: String) {
-    WRONG_VERSION_NUMBER(0, "Event - Wrong version number"),
-    CLEAN_CARD(1, "Event - Clean card");
+enum class EventControlExceptionKey constructor(val key: Int, val title: String, val message: String) {
+    WRONG_VERSION_NUMBER(0,"Invalid on this network", "Wrong version number"),
+    CLEAN_CARD(1, "Invalid on this network", "Clean card");
 }

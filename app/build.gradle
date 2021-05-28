@@ -47,10 +47,10 @@ android {
             resValue "string", "app_name", "Keyple OMAPI Control"
             applicationIdSuffix ".omapi"
         }
-        copernic {
+        coppernic {
             dimension 'device'
-            resValue "string", "app_name", "Keyple Control Copernic"
-            applicationIdSuffix ".copernic"
+            resValue "string", "app_name", "Keyple Control Coppernic"
+            applicationIdSuffix ".coppernic"
         }
         famoco {
             dimension 'device'
@@ -74,7 +74,7 @@ android {
         test.java.srcDirs += 'src/test/kotlin'
 
         omapi.java.srcDirs += 'src/omapi/kotlin'
-        copernic.java.srcDirs += 'src/copernic/kotlin'
+        coppernic.java.srcDirs += 'src/coppernic/kotlin'
         famoco.java.srcDirs += 'src/famoco/kotlin'
         mockSam.java.srcDirs += 'src/mockSam/kotlin'
         bluebird.java.srcDirs += 'src/bluebird/kotlin'
@@ -107,7 +107,7 @@ dependencies {
 
     mockSamImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:$keyple_version"
 
-    copernicImplementation "org.eclipse.keyple:keyple-android-plugin-coppernic-ask:$coppernic_plugin_version"
+    coppernicImplementation "org.eclipse.keyple:keyple-android-plugin-coppernic-ask:$coppernic_plugin_version"
 
     bluebirdImplementation "org.eclipse.keyple:keyple-android-plugin-bluebird:$bluebird_plugin_version"
 

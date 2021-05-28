@@ -49,6 +49,7 @@
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="present_again">Present again</string>
+    <string name="empty_contract_list">No contract available</string>
     <string name="card_content_description_season_pass">From %s\n to %s</string>
     <string name="card_content_description_multi_trip_zero">no trip left</string>
     <string name="card_content_description_multi_trip_single">%d trip left</string>
@@ -57,7 +58,8 @@
 
     <!-- NetworkInvalid screen -->
     <string name="card_invalid_title">Not valid on this network</string>
-    <string name="card_invalid_desc">This is a \"%s\" card.</string>
+    <string name="card_invalid_aid">Selection error : AID not found.</string>
+    <string name="card_invalid_structure">Selection error : Unknown structure.</string>
     <string name="card_invalid_default">Invalid card</string>
 
     <!--    Dialog-->

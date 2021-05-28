@@ -11,9 +11,10 @@
  */
 package org.eclipse.keyple.demo.control.exception
 
-class NoSamException : ControlException(MESSAGE) {
+class NoSamException : ControlException(TITLE, MESSAGE) {
 
     companion object {
         const val MESSAGE = "No contact secured element (SAM) is available"
+        const val TITLE = "Security error"
     }
 }

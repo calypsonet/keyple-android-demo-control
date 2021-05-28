@@ -80,15 +80,14 @@ object MockUtils {
             }
             Status.LOADING, Status.ERROR, Status.SUCCESS, Status.INVALID_CARD, Status.EMPTY_CARD -> {
                 val error = String.format(
-                    context.getString(R.string.card_invalid_desc),
+                    context.getString(R.string.card_invalid_aid),
                     context.getString(R.string.card_invalid_default)
                 )
                 cardReaderResponse =
                     CardReaderResponse(
-                        status,
-                        null,
-                        arrayListOf(),
-                        arrayListOf(),
+                        status = status,
+                        cardType = null,
+                        titlesList = arrayListOf(),
                         errorMessage = error
                     )
             }

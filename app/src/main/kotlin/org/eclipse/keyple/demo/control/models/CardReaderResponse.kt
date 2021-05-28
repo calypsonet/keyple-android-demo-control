@@ -18,7 +18,8 @@ import kotlinx.android.parcel.Parcelize
 data class CardReaderResponse(
     val status: Status,
     val cardType: String?,
-    val lastValidationsList: ArrayList<Validation>,
+    val lastValidationsList: ArrayList<Validation>? = null,
     val titlesList: ArrayList<Contract>,
+    val errorTitle: String? = null,
     val errorMessage: String? = null
 ) : Parcelable

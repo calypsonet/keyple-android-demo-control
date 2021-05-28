@@ -11,24 +11,25 @@
  ********************************************************************************/
 package org.eclipse.keyple.demo.control.ticketing
 
+import org.eclipse.keyple.calypso.transaction.CalypsoSam
+import org.eclipse.keyple.calypso.transaction.PoSecuritySettings
+import org.eclipse.keyple.core.card.selection.CardResource
+import org.eclipse.keyple.core.card.selection.CardSelectionsResult
 import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.exception.KeypleReaderException
+import org.eclipse.keyple.core.service.event.AbstractDefaultSelectionsResponse
+import org.eclipse.keyple.demo.control.models.CardReaderResponse
+import org.eclipse.keyple.demo.control.models.Location
 
 interface ITicketingSession {
     val poReader: Reader?
-    val cardContent: CardContent
+    val samReader: Reader?
     val poTypeName: String?
-    fun analyzePoProfile(): Boolean
-    val poIdentification: String?
 
-    @Throws(KeypleReaderException::class)
-    fun loadTickets(ticketNumber: Int): Int
-    fun notifySeProcessed()
-
-    companion object {
-        const val STATUS_OK = 0
-        const val STATUS_UNKNOWN_ERROR = 1
-        const val STATUS_CARD_SWITCHED = 2
-        const val STATUS_SESSION_ERROR = 3
-    }
+    fun prepareAndSetPoDefaultSelection()
+    fun processDefaultSelection(selectionResponse: AbstractDefaultSelectionsResponse?): CardSelectionsResult
+    fun checkStructure(): Boolean
+    fun checkStartupInfo(): Boolean
+    fun launchControlProcedure(locations: List<Location>): CardReaderResponse?
+    fun checkSamAndOpenChannel(samReader: Reader): CardResource<CalypsoSam>
+    fun getSecuritySettings(samResource: CardResource<CalypsoSam>?): PoSecuritySettings?
 }

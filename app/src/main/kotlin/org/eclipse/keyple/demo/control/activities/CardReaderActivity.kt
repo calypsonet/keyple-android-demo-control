@@ -32,7 +32,7 @@ import org.eclipse.keyple.demo.control.mock.MockUtils
 import org.eclipse.keyple.demo.control.models.CardReaderResponse
 import org.eclipse.keyple.demo.control.models.Status
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo
-import org.eclipse.keyple.demo.control.ticketing.TicketingSession
+import org.eclipse.keyple.demo.control.ticketing.ITicketingSession
 import timber.log.Timber
 import java.util.Timer
 import java.util.TimerTask
@@ -42,16 +42,17 @@ import javax.inject.Inject
 @ActivityScoped
 class CardReaderActivity : BaseActivity() {
 
-    private lateinit var timer: Timer
 
-    private lateinit var progress: ProgressDialog
+    @Suppress("DEPRECATION") private lateinit var progress: ProgressDialog
 
     @Inject
     lateinit var cardReaderApi: CardReaderApi
 
     private var poReaderObserver: PoObserver? = null
     private var readersInitialized = false
-    private lateinit var ticketingSession: TicketingSession
+
+    private lateinit var ticketingSession: ITicketingSession
+
     var currentAppState = AppState.WAIT_SYSTEM_READY
 
     /* application states */
@@ -67,8 +68,11 @@ class CardReaderActivity : BaseActivity() {
         setContentView(R.layout.activity_card_reader)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        @Suppress("DEPRECATION")
         progress = ProgressDialog(this)
+        @Suppress("DEPRECATION")
         progress.setMessage(getString(R.string.please_wait))
+
         progress.setCancelable(false)
     }
 
@@ -113,19 +117,11 @@ class CardReaderActivity : BaseActivity() {
         } else {
             cardReaderApi.startNfcDetection()
         }
-
-        timer = Timer() // After cancel, need to reinit Timer
-//        timer.schedule(object : TimerTask() {
-//            override fun run() {
-//                runOnUiThread { onBackPressed() }
-//            }
-//        }, RETURN_DELAY_MS.toLong())
     }
 
     override fun onPause() {
         super.onPause()
         loadingAnimation.cancelAnimation()
-        timer.cancel()
         if (readersInitialized) {
             cardReaderApi.stopNfcDetection()
             Timber.d("stopNfcDetection")
@@ -162,15 +158,11 @@ class CardReaderActivity : BaseActivity() {
 
                 if (!seSelectionResult.hasActiveSelection()) {
                     Timber.e("PO Not selected")
-                    val error = String.format(
-                        getString(R.string.card_invalid_desc),
-                        "a case of PO Not selected"
-                    )
+                    val error = getString(R.string.card_invalid_aid)
                     displayResult(
                         CardReaderResponse(
                             status = Status.INVALID_CARD,
                             cardType = null,
-                            lastValidationsList = arrayListOf(),
                             titlesList = arrayListOf(),
                             errorMessage = error
                         )
@@ -179,26 +171,37 @@ class CardReaderActivity : BaseActivity() {
                 }
 
                 Timber.i("PO Type = ${ticketingSession.poTypeName}")
-                if (CalypsoInfo.PO_TYPE_NAME_CALYPSO != ticketingSession.poTypeName) {
-                    val cardType = ticketingSession.poTypeName ?: "an unknown card"
-                    val error = String.format(
-                        getString(R.string.card_invalid_desc),
-                        cardType.trim { it <= ' ' }
-                    )
+                if (CalypsoInfo.PO_TYPE_NAME_CALYPSO_05h != ticketingSession.poTypeName &&
+                    CalypsoInfo.PO_TYPE_NAME_CALYPSO_32h != ticketingSession.poTypeName &&
+                    CalypsoInfo.PO_TYPE_NAME_NAVIGO_05h != ticketingSession.poTypeName
+                ) {
+                    val error = getString(R.string.card_invalid_aid)
                     displayResult(
                         CardReaderResponse(
                             status = Status.INVALID_CARD,
-                            cardType = cardType,
+                            cardType = null,
                             titlesList = arrayListOf(),
-                            lastValidationsList = arrayListOf(),
                             errorMessage = error
                         )
                     )
                     return
-                } else {
-                    Timber.i("A Calypso PO selection succeeded.")
-                    newAppState = AppState.CARD_STATUS
                 }
+
+                if (!ticketingSession.checkStructure()) {
+                    val error = getString(R.string.card_invalid_structure)
+                    displayResult(
+                        CardReaderResponse(
+                            status = Status.INVALID_CARD,
+                            cardType = null,
+                            titlesList = arrayListOf(),
+                            errorMessage = error
+                        )
+                    )
+                    return
+                }
+
+                Timber.i("A Calypso PO selection succeeded.")
+                newAppState = AppState.CARD_STATUS
             }
             ReaderEvent.EventType.CARD_REMOVED -> {
                 currentAppState = AppState.WAIT_SYSTEM_READY
@@ -219,17 +222,17 @@ class CardReaderActivity : BaseActivity() {
                         GlobalScope.launch {
                             try {
 
-                                if (ticketingSession.analyzePoProfile()) {
+                                if (ticketingSession.checkStartupInfo()) {
                                     /*
                                      * LAUNCH CONTROL PROCEDURE
                                      */
-                                    withContext(Dispatchers.Main){
+                                    withContext(Dispatchers.Main) {
                                         progress.show()
                                     }
-                                    val cardReaderResponse = withContext(Dispatchers.IO){
+                                    val cardReaderResponse = withContext(Dispatchers.IO) {
                                         ticketingSession.launchControlProcedure(locationFileManager.getLocations())
                                     }
-                                    withContext(Dispatchers.Main){
+                                    withContext(Dispatchers.Main) {
                                         progress.dismiss()
                                         displayResult(cardReaderResponse)
                                     }
@@ -239,10 +242,9 @@ class CardReaderActivity : BaseActivity() {
                                 Timber.e("Load ERROR page after exception = ${e.message}")
                                 displayResult(
                                     CardReaderResponse(
-                                        Status.ERROR,
-                                        "some invalid card",
-                                        arrayListOf(),
-                                        arrayListOf()
+                                        status = Status.ERROR,
+                                        cardType = "some invalid card",
+                                        titlesList = arrayListOf()
                                     )
                                 )
                             }
@@ -291,12 +293,12 @@ class CardReaderActivity : BaseActivity() {
             }
 
             when (cardReaderResponse.status) {
-                Status.TICKETS_FOUND -> {
+                Status.TICKETS_FOUND, Status.EMPTY_CARD -> {
                     val intent = Intent(this@CardReaderActivity, CardContentActivity::class.java)
                     intent.putExtra(CARD_CONTENT, cardReaderResponse)
                     startActivity(intent)
                 }
-                Status.LOADING, Status.ERROR, Status.SUCCESS, Status.INVALID_CARD, Status.EMPTY_CARD -> {
+                Status.LOADING, Status.ERROR, Status.SUCCESS, Status.INVALID_CARD -> {
                     val intent = Intent(this@CardReaderActivity, NetworkInvalidActivity::class.java)
                     intent.putExtra(CARD_CONTENT, cardReaderResponse)
                     startActivity(intent)

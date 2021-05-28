@@ -89,7 +89,6 @@ class OmapiReaderRepositoryImpl @Inject constructor(
                 getContactlessIsoProtocol()!!.applicationProtocolName
             )
         }
-
         return poReader
     }
 

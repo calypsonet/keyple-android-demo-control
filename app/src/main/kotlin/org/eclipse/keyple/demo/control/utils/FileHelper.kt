@@ -13,6 +13,7 @@
 package org.eclipse.keyple.demo.control.utils
 
 import android.content.Context
+import android.os.Environment
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -86,5 +87,21 @@ object FileHelper {
             }
         }
         return length
+    }
+
+    @Suppress("DEPRECATION")
+    @Throws(IOException::class)
+    fun getExternalStoragePath(): String {
+        if (!isExternalStorageAvailable()) {
+            throw IOException("External storage not mounted")
+        }
+        return Environment.getExternalStorageDirectory().absolutePath
+    }
+
+    /**
+     * @return `true` if the external storage is mounted and readable/writable; `false` otherwise
+     */
+    private fun isExternalStorageAvailable(): Boolean {
+        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
     }
 }

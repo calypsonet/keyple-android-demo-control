@@ -18,9 +18,11 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.eclipse.keyple.demo.control.models.Location
 import org.eclipse.keyple.demo.control.utils.FileHelper
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -36,14 +38,16 @@ class LocationFileManager @Inject constructor(context: Context) {
     var locationsFromResources: String
 
     init {
-        val sdCardPath = Environment.getExternalStorageDirectory().absolutePath
+//        val sdCardPath = Environment.getExternalStorageDirectory().absolutePath
+        val sdCardPath = FileHelper.getExternalStoragePath()
         val dirPath = "$sdCardPath$LOCATION_DIRECTORY_PATH"
+
         val dirExists = FileHelper.fileExist(dirPath)
         if (!dirExists) {
             /*
              * Create App directory
              */
-            FileHelper.createDirectory(sdCardPath, LOCATION_DIRECTORY_PATH)
+            val dirCreated = FileHelper.createDirectory(sdCardPath, LOCATION_DIRECTORY_PATH)
         }
 
         val fileExists = FileHelper.fileExist(FILE_PATH)
@@ -55,7 +59,7 @@ class LocationFileManager @Inject constructor(context: Context) {
              * Create location JSON file
              */
             val fileName = "$LOCATION_FILE_NAME.json"
-            FileHelper.createFile(
+            val fileCreated = FileHelper.createFile(
                 dirPath = dirPath,
                 name = fileName,
                 content = locationsFromResources
@@ -65,8 +69,14 @@ class LocationFileManager @Inject constructor(context: Context) {
 
     fun getLocations(): List<Location> {
         if (locationList == null) {
-            val file = getFileFromSdCard()
-            locationList = getGson().fromJson(file, Array<Location>::class.java).toList()
+            try{
+                val file = getFileFromSdCard()
+                locationList = getGson().fromJson(file, Array<Location>::class.java).toList()
+            }
+            catch (e: FileNotFoundException){
+                Timber.e(e)
+                locationList = getGson().fromJson(locationsFromResources, Array<Location>::class.java).toList()
+            }
         }
         return locationList!!
     }
