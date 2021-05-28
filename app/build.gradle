@@ -132,7 +132,6 @@ dependencies {
     // Google GSON
     implementation "com.google.code.gson:gson:2.8.6"
 
-
     // Devnied - Byte Utils
     implementation('com.github.devnied:bit-lib4j:1.4.5') {
         exclude group: 'org.slf4j'

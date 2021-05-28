@@ -12,7 +12,7 @@
 package org.eclipse.keyple.demo.control.reader
 
 import android.app.Activity
-import org.eclipse.keyple.core.service.KeyplePluginException
+import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.Reader
 
 interface IReaderRepository {
@@ -30,6 +30,7 @@ interface IReaderRepository {
     fun getContactlessIsoProtocol(): PoReaderProtocol?
     fun getContactlessMifareProtocol(): PoReaderProtocol?
     fun getSamReaderProtocol(): String
+    fun getPlugin(): Plugin
     fun clear()
 
     fun isMockedResponse(): Boolean = false

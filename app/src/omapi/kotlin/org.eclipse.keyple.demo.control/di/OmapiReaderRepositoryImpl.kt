@@ -62,6 +62,9 @@ class OmapiReaderRepositoryImpl @Inject constructor(
         }
     }
 
+
+    override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
+
     @Throws(KeypleException::class)
     override suspend fun initPoReader(): Reader? {
         val readerPlugin = SmartCardService.getInstance().getPlugin(AndroidNfcPlugin.PLUGIN_NAME)

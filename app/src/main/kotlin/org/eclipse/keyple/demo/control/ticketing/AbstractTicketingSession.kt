@@ -11,17 +11,25 @@
  ********************************************************************************/
 package org.eclipse.keyple.demo.control.ticketing
 
-import org.eclipse.keyple.card.calypso.CalypsoCardExtension
-import org.eclipse.keyple.card.calypso.po.ElementaryFile
-import org.eclipse.keyple.card.calypso.po.PoSmartCard
-import org.eclipse.keyple.card.calypso.transaction.PoSecuritySetting
-import org.eclipse.keyple.card.calypso.transaction.PoTransactionService
+import org.eclipse.keyple.card.calypso.CalypsoExtensionService
+import org.eclipse.keyple.card.calypso.CalypsoExtensionServiceProvider
+import org.eclipse.keyple.card.calypso.card.CalypsoCard
+import org.eclipse.keyple.card.calypso.card.ElementaryFile
+import org.eclipse.keyple.card.calypso.sam.SamRevision
+import org.eclipse.keyple.card.calypso.transaction.CardSecuritySetting
+import org.eclipse.keyple.card.calypso.transaction.CardTransactionService
+import org.eclipse.keyple.core.common.KeypleReaderExtension
 import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.selection.CardSelectionResult
+import org.eclipse.keyple.core.service.resource.CardResourceProfileConfigurator
+import org.eclipse.keyple.core.service.resource.CardResourceService
+import org.eclipse.keyple.core.service.resource.CardResourceServiceProvider
+import org.eclipse.keyple.core.service.resource.PluginsConfigurator
+import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 import org.eclipse.keyple.core.service.selection.CardSelectionService
 import org.eclipse.keyple.demo.control.di.scopes.AppScoped
 import org.eclipse.keyple.demo.control.reader.IReaderRepository
+import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.eclipse.keyple.parser.dto.CardletInputDto
 import org.eclipse.keyple.parser.keyple.CardletParser
 import org.eclipse.keyple.parser.model.CardletDto
@@ -32,10 +40,10 @@ abstract class AbstractTicketingSession protected constructor(
     protected val readerRepository: IReaderRepository
 ) {
 
-    protected lateinit var calypsoPo: PoSmartCard
+    protected lateinit var calypsoCard: CalypsoCard
     protected lateinit var cardSelection: CardSelectionService
 
-    lateinit var calypsoCardExtensionProvider: CalypsoCardExtension
+    lateinit var calypsoCardExtensionProvider: CalypsoExtensionService
 
     var poTypeName: String? = null
         protected set
@@ -82,8 +90,8 @@ abstract class AbstractTicketingSession protected constructor(
 //    }
 
     val poIdentification: String
-        get() = (calypsoPo.applicationSerialNumber + ", " +
-                calypsoPo.revision.toString())
+        get() = (calypsoCard.applicationSerialNumber + ", " +
+                calypsoCard.revision.toString())
 
     /**
      * initial PO content analysis
@@ -92,10 +100,10 @@ abstract class AbstractTicketingSession protected constructor(
      */
     fun analyzePoProfile(): Boolean {
         var status = false
-        if (calypsoPo.startupInfo != null) {
-            currentPoSN = calypsoPo.applicationSerialNumberBytes
+        if (calypsoCard.startupInfo != null) {
+            currentPoSN = calypsoCard.applicationSerialNumberBytes
             cardContent.serialNumber = currentPoSN
-            cardContent.poRevision = calypsoPo.revision.toString()
+            cardContent.poRevision = calypsoCard.revision.toString()
             status = true
         }
 
@@ -138,7 +146,7 @@ abstract class AbstractTicketingSession protected constructor(
 //        }
 //    }
 
-    fun getSecuritySettings(): PoSecuritySetting? {
+    fun getSecuritySettings(): CardSecuritySetting? {
 
         // The default KIF values for personalization, loading and debiting
         val DEFAULT_KIF_PERSO = 0x21.toByte()
@@ -151,34 +159,105 @@ abstract class AbstractTicketingSession protected constructor(
         val DEFAULT_KEY_RECORD_NUMBER_DEBIT = 0x03.toByte()
 
         /* define the security parameters to provide when creating PoTransaction */
-        return PoSecuritySetting.builder("samResource") //
+        return CardSecuritySetting.builder() //
+            .setSamCardResourceProfileName(SAM_PROFILE_NAME)
             .assignKif(
-                PoTransactionService.SessionAccessLevel.SESSION_LVL_PERSO,
+                CardTransactionService.SessionAccessLevel.SESSION_LVL_PERSO,
                 DEFAULT_KIF_PERSO
             ) //
             .assignKif(
-                PoTransactionService.SessionAccessLevel.SESSION_LVL_LOAD,
+                CardTransactionService.SessionAccessLevel.SESSION_LVL_LOAD,
                 DEFAULT_KIF_LOAD
             ) //
             .assignKif(
-                PoTransactionService.SessionAccessLevel.SESSION_LVL_DEBIT,
+                CardTransactionService.SessionAccessLevel.SESSION_LVL_DEBIT,
                 DEFAULT_KIF_DEBIT
             ) //
             .assignKeyRecordNumber(
-                PoTransactionService.SessionAccessLevel.SESSION_LVL_PERSO,
+                CardTransactionService.SessionAccessLevel.SESSION_LVL_PERSO,
                 DEFAULT_KEY_RECORD_NUMBER_PERSO
             ) //
             .assignKeyRecordNumber(
-                PoTransactionService.SessionAccessLevel.SESSION_LVL_LOAD,
+                CardTransactionService.SessionAccessLevel.SESSION_LVL_LOAD,
                 DEFAULT_KEY_RECORD_NUMBER_LOAD
             ) //
             .assignKeyRecordNumber(
-                PoTransactionService.SessionAccessLevel.SESSION_LVL_DEBIT,
+                CardTransactionService.SessionAccessLevel.SESSION_LVL_DEBIT,
                 DEFAULT_KEY_RECORD_NUMBER_DEBIT
             )
             .build()
     }
 
     fun parseCardlet(cardletDto: CardletInputDto): CardletDto? = CardletParser().parseCardlet(cardletDto)
+
+    /**
+     * Setup the [CardResourceService] to provide a Calypso SAM C1 resource when requested.
+     *
+     * @param plugin The plugin to which the SAM reader belongs.
+     * @param readerNameRegex A regular expression matching the expected SAM reader name.
+     * @param samProfileName A string defining the SAM profile.
+     * @throws IllegalStateException If the expected card resource is not found.
+     */
+    fun setupCardResourceService(
+        readerNameRegex: String?, samProfileName: String?
+    ) {
+
+        // Create a card resource extension expecting a SAM "C1".
+        val samCardResourceExtension =
+            CalypsoExtensionServiceProvider.getService()
+                .createSamResourceProfileExtension()
+                .setSamRevision(SamRevision.C1)
+
+        val plugin = readerRepository.getPlugin()
+        // Get the service
+        val cardResourceService = CardResourceServiceProvider.getService()
+
+        // Create a minimalist configuration (no plugin/reader observation)
+        cardResourceService
+            .configurator
+            .withPlugins(
+                PluginsConfigurator.builder().addPlugin(plugin, ReaderConfigurator(readerRepository)).build()
+            )
+            .withCardResourceProfiles(
+                CardResourceProfileConfigurator.builder(samProfileName, samCardResourceExtension)
+                    .withReaderNameRegex(readerNameRegex)
+                    .build()
+            )
+            .configure()
+        cardResourceService.start()
+
+        // verify the resource availability
+        val cardResource = cardResourceService.getCardResource(samProfileName)
+            ?: throw IllegalStateException(
+                java.lang.String.format(
+                    "Unable to retrieve a SAM card resource for profile '%s' from reader '%s' in plugin '%s'",
+                    samProfileName, readerNameRegex, plugin.name
+                )
+            )
+
+        // release the resource
+        cardResourceService.releaseCardResource(cardResource)
+    }
+
+    /**
+     * Reader configurator used by the card resource service to setup the SAM reader with the required
+     * settings.
+     */
+    private class ReaderConfigurator(val readerRepository: IReaderRepository) : ReaderConfiguratorSpi {
+        /** {@inheritDoc}  */
+        override fun setupReader(reader: Reader) {
+            // Configure the reader with parameters suitable for contactless operations.
+            try {
+                reader
+                    .getExtension((readerRepository.getSamReader() as KeypleReaderExtension)::class.java)
+//                    .setContactless(false)
+//                    .setIsoProtocol(PcscReader.IsoProtocol.T0)
+//                    .setSharingMode(PcscReader.SharingMode.SHARED)
+            } catch (e: Exception) {
+                Timber.e(
+                    "Exception raised while setting up the reader ${reader.getName()} : ${e.message}")
+            }
+        }
+    }
 }
 

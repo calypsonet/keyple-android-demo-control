@@ -11,13 +11,9 @@
  ********************************************************************************/
 package org.eclipse.keyple.demo.control.ticketing
 
-import org.eclipse.keyple.card.calypso.CalypsoCardExtensionProvider
-import org.eclipse.keyple.card.calypso.po.PoSmartCard
-import org.eclipse.keyple.card.calypso.sam.SamRevision
-import org.eclipse.keyple.card.calypso.transaction.CalypsoPoTransactionException
-import org.eclipse.keyple.card.calypso.transaction.PoTransactionService
-import org.eclipse.keyple.core.card.ProxyReader
-import org.eclipse.keyple.core.common.KeypleCardSelectionResponse
+import org.eclipse.keyple.card.calypso.CalypsoExtensionServiceProvider
+import org.eclipse.keyple.card.calypso.card.CalypsoCard
+import org.eclipse.keyple.card.calypso.transaction.CardTransactionService
 import org.eclipse.keyple.core.service.CardSelectionServiceFactory
 import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Reader
@@ -78,11 +74,11 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
          * Prepare a PO selection
          */
         cardSelection = CardSelectionServiceFactory.getService(MultiSelectionProcessing.FIRST_MATCH)
-        calypsoCardExtensionProvider = CalypsoCardExtensionProvider.getService()
+        calypsoCardExtensionProvider = CalypsoExtensionServiceProvider.getService()
 
         /* Select Calypso */
         val poSelectionRequest =
-            calypsoCardExtensionProvider.createPoCardSelection(
+            calypsoCardExtensionProvider.createCardSelection(
                 CardSelector.builder()
                     .filterByDfName(AID_HIS_STRUCTURE_5H)
                     .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
@@ -99,7 +95,7 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
          * NAVIGO
          */
         val navigoCardSelectionRequest =
-            calypsoCardExtensionProvider.createPoCardSelection(
+            calypsoCardExtensionProvider.createCardSelection(
                 CardSelector.builder()
                     .filterByDfName(AID_NORMALIZED_IDF)
                     .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
@@ -140,11 +136,11 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
         if (selectionsResult.hasActiveSelection()) {
             when (selectionsResult.smartCards.keys.first()) {
                 calypsoPoIndex -> {
-                    calypsoPo = selectionsResult.activeSmartCard as PoSmartCard
+                    calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
                     poTypeName = PO_TYPE_NAME_CALYPSO_05H
                 }
                 navigoCardIndex -> {
-                    calypsoPo = selectionsResult.activeSmartCard as PoSmartCard
+                    calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
                     poTypeName = PO_TYPE_NAME_NAVIGO
                 }
                 bankingCardIndex -> poTypeName = PO_TYPE_NAME_BANKING
@@ -173,32 +169,26 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
     override fun loadTickets(ticketNumber: Int): Int {
         return try {
             val poTransaction = if (samReader != null) {
-
-                val samCardResourceProfileExtension =
-                    calypsoCardExtensionProvider.createSamCardResourceProfileExtension()
-                samCardResourceProfileExtension.setSamRevision(SamRevision.C1)
-
-                calypsoCardExtensionProvider.createPoSecuredTransaction(
+                //TODO: remove useless code
+                calypsoCardExtensionProvider.createCardTransaction(
                     poReader,
-                    calypsoPo,
-                    getSecuritySettings(),
-                    samCardResourceProfileExtension,
-                    samReader as ProxyReader
+                    calypsoCard,
+                    getSecuritySettings()
                 )
             } else {
-                calypsoCardExtensionProvider.createPoUnsecuredTransaction(
+                calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
                     poReader,
-                    calypsoPo
+                    calypsoCard
                 )
             }
-            if (!Arrays.equals(currentPoSN, calypsoPo.applicationSerialNumberBytes)) {
+            if (!Arrays.equals(currentPoSN, calypsoCard.applicationSerialNumberBytes)) {
                 Timber.i("Load ticket status  : STATUS_CARD_SWITCHED")
                 return ITicketingSession.STATUS_CARD_SWITCHED
             }
             /*
              * Open a transaction to read/write the Calypso PO
              */
-            poTransaction.processOpening(PoTransactionService.SessionAccessLevel.SESSION_LVL_LOAD)
+            poTransaction.processOpening(CardTransactionService.SessionAccessLevel.SESSION_LVL_LOAD)
 
             /*
              * Read actual ticket number
@@ -207,7 +197,7 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
                 CalypsoInfo.SFI_Counter,
                 RECORD_NUMBER_1.toInt()
             )
-            poTransaction.processPoCommands()
+            poTransaction.processCardCommands()
             poTransaction.prepareIncreaseCounter(
                 CalypsoInfo.SFI_Counter,
                 RECORD_NUMBER_1.toInt(),
@@ -233,9 +223,6 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
             cardSelection.prepareReleaseChannel()
             Timber.i("Load ticket status  : STATUS_OK")
             ITicketingSession.STATUS_OK
-        } catch (e: CalypsoPoTransactionException) {
-            Timber.e(e)
-            ITicketingSession.STATUS_SESSION_ERROR
         } catch (e: Exception) {
             Timber.e(e)
             ITicketingSession.STATUS_SESSION_ERROR
@@ -249,13 +236,12 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
      * @return
      */
     @Throws(
-        CalypsoPoTransactionException::class,
         Exception::class,
         ControlException::class
     )
     fun launchControlProcedure(locations: List<Location>): CardReaderResponse? {
         return ControlProcedure().launch(
-            calypsoPo = calypsoPo,
+            calypsoCard = calypsoCard,
             samReader = samReader,
             ticketingSession = this@TicketingSession,
             locations = locations
@@ -268,14 +254,13 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
      * @return
      */
     @Throws(
-        CalypsoPoTransactionException::class,
         Exception::class,
         ControlException::class
     )
     fun launchPersonalizeProcedure(contractType: ContractPriorityEnum): Status {
         return PersonalizeProcedure().launch(
             contractType = contractType,
-            calypsoPo = calypsoPo,
+            calypsoCard = calypsoCard,
             samReader = samReader,
             ticketingSession = this
         )
@@ -291,37 +276,31 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
     fun loadContract(): Int {
         return try {
             val poTransaction = if (samReader != null) {
-
-                val samCardResourceProfileExtension =
-                    calypsoCardExtensionProvider.createSamCardResourceProfileExtension()
-                samCardResourceProfileExtension.setSamRevision(SamRevision.C1)
-
-                calypsoCardExtensionProvider.createPoSecuredTransaction(
+                //TODO: remove useless code
+                calypsoCardExtensionProvider.createCardTransaction(
                     poReader,
-                    calypsoPo,
-                    getSecuritySettings(),
-                    samCardResourceProfileExtension,
-                    samReader as ProxyReader
+                    calypsoCard,
+                    getSecuritySettings()
                 )
             } else {
-                calypsoCardExtensionProvider.createPoUnsecuredTransaction(
+                calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
                     poReader,
-                    calypsoPo
+                    calypsoCard
                 )
             }
 
-            if (!Arrays.equals(currentPoSN, calypsoPo.applicationSerialNumberBytes)) {
+            if (!Arrays.equals(currentPoSN, calypsoCard.applicationSerialNumberBytes)) {
                 return ITicketingSession.STATUS_CARD_SWITCHED
             }
 
-            poTransaction.processOpening(PoTransactionService.SessionAccessLevel.SESSION_LVL_LOAD)
+            poTransaction.processOpening(CardTransactionService.SessionAccessLevel.SESSION_LVL_LOAD)
 
             /* allow to determine the anticipated response */
             poTransaction.prepareReadRecordFile(
                 CalypsoInfo.SFI_Counter,
                 RECORD_NUMBER_1.toInt()
             )
-            poTransaction.processPoCommands()
+            poTransaction.processCardCommands()
             poTransaction.prepareUpdateRecord(
                 SFI_Contracts,
                 RECORD_NUMBER_1.toInt(),
@@ -336,9 +315,6 @@ class TicketingSession @Inject constructor(readerRepository: IReaderRepository) 
             poTransaction.prepareAppendRecord(SFI_EventLog, event.toByteArray())
             poTransaction.processClosing()
             ITicketingSession.STATUS_OK
-        } catch (e: CalypsoPoTransactionException) {
-            Timber.e(e)
-            ITicketingSession.STATUS_SESSION_ERROR
         } catch (e: Exception) {
             Timber.e(e)
             ITicketingSession.STATUS_SESSION_ERROR

@@ -12,11 +12,8 @@
 
 package org.eclipse.keyple.demo.control.ticketing.procedure
 
-import org.eclipse.keyple.card.calypso.po.PoSmartCard
-import org.eclipse.keyple.card.calypso.sam.SamRevision
-import org.eclipse.keyple.card.calypso.transaction.CalypsoPoTransactionException
-import org.eclipse.keyple.card.calypso.transaction.PoTransactionService
-import org.eclipse.keyple.core.card.ProxyReader
+import org.eclipse.keyple.card.calypso.card.CalypsoCard
+import org.eclipse.keyple.card.calypso.transaction.CardTransactionService
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.demo.control.exception.NoSamException
 import org.eclipse.keyple.demo.control.models.Status
@@ -40,7 +37,7 @@ class PersonalizeProcedure {
 
     fun launch(
         contractType: ContractPriorityEnum,
-        calypsoPo: PoSmartCard,
+        calypsoCard: CalypsoCard,
         samReader: Reader?,
         ticketingSession: AbstractTicketingSession
     ): Status {
@@ -56,22 +53,18 @@ class PersonalizeProcedure {
         try {
             val poTransaction =
                 if (samReader != null) {
-                    val samCardResourceProfileExtension =
-                        ticketingSession.calypsoCardExtensionProvider.createSamCardResourceProfileExtension()
-                    samCardResourceProfileExtension.setSamRevision(SamRevision.C1)
+                    ticketingSession.setupCardResourceService(CalypsoInfo.SAM_READER_NAME_REGEX, CalypsoInfo.SAM_PROFILE_NAME)
 
-                    ticketingSession.calypsoCardExtensionProvider.createPoSecuredTransaction(
+                    ticketingSession.calypsoCardExtensionProvider.createCardTransaction(
                         poReader,
-                        calypsoPo,
-                        ticketingSession.getSecuritySettings(),
-                        samCardResourceProfileExtension,
-                        samReader as ProxyReader
+                        calypsoCard,
+                        ticketingSession.getSecuritySettings()
                     )
                 } else {
                     throw NoSamException()
                 }
 
-            poTransaction.processOpening(PoTransactionService.SessionAccessLevel.SESSION_LVL_PERSO)
+            poTransaction.processOpening(CardTransactionService.SessionAccessLevel.SESSION_LVL_PERSO)
 
             /*
              * Environment
@@ -116,7 +109,7 @@ class PersonalizeProcedure {
                 CalypsoInfo.RECORD_NUMBER_1.toInt(),
                 CardletUtils.getEmptyFile()
             )
-            poTransaction.processPoCommands()
+            poTransaction.processCardCommands()
 
             if (contractType == ContractPriorityEnum.MULTI_TRIP) {
                 poTransaction.prepareIncreaseCounter(
@@ -124,9 +117,9 @@ class PersonalizeProcedure {
                     CalypsoInfo.RECORD_NUMBER_1.toInt(),
                     CounterStructureParser().parse(cardlet.counterData).counterValue
                 )
-                poTransaction.processPoCommands()
+                poTransaction.processCardCommands()
 
-                printCounterValues(poTransaction = poTransaction, calypsoPo = calypsoPo)
+                printCounterValues(poTransaction = poTransaction, calypsoPo = calypsoCard)
 
             }
 
@@ -137,8 +130,6 @@ class PersonalizeProcedure {
 
             Timber.i("Personalization Successful - Calypso Session Closed.")
             return Status.SUCCESS
-        } catch (e: CalypsoPoTransactionException) {
-            Timber.e(e)
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -146,7 +137,7 @@ class PersonalizeProcedure {
         return Status.ERROR
     }
 
-    private fun printCounterValues(poTransaction: PoTransactionService, calypsoPo: PoSmartCard){
+    private fun printCounterValues(poTransaction: CardTransactionService, calypsoPo: CalypsoCard){
 
         poTransaction.prepareReadCounterFile(
             SFI_Counter_0A,
@@ -167,7 +158,7 @@ class PersonalizeProcedure {
             SFI_Counter_0D,
             CalypsoInfo.RECORD_NUMBER_1.toInt()
         )
-        poTransaction.processPoCommands()
+        poTransaction.processCardCommands()
 
 
         val counterContent0A = calypsoPo.getFileBySfi(SFI_Counter_0A)

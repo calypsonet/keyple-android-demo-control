@@ -35,6 +35,7 @@ import org.eclipse.keyple.bluebird.plugin.BluebirdSupportContactlessProtocols
 import org.eclipse.keyple.core.common.KeyplePluginExtensionFactory
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
+import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.service.spi.ReaderObservationExceptionHandlerSpi
@@ -62,6 +63,8 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
             smartCardService.registerPlugin(pluginFactory)
         }
     }
+
+    override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
 
     @Throws(KeyplePluginException::class)
     override suspend fun initPoReader(): Reader? {
