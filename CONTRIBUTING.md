@@ -2,6 +2,12 @@
 
 Thanks for your interest in this project.
 
+## Project description
+
+'Keyple Android Control' is a project containing an app demonstrating an example for ticketing card control. It implements multiple devices plugins developed using [Eclipse Keyple](https://keyple.org/) API.
+
+[calypsonet/keyple-android-demo-control](https://github.com/calypsonet/keyple-android-demo-control)
+
 ## Contributing
 
 1. [Fork](https://help.github.com/articles/fork-a-repo/) the [calypsonet/keyple-android-demo-control](https://github.com/calypsonet/keyple-android-demo-control) repository

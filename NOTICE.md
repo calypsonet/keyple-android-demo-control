@@ -31,7 +31,74 @@ SPDX-License-Identifier: EPL-2.0
    
 ## Third-party Content
 
-### Android Open Source Project
+Google Gson (2.2.4)
+
+ * License: Apache License, 2.0
+
+SLF4J API (1.7.25)
+
+ * License: MIT License
+
+Mokito API (2.13.0)
+
+ * License: MIT License
+
+Junit (4.12)
+
+ * License: Eclipse Public License, 2.0
+
+RxJava: Reactive Extensions for Java (2.1.13):
+
+ * Licence: Apache Software License, 2.0
+
+####Specific for Android plugins
+
+SEEK for Android (plugin OMAPI) (3.2):
 
  * License: Apache Software License, 2.0
+
+Android Open Source Project
+
+ * License: Apache Software License, 2.0
+
+Timber (4.7.1):
+
+ * Licence: Apache Software License, 2.0
+
+slf4j Timber (3.1):
+
+ * Licence: Apache Software License, 2.0
+
+Mockk (1.9):
+
+ * Licence: Apache Software License, 2.0
+
+Kotlin Standard Library (1.3.72):
+
+  * Licence: Apache Software License, 2.0
+
+Kotlinx Coroutines core (1.3.3):
+
+ * Licence: Apache Software License, 2.0
+
+Lottie for Android (3.4.4):
+
+ * Licence: Apache Software License, 2.0
+
+RxAndroid: Reactive Extensions for Android (2.0.2):
+
+ * Licence: Apache Software License, 2.0
+
+Joda Time Library (2.8.1):
+
+ * Licence: Apache Software License, 2.0
+
+Bit-lib4j (1.4.5):
+
+ * Licence: Apache Software License, 2.0
+
+Dagger (2.19):
+
+ * Licence: Apache Software License, 2.0
+
  
