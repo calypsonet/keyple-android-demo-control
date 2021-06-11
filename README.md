@@ -8,7 +8,7 @@ This demo shows how to easily control a contract (Season Pass and/or Multi-trip 
 
 It implements multiple plugins and switching from one plugin to another is made easy by using the flavours feature for handling multiple devices:
 - [Keyple Plugin Android NFC | Eclipse Keyple](https://keyple.org/components-java/plugins/nfc/)
-- [Keyple Plugin Android OMAPI | Eclipse Keyple]( (https://keyple.org/components-java/plugins/omapi/)
+- [Keyple Plugin Android OMAPI | Eclipse Keyple](https://keyple.org/components-java/plugins/omapi/)
 - [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic)
 - [Famoco](https://github.com/calypsonet/keyple-famoco)
 
