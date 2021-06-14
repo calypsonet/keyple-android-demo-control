@@ -19,6 +19,7 @@ import org.eclipse.keyple.calypso.transaction.PoTransaction
 import org.eclipse.keyple.calypso.transaction.exception.CalypsoPoTransactionException
 import org.eclipse.keyple.core.card.selection.CardResource
 import org.eclipse.keyple.core.service.Reader
+import org.eclipse.keyple.demo.control.exception.ControlException
 import org.eclipse.keyple.demo.control.exception.EnvironmentControlException
 import org.eclipse.keyple.demo.control.exception.EnvironmentControlExceptionKey
 import org.eclipse.keyple.demo.control.exception.EventControlException
@@ -32,7 +33,6 @@ import org.eclipse.keyple.demo.control.models.Status
 import org.eclipse.keyple.demo.control.models.Validation
 import org.eclipse.keyple.demo.control.models.mapper.ContractMapper
 import org.eclipse.keyple.demo.control.models.mapper.ValidationMapper
-import org.eclipse.keyple.demo.control.ticketing.AbstractTicketingSession
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_1
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_2
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_3
@@ -44,11 +44,13 @@ import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0C
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0D
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_EnvironmentAndHolder
 import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventLog
+import org.eclipse.keyple.demo.control.ticketing.ITicketingSession
 import org.eclipse.keyple.parser.keyple.ContractStructureParser
 import org.eclipse.keyple.parser.keyple.CounterStructureParser
 import org.eclipse.keyple.parser.keyple.EnvironmentHolderStructureParser
 import org.eclipse.keyple.parser.keyple.EventStructureParser
 import org.eclipse.keyple.parser.model.ContractStructureDto
+import org.eclipse.keyple.parser.model.EventStructureDto
 import org.eclipse.keyple.parser.model.type.ContractPriorityEnum
 import org.eclipse.keyple.parser.model.type.VersionNumberEnum
 import org.joda.time.DateTime
@@ -63,7 +65,7 @@ class ControlProcedure {
     fun launch(
         calypsoPo: CalypsoPo,
         samReader: Reader?,
-        ticketingSession: AbstractTicketingSession,
+        ticketingSession: ITicketingSession,
         locations: List<Location>
     ): CardReaderResponse {
         val now = DateTime.now()
@@ -79,7 +81,9 @@ class ControlProcedure {
         val poTypeName = ticketingSession.poTypeName
 
         val errorMessage: String?
-        val validation: Validation
+        var errorTitle: String? = null
+        var validation: Validation? = null
+        var status: Status = Status.ERROR
         try {
             var inTransactionFlag: Boolean //true if a SAM is available and a secure session have been opened
             val poTransaction =
@@ -107,13 +111,6 @@ class ControlProcedure {
                     PoTransaction(CardResource(poReader, calypsoPo))
                 }
 
-            if (inTransactionFlag) {
-                /*
-                 * Open a transaction to read/write the Calypso PO
-                 */
-                poTransaction.processOpening(PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_DEBIT)
-            }
-
             /*
              * Step 2 - Unpack environment structure from the binary present in the environment record.
              */
@@ -121,7 +118,19 @@ class ControlProcedure {
                 SFI_EnvironmentAndHolder,
                 RECORD_NUMBER_1.toInt()
             )
-            poTransaction.processPoCommands()
+
+            if (inTransactionFlag) {
+                /*
+                 * Open a transaction to read/write the Calypso PO and read the Environment file
+                 */
+                poTransaction.processOpening(PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_DEBIT)
+            }
+            else{
+                /*
+                 * Read the Environment file
+                 */
+                poTransaction.processPoCommands()
+            }
 
             val efEnvironmentHolder =
                 calypsoPo.getFileBySfi(SFI_EnvironmentAndHolder)
@@ -247,19 +256,20 @@ class ControlProcedure {
                 it.second
             }
 
-            if (eventContract.isNotEmpty()) {
-                validation = ValidationMapper.map(
-                    event = event,
-                    contract = eventContract[0],
-                    locations = locations
-                )
-            } else {
-                validation = ValidationMapper.map(
-                    event = event,
-                    contract = null,
-                    locations = locations
-                )
-            }
+            if (isValidEvent(event))
+                if (eventContract.isNotEmpty()) {
+                    validation = ValidationMapper.map(
+                        event = event,
+                        contract = eventContract[0],
+                        locations = locations
+                    )
+                } else {
+                    validation = ValidationMapper.map(
+                        event = event,
+                        contract = null,
+                        locations = locations
+                    )
+                }
 
             val displayedContract = arrayListOf<Contract>()
             contracts.forEach {
@@ -369,16 +379,19 @@ class ControlProcedure {
                 poTransaction.processClosing()
             }
 
+            var validationList: ArrayList<Validation>? = null
+            if (validation != null) {
+                validationList = arrayListOf(validation)
+            }
+
             Timber.i("Control procedure result : STATUS_OK")
+            status = Status.TICKETS_FOUND
             return CardReaderResponse(
-                status = Status.TICKETS_FOUND,
+                status = status,
                 cardType = poTypeName ?: "",
-                lastValidationsList = arrayListOf(validation),
+                lastValidationsList = validationList,
                 titlesList = displayedContract
             )
-        } catch (e: EnvironmentControlException) {
-            Timber.e(e)
-            errorMessage = e.message
         } catch (e: CalypsoSamCommandException) {
             Timber.e(e)
             errorMessage = e.message
@@ -388,14 +401,39 @@ class ControlProcedure {
         } catch (e: CalypsoPoTransactionException) {
             Timber.e(e)
             errorMessage = e.message
+            status = Status.ERROR
+        } catch (e: EventControlException) {
+            Timber.e(e)
+            errorMessage = e.message
+            status = if(e.key == EventControlExceptionKey.CLEAN_CARD){
+                Status.EMPTY_CARD
+            }
+            else{
+                Status.ERROR
+            }
+        } catch (e: ControlException) {
+            Timber.e(e)
+            errorTitle = e.title
+            errorMessage = e.message
+        } catch (e: Exception) {
+            Timber.e(e)
+            errorMessage = e.message
+            status = Status.ERROR
         }
 
         return CardReaderResponse(
-            status = Status.ERROR,
+            status = status,
             titlesList = arrayListOf(),
-            lastValidationsList = arrayListOf(),
+            errorTitle = errorTitle,
             errorMessage = errorMessage,
             cardType = ticketingSession.poTypeName
         )
+    }
+
+    /**
+     * An event is considered valid for display if an eventTimeStamp or an eventDateStamp has been set during a provious validation
+     */
+    private fun isValidEvent(event: EventStructureDto): Boolean {
+        return event.eventTimeStamp != 0 || event.eventDateStamp != 0
     }
 }

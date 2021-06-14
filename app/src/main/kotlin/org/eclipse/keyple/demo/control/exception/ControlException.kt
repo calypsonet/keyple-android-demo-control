@@ -11,5 +11,5 @@
  */
 package org.eclipse.keyple.demo.control.exception
 
-abstract class ControlException protected constructor(message: String?) :
+abstract class ControlException protected constructor(val title: String? = null, message: String?) :
     RuntimeException(message)

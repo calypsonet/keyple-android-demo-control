@@ -11,9 +11,10 @@
  */
 package org.eclipse.keyple.demo.control.exception
 
-class NoLocationDefinedException() : ControlException(MESSAGE) {
+class NoLocationDefinedException : ControlException(TITLE, MESSAGE) {
 
     companion object {
         const val MESSAGE = "Please define a location before attempting to control a card"
+        const val TITLE = "Location error"
     }
 }

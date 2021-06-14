@@ -12,9 +12,11 @@
 package org.eclipse.keyple.demo.control.activities
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.activity_card_content.emptyContract
 import kotlinx.android.synthetic.main.activity_card_content.lastValidationList
+import kotlinx.android.synthetic.main.activity_card_content.lastValidationListContainer
 import kotlinx.android.synthetic.main.activity_card_content.presentBtn
 import kotlinx.android.synthetic.main.activity_card_content.titlesList
 import org.eclipse.keyple.demo.control.R
@@ -49,11 +51,25 @@ class CardContentActivity : BaseActivity() {
         titleLinearLayoutManager = LinearLayoutManager(this)
         titlesList.layoutManager = titleLinearLayoutManager
 
-        validationsAdapter = ValidationsRecyclerAdapter(cardContent.lastValidationsList)
-        lastValidationList.adapter = validationsAdapter
-        lastValidationList.setDivider(R.drawable.recycler_view_divider)
+        if(!cardContent.titlesList.isNullOrEmpty()){
+            titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
+            titlesList.adapter = titlesAdapter
+            titlesList.visibility = View.VISIBLE
+            emptyContract.visibility = View.GONE
+        }
+        else{
+            titlesList.visibility = View.GONE
+            emptyContract.visibility = View.VISIBLE
+        }
 
-        titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
-        titlesList.adapter = titlesAdapter
+        if(cardContent.lastValidationsList != null){
+            lastValidationListContainer.visibility = View.VISIBLE
+            validationsAdapter = ValidationsRecyclerAdapter(cardContent.lastValidationsList)
+            lastValidationList.adapter = validationsAdapter
+            lastValidationList.setDivider(R.drawable.recycler_view_divider)
+        }
+        else{
+            lastValidationListContainer.visibility = View.GONE
+        }
     }
 }

@@ -86,12 +86,12 @@
 
     <ImageView
         android:id="@+id/eclipse_logo"
-        android:layout_width="@dimen/eclipse_logo_width"
-        android:layout_height="@dimen/eclipse_logo_height"
-        android:src="@drawable/ic_logo_eclipse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_logo_calypso"
         android:scaleType="center"
         android:background="@android:color/transparent"
-        android:contentDescription="@string/eclipse_foundation"
+        android:contentDescription="@string/calypso"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

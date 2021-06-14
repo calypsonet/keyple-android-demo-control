@@ -38,7 +38,7 @@
     <!-- Home screen -->
     <string name="home_description">Open source API for Smart Ticketing</string>
     <string name="start_validation_label">Start control</string>
-    <string name="eclipse_foundation">Eclipse Foundation</string>
+    <string name="calypso">Calypso Networks Association</string>
 
     <!-- Present screen -->
     <string name="present_support_label">Please present your contactless support</string>
@@ -49,6 +49,7 @@
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="present_again">Present again</string>
+    <string name="empty_contract_list">No contract available</string>
     <string name="card_content_description_season_pass">From %s\n to %s</string>
     <string name="card_content_description_multi_trip_zero">no trip left</string>
     <string name="card_content_description_multi_trip_single">%d trip left</string>
@@ -57,7 +58,8 @@
 
     <!-- NetworkInvalid screen -->
     <string name="card_invalid_title">Not valid on this network</string>
-    <string name="card_invalid_desc">This is a \"%s\" card.</string>
+    <string name="card_invalid_aid">Selection error : AID not found.</string>
+    <string name="card_invalid_structure">Selection error : Unknown structure.</string>
     <string name="card_invalid_default">Invalid card</string>
 
     <!--    Dialog-->

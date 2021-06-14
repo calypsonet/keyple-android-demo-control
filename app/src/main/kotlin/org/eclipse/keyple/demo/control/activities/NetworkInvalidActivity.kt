@@ -12,8 +12,8 @@
 package org.eclipse.keyple.demo.control.activities
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_network_invalid.invalidDescription
+import kotlinx.android.synthetic.main.activity_network_invalid.invalid_title
 import kotlinx.android.synthetic.main.activity_network_invalid.presentBtn
 import kotlinx.android.synthetic.main.logo_toolbar.toolbarLogo
 import org.eclipse.keyple.demo.control.R
@@ -28,6 +28,9 @@ class NetworkInvalidActivity : BaseActivity() {
         toolbarLogo.setImageResource(R.drawable.ic_logo_white)
 
         val cardContent: CardReaderResponse? = intent.getParcelableExtra(CARD_CONTENT)
+        cardContent?.errorTitle?.let {
+            invalid_title.text = it
+        }
         invalidDescription.text = cardContent?.errorMessage
         presentBtn.setOnClickListener {
             onBackPressed()

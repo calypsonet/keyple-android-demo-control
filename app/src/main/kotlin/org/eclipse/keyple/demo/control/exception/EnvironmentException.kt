@@ -12,9 +12,9 @@
 package org.eclipse.keyple.demo.control.exception
 
 class EnvironmentControlException(key: EnvironmentControlExceptionKey) :
-    ControlException(key.value)
+    ControlException(key.title, key.message)
 
-enum class EnvironmentControlExceptionKey constructor(val key: Int, val value: String) {
-    WRONG_VERSION_NUMBER(0, "Environment Error : wrong version number"),
-    EXPIRED(1, "Environment Error : end date expired");
+enum class EnvironmentControlExceptionKey constructor(val key: Int, val title: String, val message: String) {
+    WRONG_VERSION_NUMBER(0, "Invalid on this network", "Environment Error: wrong version number"),
+    EXPIRED(1, "Invalid on this network", "Environment Error: end date expired");
 }

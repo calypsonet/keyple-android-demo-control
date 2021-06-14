@@ -89,13 +89,13 @@
 
     <ImageView
         android:id="@+id/eclipse_logo"
-        android:layout_width="@dimen/eclipse_logo_width"
-        android:layout_height="@dimen/eclipse_logo_height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/home_element_margin"
         android:background="@android:color/transparent"
-        android:contentDescription="@string/eclipse_foundation"
+        android:contentDescription="@string/calypso"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_logo_eclipse"
+        android:src="@drawable/ic_logo_calypso"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

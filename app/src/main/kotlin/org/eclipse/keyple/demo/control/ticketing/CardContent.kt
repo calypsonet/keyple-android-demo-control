@@ -14,11 +14,13 @@ package org.eclipse.keyple.demo.control.ticketing
 import java.util.SortedMap
 import java.util.TreeMap
 import org.eclipse.keyple.core.util.ByteArrayUtil
+import org.eclipse.keyple.demo.control.models.StructureEnum
 
 class CardContent {
     var serialNumber: ByteArray? = null
     var poRevision: String? = null
     var poTypeName: String? = null
+    var poStructure: Byte? = null
     var extraInfo: String? = null
     var icc: SortedMap<Int, ByteArray>
     var id: SortedMap<Int, ByteArray>

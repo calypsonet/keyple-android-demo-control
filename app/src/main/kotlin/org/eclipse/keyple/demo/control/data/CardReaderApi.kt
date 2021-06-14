@@ -12,7 +12,6 @@
 package org.eclipse.keyple.demo.control.data
 
 import android.app.Activity
-import fr.devnied.bitlib.BytesUtils
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardService
 import org.eclipse.keyple.core.service.event.ObservableReader
@@ -22,12 +21,8 @@ import org.eclipse.keyple.core.service.exception.KeyplePluginNotFoundException
 import org.eclipse.keyple.core.service.exception.KeypleReaderIOException
 import org.eclipse.keyple.demo.control.di.scopes.AppScoped
 import org.eclipse.keyple.demo.control.reader.IReaderRepository
-import org.eclipse.keyple.demo.control.ticketing.CardContent
+import org.eclipse.keyple.demo.control.ticketing.ITicketingSession
 import org.eclipse.keyple.demo.control.ticketing.TicketingSession
-import org.eclipse.keyple.demo.control.ticketing.TicketingSessionManager
-import org.eclipse.keyple.demo.control.utils.CardletUtils
-import org.eclipse.keyple.parser.dto.CardletInputDto
-import org.eclipse.keyple.parser.model.CardletDto
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,8 +31,7 @@ class CardReaderApi @Inject constructor(
     private var readerRepository: IReaderRepository
 ) {
 
-    private lateinit var ticketingSessionManager: TicketingSessionManager
-    private var ticketingSession: TicketingSession? = null
+    private var ticketingSession: ITicketingSession? = null
 
     @Throws(
         KeyplePluginInstantiationException::class,
@@ -89,10 +83,7 @@ class CardReaderApi @Inject constructor(
             /* remove the observer if it already exist */
             (reader as ObservableReader).addObserver(observer)
 
-            ticketingSessionManager = TicketingSessionManager()
-
-            ticketingSession =
-                ticketingSessionManager.createTicketingSession(readerRepository) as TicketingSession
+            ticketingSession = TicketingSession(readerRepository)
         }
     }
 
@@ -115,7 +106,7 @@ class CardReaderApi @Inject constructor(
         }
     }
 
-    fun getTicketingSession(): TicketingSession? {
+    fun getTicketingSession(): ITicketingSession? {
         return ticketingSession
     }
 
@@ -135,78 +126,4 @@ class CardReaderApi @Inject constructor(
     fun isMockedResponse(): Boolean {
         return readerRepository.isMockedResponse()
     }
-
-    fun parseCardlet(): CardletDto? {
-        if (ticketingSession == null) {
-            Timber.w("No ticketing session available")
-            return null
-        }
-
-        val cardContent = ticketingSession!!.cardContent
-        printCardContent(cardContent)
-
-        var env: ByteArray = byteArrayOf()
-        cardContent.environment.forEach {
-            env = it.value
-        }
-
-        val contracts = mutableListOf<ByteArray>()
-        cardContent.contracts.forEach {
-            contracts.add(it.value)
-        }
-
-        val events = mutableListOf<ByteArray>()
-        cardContent.eventLog.forEach {
-            events.add(it.value)
-        }
-
-        val counter = cardContent.counters[0] ?: CardletUtils.getEmptyFile()
-
-        val cardletInputDto = CardletInputDto(
-            envData = env,
-            contractData = contracts,
-            eventData = events,
-            counterData = counter
-        )
-
-        return ticketingSession?.parseCardlet(cardletInputDto)
-    }
-
-    private fun printCardContent(cardContent: CardContent){
-        println(">>> ")
-        println(">>> ")
-        println(">>> CardReaderApi.printCardContent - DISPLAY CONTENT")
-        println(">>> ")
-        println(">>> CardReaderApi.printCardContent - ENV")
-        var env: ByteArray = ByteArray(4)
-        cardContent.environment.forEach {
-            println(">>> CardReaderApi.printCardContent - ${it.key} : ${getSfiContent(it.value)}")
-            env = it.value
-        }
-        println(">>> CardReaderApi.printCardContent - CONTRACT LIST")
-        var contractsList: ByteArray = ByteArray(4)
-        cardContent.contractsList.forEach {
-            println(">>> CardReaderApi.printCardContent - ${it.key} : ${getSfiContent(it.value)}")
-            contractsList = it.value
-        }
-        println(">>> ")
-        println(">>> CardReaderApi.printCardContent - CONTRACTS")
-        val contracts = mutableListOf<ByteArray>()
-        cardContent.contracts.forEach {
-            println(">>> CardReaderApi.printCardContent - ${it.key} : ${getSfiContent(it.value)}")
-            contracts.add(it.value)
-        }
-        println(">>> ")
-        println(">>> CardReaderApi.printCardContent - EVENT")
-        val events = mutableListOf<ByteArray>()
-        cardContent.eventLog.forEach {
-            println(">>> CardReaderApi.printCardContent - ${it.key} : ${getSfiContent(it.value)}")
-            events.add(it.value)
-        }
-        println(">>> ")
-        println(">>> ")
-    }
-
-    private fun getSfiContent(content: ByteArray?): String = BytesUtils.bytesToString(
-        content ?: byteArrayOf(0))
 }
