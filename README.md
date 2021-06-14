@@ -212,7 +212,7 @@ Add a product flavour to the `device` flavour dimension
 ```
 
 Create the flavours sourceSet folder `coppernic` in the `app/src` folder.  
-Then create in `coppernic` the package folders that will contain the code classes: `org/eclipse/keyple/demo/validator/`
+Then create in `coppernic` the package folders that will contain the code classes: `org/calypsonet/keyple/demo/control/`
 
 Declare the sourceSet folder associated to the flavour in the `build.gradle` file :
 ```groovy
