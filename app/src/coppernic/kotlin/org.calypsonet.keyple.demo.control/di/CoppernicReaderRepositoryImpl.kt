@@ -25,9 +25,11 @@ package org.calypsonet.keyple.demo.control.di
 
 import android.app.Activity
 import android.content.Context
+import android.media.MediaPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.calypsonet.keyple.demo.control.R
 import org.eclipse.keyple.coppernic.ask.plugin.Cone2ContactReader
 import org.eclipse.keyple.coppernic.ask.plugin.Cone2ContactlessReader
 import org.eclipse.keyple.coppernic.ask.plugin.Cone2PluginFactory
@@ -45,12 +47,19 @@ import javax.inject.Inject
 class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationContext: Context, private val readerObservationExceptionHandler: ReaderObservationExceptionHandler) :
     IReaderRepository {
 
+    lateinit var successMedia: MediaPlayer
+    lateinit var errorMedia: MediaPlayer
+
     override var poReader: Reader? = null
     override var samReaders: MutableMap<String, Reader> = mutableMapOf()
 
     @Throws(KeypleException::class)
     override fun registerPlugin(activity: Activity) {
         runBlocking {
+
+            successMedia = MediaPlayer.create(activity, R.raw.success)
+            errorMedia = MediaPlayer.create(activity, R.raw.error)
+
             val pluginFactory: Cone2PluginFactory?
             pluginFactory = withContext(Dispatchers.IO) {
                 Cone2PluginFactory.init(applicationContext, readerObservationExceptionHandler)
@@ -67,8 +76,8 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
         poReader?.let {
 
             it.activateProtocol(
-                getContactlessIsoProtocol()!!.readerProtocolName,
-                getContactlessIsoProtocol()!!.applicationProtocolName
+                getContactlessIsoProtocol().readerProtocolName,
+                getContactlessIsoProtocol().applicationProtocolName
             )
 
             this.poReader = poReader
@@ -110,30 +119,39 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
         }
     }
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol? {
+    override fun getContactlessIsoProtocol(): PoReaderProtocol {
         return PoReaderProtocol(
             ParagonSupportedContactlessProtocols.ISO_14443.name,
             ParagonSupportedContactlessProtocols.ISO_14443.name
         )
     }
 
-    override fun getContactlessMifareProtocol(): PoReaderProtocol? {
-        return PoReaderProtocol(
-            ParagonSupportedContactlessProtocols.MIFARE.name,
-            ParagonSupportedContactlessProtocols.MIFARE.name
-        )
-    }
-
     override fun getSamReaderProtocol(): String = ParagonSupportedContactProtocols.INNOVATRON_HIGH_SPEED_PROTOCOL.name
 
     override fun clear() {
-        poReader?.deactivateProtocol(getContactlessIsoProtocol()!!.readerProtocolName)
+        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         samReaders.forEach {
             (it.value as AbstractLocalReader).deactivateProtocol(
                 getSamReaderProtocol()
             )
         }
+
+        successMedia.stop()
+        successMedia.release()
+
+        errorMedia.stop()
+        errorMedia.release()
+    }
+
+    override fun displayResultSuccess(): Boolean {
+        successMedia.start()
+        return true
+    }
+
+    override fun displayResultFailed(): Boolean {
+        errorMedia.start()
+        return true
     }
 
     companion object {

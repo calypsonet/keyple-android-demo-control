@@ -15,6 +15,7 @@ package org.calypsonet.keyple.demo.control.activities
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_card_reader.loadingAnimation
@@ -22,21 +23,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.eclipse.keyple.core.service.event.ObservableReader
-import org.eclipse.keyple.core.service.event.ReaderEvent
-import org.eclipse.keyple.core.service.exception.KeyplePluginInstantiationException
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.data.CardReaderApi
 import org.calypsonet.keyple.demo.control.di.scopes.ActivityScoped
 import org.calypsonet.keyple.demo.control.mock.MockUtils
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Status
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
+import org.eclipse.keyple.core.service.event.ObservableReader
+import org.eclipse.keyple.core.service.event.ReaderEvent
+import org.eclipse.keyple.core.service.exception.KeyplePluginInstantiationException
 import timber.log.Timber
 import java.util.Timer
 import java.util.TimerTask
-import javax.inject.Inject
 
 
 @ActivityScoped
@@ -45,11 +44,7 @@ class CardReaderActivity : BaseActivity() {
 
     @Suppress("DEPRECATION") private lateinit var progress: ProgressDialog
 
-    @Inject
-    lateinit var cardReaderApi: CardReaderApi
-
     private var poReaderObserver: PoObserver? = null
-    private var readersInitialized = false
 
     private lateinit var ticketingSession: ITicketingSession
 
@@ -68,6 +63,8 @@ class CardReaderActivity : BaseActivity() {
         setContentView(R.layout.activity_card_reader)
         setSupportActionBar(findViewById(R.id.toolbar))
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         @Suppress("DEPRECATION")
         progress = ProgressDialog(this)
         @Suppress("DEPRECATION")
@@ -76,11 +73,19 @@ class CardReaderActivity : BaseActivity() {
         progress.setCancelable(false)
     }
 
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        if(menuItem.itemId == android.R.id.home){
+            finish()
+        }
+
+        return super.onOptionsItemSelected(menuItem)
+    }
+
     override fun onResume() {
         super.onResume()
         loadingAnimation.playAnimation()
 
-        if (!readersInitialized) {
+        if (!cardReaderApi.readersInitialized) {
             GlobalScope.launch {
                 withContext(Dispatchers.Main) {
                     showProgress()
@@ -91,7 +96,7 @@ class CardReaderActivity : BaseActivity() {
                         poReaderObserver = PoObserver()
                         cardReaderApi.init(poReaderObserver, this@CardReaderActivity)
                         ticketingSession = cardReaderApi.getTicketingSession()!!
-                        readersInitialized = true
+                        cardReaderApi.readersInitialized = true
                         handleAppEvents(AppState.WAIT_CARD, null)
                         cardReaderApi.startNfcDetection()
                     } catch (e: KeyplePluginInstantiationException) {
@@ -108,7 +113,7 @@ class CardReaderActivity : BaseActivity() {
                         }
                     }
                 }
-                if (readersInitialized) {
+                if (cardReaderApi.readersInitialized) {
                     withContext(Dispatchers.Main) {
                         dismissProgress()
                     }
@@ -122,14 +127,13 @@ class CardReaderActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         loadingAnimation.cancelAnimation()
-        if (readersInitialized) {
+        if (cardReaderApi.readersInitialized) {
             cardReaderApi.stopNfcDetection()
             Timber.d("stopNfcDetection")
         }
     }
 
     override fun onDestroy() {
-        readersInitialized = false
         cardReaderApi.onDestroy(poReaderObserver)
         poReaderObserver = null
         super.onDestroy()
@@ -233,6 +237,12 @@ class CardReaderActivity : BaseActivity() {
                                         ticketingSession.launchControlProcedure(locationFileManager.getLocations())
                                     }
                                     withContext(Dispatchers.Main) {
+                                        if(cardReaderResponse.status == Status.EMPTY_CARD){
+                                            cardReaderApi.displayResultFailed()
+                                        }
+                                        else{
+                                            cardReaderApi.displayResultSuccess()
+                                        }
                                         progress.dismiss()
                                         displayResult(cardReaderResponse)
                                     }
@@ -299,6 +309,7 @@ class CardReaderActivity : BaseActivity() {
                     startActivity(intent)
                 }
                 Status.LOADING, Status.ERROR, Status.SUCCESS, Status.INVALID_CARD -> {
+                    cardReaderApi.displayResultFailed()
                     val intent = Intent(this@CardReaderActivity, NetworkInvalidActivity::class.java)
                     intent.putExtra(CARD_CONTENT, cardReaderResponse)
                     startActivity(intent)

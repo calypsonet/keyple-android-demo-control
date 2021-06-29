@@ -31,13 +31,27 @@ interface IReaderRepository {
 
     fun getSamReader(): Reader?
     fun getContactlessIsoProtocol(): PoReaderProtocol?
-    fun getContactlessMifareProtocol(): PoReaderProtocol?
-    fun getSamReaderProtocol(): String
+    fun getSamReaderProtocol(): String?
     fun clear()
 
     fun isMockedResponse(): Boolean = false
 
     fun getPermissions(): Array<String>? = null
+
+    /**
+     * Method used only for Flowbird device. Changes color and sound if needed
+     */
+    fun displayWaiting(): Boolean = false
+
+    /**
+     * Method used only for Flowbird device. Changes color and sound if needed
+     */
+    fun displayResultSuccess(): Boolean = false
+
+    /**
+     * Method used only for Flowbird device. Changes color and sound if needed
+     */
+    fun displayResultFailed(): Boolean = false
 }
 
 data class PoReaderProtocol(val readerProtocolName: String, val applicationProtocolName: String)

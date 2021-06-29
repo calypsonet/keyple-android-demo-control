@@ -13,8 +13,12 @@ package org.calypsonet.keyple.demo.control.di
 
 import android.app.Activity
 import android.content.Context
+import android.media.MediaPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.reader.IReaderRepository
+import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
 import org.eclipse.keyple.core.plugin.AbstractLocalReader
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardService
@@ -24,13 +28,10 @@ import org.eclipse.keyple.core.service.exception.KeypleException
 import org.eclipse.keyple.core.service.exception.KeyplePluginInstantiationException
 import org.eclipse.keyple.core.service.util.ContactCardCommonProtocols
 import org.eclipse.keyple.core.service.util.ContactlessCardCommonProtocols
-import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPlugin
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactory
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcProtocolSettings
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
-import org.eclipse.keyple.plugin.android.nfc.AndroidNfcSupportedProtocols
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactory
 import org.eclipse.keyple.plugin.android.omapi.PLUGIN_NAME
 import timber.log.Timber
@@ -42,11 +43,18 @@ class OmapiReaderRepositoryImpl @Inject constructor(
 ) :
     IReaderRepository {
 
+    lateinit var successMedia: MediaPlayer
+    lateinit var errorMedia: MediaPlayer
+
     override var poReader: Reader? = null
     override var samReaders: MutableMap<String, Reader> = mutableMapOf()
 
     @Throws(KeypleException::class)
     override fun registerPlugin(activity: Activity) {
+
+        successMedia = MediaPlayer.create(activity, R.raw.success)
+        errorMedia = MediaPlayer.create(activity, R.raw.error)
+
         SmartCardService.getInstance().registerPlugin(
             AndroidNfcPluginFactory(
                 activity,
@@ -78,15 +86,10 @@ class OmapiReaderRepositoryImpl @Inject constructor(
             androidNfcReader.noPlateformSound = false
             androidNfcReader.skipNdefCheck = false
 
-            (poReader as ObservableReader).activateProtocol(
-                getContactlessMifareProtocol()!!.readerProtocolName,
-                getContactlessMifareProtocol()!!.applicationProtocolName
-            )
-
             // with this protocol settings we activate the nfc for ISO1443_4 protocol
             (poReader as ObservableReader).activateProtocol(
-                getContactlessIsoProtocol()!!.readerProtocolName,
-                getContactlessIsoProtocol()!!.applicationProtocolName
+                getContactlessIsoProtocol().readerProtocolName,
+                getContactlessIsoProtocol().applicationProtocolName
             )
         }
         return poReader
@@ -133,17 +136,10 @@ class OmapiReaderRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol? {
+    override fun getContactlessIsoProtocol(): PoReaderProtocol {
         return PoReaderProtocol(
             ContactlessCardCommonProtocols.ISO_14443_4.name,
             AndroidNfcProtocolSettings.getSetting(ContactlessCardCommonProtocols.ISO_14443_4.name)
-        )
-    }
-
-    override fun getContactlessMifareProtocol(): PoReaderProtocol? {
-        return PoReaderProtocol(
-            AndroidNfcSupportedProtocols.MIFARE_CLASSIC.name,
-            AndroidNfcProtocolSettings.getSetting(AndroidNfcSupportedProtocols.MIFARE_CLASSIC.name)
         )
     }
 
@@ -152,15 +148,29 @@ class OmapiReaderRepositoryImpl @Inject constructor(
     }
 
     override fun clear() {
-
         samReaders.forEach {
             (it.value as AbstractLocalReader).deactivateProtocol(getSamReaderProtocol())
         }
 
         poReader?.let {
-            (poReader as ObservableReader).deactivateProtocol(getContactlessMifareProtocol()!!.readerProtocolName)
-            (poReader as ObservableReader).deactivateProtocol(getContactlessIsoProtocol()!!.readerProtocolName)
+            (poReader as ObservableReader).deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
         }
+
+        successMedia.stop()
+        successMedia.release()
+
+        errorMedia.stop()
+        errorMedia.release()
+    }
+
+    override fun displayResultSuccess(): Boolean {
+        successMedia.start()
+        return true
+    }
+
+    override fun displayResultFailed(): Boolean {
+        errorMedia.start()
+        return true
     }
 
     companion object {

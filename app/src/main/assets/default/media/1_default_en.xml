@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<medias>
+    <!-- hunting -->
+    <media domain="KeypleFlowbirdDomain" language="en" id="huntingAll">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="on"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="huntingAll">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="on"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="huntingAll">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="on"/>
+    </media>
+
+    <media domain="KeypleFlowbirdDomain" language="en" id="huntingClessOnly">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="on"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="huntingClessOnly">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="on"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="huntingClessOnly">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="on"/>
+    </media>
+
+    <media domain="KeypleFlowbirdDomain" language="en" id="huntingNone">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="huntingNone">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="huntingNone">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+    </media>
+
+    <!-- validation success -->
+    <media domain="KeypleFlowbirdDomain" language="en" id="successCless">
+        <led name="target_red" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="target_green" mode="on"/>
+        <sound name="success.mp3" />
+        <text_display id="customer.result.OK"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="successCless">
+        <led name="target_red" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="target_green" mode="on"/>
+        <sound name="success.mp3" />
+        <text_display id="customer.result.OK"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="successCless">
+        <led name="target_red" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="target_green" mode="on"/>
+        <sound name="success.mp3" />
+        <text_display id="customer.result.OK"/>
+    </media>
+
+
+    <!-- validation error -->
+    <media domain="KeypleFlowbirdDomain" language="en" id="errorCless">
+        <led name="target_blue" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_red" mode="on"/>
+        <text_display id="customer.result.KO"/>
+        <sound name="error.mp3" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="errorCless">
+        <led name="target_blue" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_red" mode="on"/>
+        <text_display id="customer.result.KO"/>
+        <sound name="error.mp3" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="errorCless">
+        <led name="target_blue" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_red" mode="on"/>
+        <text_display id="customer.result.KO"/>
+        <sound name="error.mp3" />
+    </media>
+
+
+    <!-- validator states -->
+    <media domain="KeypleFlowbirdDomain" language="en" id="nominalState">
+        <led name="status_red" mode="off" />
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="on" />
+        <led name="light"        mode="on" />
+        <text_display id="customer.display.selection.title"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="nominalState">
+        <led name="status_red" mode="off" />
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="on" />
+        <led name="light"        mode="on" />
+        <text_display id="customer.display.selection.title"/>
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="nominalState">
+        <led name="status_red" mode="off" />
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="on" />
+        <led name="light"        mode="on" />
+        <text_display id="customer.display.selection.title"/>
+    </media>
+
+    <media domain="KeypleFlowbirdDomain" language="en" id="degradedState">
+        <led name="status_red" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="status_amber" mode="on" />
+        <led name="light"        mode="on" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="degradedState">
+        <led name="status_red" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="status_amber" mode="on" />
+        <led name="light"        mode="on" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="degradedState">
+        <led name="status_red" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="status_amber" mode="on" />
+        <led name="light"        mode="on" />
+    </media>
+
+    <media domain="KeypleFlowbirdDomain" language="en" id="serviceClosed">
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="light"        mode="off" />
+        <led name="status_red" mode="on" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="serviceClosed">
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="light"        mode="off" />
+        <led name="status_red" mode="on" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="serviceClosed">
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="light"        mode="off" />
+        <led name="status_red" mode="on" />
+    </media>
+
+    <media domain="KeypleFlowbirdDomain" language="en" id="maintenance">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="light"        mode="off" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="maintenance">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="light"        mode="off" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="maintenance">
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="light"        mode="off" />
+    </media>
+
+    <media domain="KeypleFlowbirdDomain" language="en" id="outoforder">
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="light"       mode="off" />
+        <led name="status_red" mode="on" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="outoforder">
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="light"       mode="off" />
+        <led name="status_red" mode="on" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="outoforder">
+        <led name="status_amber" mode="off" />
+        <led name="status_green" mode="off" />
+        <led name="target_red" mode="off"/>
+        <led name="target_green" mode="off"/>
+        <led name="target_blue" mode="off"/>
+        <led name="light"       mode="off" />
+        <led name="status_red" mode="on" />
+    </media>
+
+    <!-- auth -->
+    <media domain="KeypleFlowbirdDomain" language="en" id="authSuccess">
+        <sound name="success.mp3" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="authSuccess">
+        <sound name="success.mp3" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="authSuccess">
+        <sound name="success.mp3" />
+    </media>
+
+    <media domain="KeypleFlowbirdDomain" language="en" id="authDenied">
+        <sound name="error.mp3" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="es" id="authDenied">
+        <sound name="error.mp3" />
+    </media>
+    <media domain="KeypleFlowbirdDomain" language="fr" id="authDenied">
+        <sound name="error.mp3" />
+    </media>
+</medias>

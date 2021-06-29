@@ -33,6 +33,8 @@ class CardReaderApi @Inject constructor(
 
     private var ticketingSession: ITicketingSession? = null
 
+    var readersInitialized = false
+
     @Throws(
         KeyplePluginInstantiationException::class,
         IllegalStateException::class,
@@ -111,6 +113,8 @@ class CardReaderApi @Inject constructor(
     }
 
     fun onDestroy(observer: ObservableReader.ReaderObserver?) {
+        readersInitialized = false
+
         readerRepository.clear()
         if (observer != null && readerRepository.poReader != null) {
             (readerRepository.poReader as ObservableReader).removeObserver(observer)
@@ -126,4 +130,8 @@ class CardReaderApi @Inject constructor(
     fun isMockedResponse(): Boolean {
         return readerRepository.isMockedResponse()
     }
+
+    fun displayResultSuccess(): Boolean = readerRepository.displayResultSuccess()
+
+    fun displayResultFailed(): Boolean = readerRepository.displayResultFailed()
 }

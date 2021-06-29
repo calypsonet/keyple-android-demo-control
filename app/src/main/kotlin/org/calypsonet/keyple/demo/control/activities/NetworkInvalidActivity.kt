@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.logo_toolbar.toolbarLogo
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.activities.CardReaderActivity.Companion.CARD_CONTENT
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
+import timber.log.Timber
 
 class NetworkInvalidActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +35,15 @@ class NetworkInvalidActivity : BaseActivity() {
         invalidDescription.text = cardContent?.errorMessage
         presentBtn.setOnClickListener {
             onBackPressed()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (cardReaderApi.readersInitialized) {
+            cardReaderApi.stopNfcDetection()
+            Timber.d("stopNfcDetection")
         }
     }
 }
