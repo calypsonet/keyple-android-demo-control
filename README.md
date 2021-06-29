@@ -11,6 +11,7 @@ It implements multiple plugins and switching from one plugin to another is made 
 - [Keyple Plugin Android OMAPI | Eclipse Keyple](https://keyple.org/components-java/plugins/omapi/)
 - [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic)
 - [Famoco](https://github.com/calypsonet/keyple-famoco)
+- [Flowbird](https://github.com/calypsonet/keyple-android-plugin-flowbird)
 
 The source code and APKs for several terminals are available at  [calypsonet/keyple-android-demo-control/releases](https://github.com/calypsonet/keyple-android-demo-control/releases)
 
@@ -27,8 +28,8 @@ The demo works with the cards provided in the [Test kit](https://calypsonet.org/
 
 This demo can be used with Calypso cards with the following configurations:
 * AID 315449432E49434131h - File Structure 05h (CD Light/GTML Compatibility)
-* (Work in progress) AID 315449432E49434133h - File Structure 32h (Calypso Light Classic)
-* (Work in progress) AID A0000004040125090101h - File Structure 05h (CD Light/GTML Compatibility)
+* AID 315449432E49434133h - File Structure 32h (Calypso Light Classic)
+* AID A0000004040125090101h - File Structure 05h (CD Light/GTML Compatibility)
 
 ## Control Procedure
 
@@ -183,6 +184,11 @@ Here are some examples:
 ```groovy
     famocoImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:1.0.0"
     famocoImplementation "org.eclipse.keyple:keyple-android-plugin-famoco-se-communication:1.0.0"
+```
+
+- Flowbird device:
+```groovy
+    flowbirdImplementation "org.eclipse.keyple:keyple-android-plugin-flowbird:1.1.0"
 ```
 
 ## Device specific flavours
