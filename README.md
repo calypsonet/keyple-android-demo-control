@@ -12,6 +12,7 @@ It implements multiple plugins and switching from one plugin to another is made 
 - [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic)
 - [Famoco](https://github.com/calypsonet/keyple-famoco)
 - [Flowbird](https://github.com/calypsonet/keyple-android-plugin-flowbird)
+- [Bluebird](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
 
 The source code and APKs for several terminals are available at  [calypsonet/keyple-android-demo-control/releases](https://github.com/calypsonet/keyple-android-demo-control/releases)
 
@@ -189,6 +190,11 @@ Here are some examples:
 - Flowbird device:
 ```groovy
     flowbirdImplementation "org.eclipse.keyple:keyple-android-plugin-flowbird:1.1.0"
+```
+
+- Bluebird device:
+```groovy
+    bluebirdImplementation "org.eclipse.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:1.0.0"
 ```
 
 ## Device specific flavours
