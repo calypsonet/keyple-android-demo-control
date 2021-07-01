@@ -237,7 +237,8 @@ class CardReaderActivity : BaseActivity() {
                                         ticketingSession.launchControlProcedure(locationFileManager.getLocations())
                                     }
                                     withContext(Dispatchers.Main) {
-                                        if(cardReaderResponse.status == Status.EMPTY_CARD){
+                                        if(cardReaderResponse.status == Status.EMPTY_CARD ||
+                                            cardReaderResponse.status == Status.ERROR){
                                             cardReaderApi.displayResultFailed()
                                         }
                                         else{
