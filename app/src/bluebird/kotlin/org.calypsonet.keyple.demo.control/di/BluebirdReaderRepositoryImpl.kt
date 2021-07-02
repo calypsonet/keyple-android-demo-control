@@ -28,30 +28,30 @@ import android.media.MediaPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.reader.IReaderRepository
+import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keyple.bluebird.plugin.BluebirdContactReader
 import org.eclipse.keyple.bluebird.plugin.BluebirdContactlessReader
 import org.eclipse.keyple.bluebird.plugin.BluebirdPlugin
 import org.eclipse.keyple.bluebird.plugin.BluebirdPluginFactoryProvider
 import org.eclipse.keyple.bluebird.plugin.BluebirdSupportContactlessProtocols
-import org.eclipse.keyple.core.common.KeyplePluginExtensionFactory
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
-import org.eclipse.keyple.core.service.spi.ReaderObservationExceptionHandlerSpi
 import org.eclipse.keyple.core.util.protocol.ContactCardCommonProtocol
-import org.eclipse.keyple.demo.control.reader.IReaderRepository
-import org.eclipse.keyple.demo.control.reader.PoReaderProtocol
 import javax.inject.Inject
 
 class BluebirdReaderRepositoryImpl @Inject constructor(
-    private val readerObservationExceptionHandler: ReaderObservationExceptionHandlerSpi
+    private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
 ) :
     IReaderRepository {
 
-    lateinit var successMedia: MediaPlayer
-    lateinit var errorMedia: MediaPlayer
+    private lateinit var successMedia: MediaPlayer
+    private lateinit var errorMedia: MediaPlayer
 
     override var poReader: Reader? = null
     override var samReaders: MutableList<Reader> = mutableListOf()
@@ -63,9 +63,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
             successMedia = MediaPlayer.create(activity, R.raw.success)
             errorMedia = MediaPlayer.create(activity, R.raw.error)
 
-            val pluginFactory: BluebirdPluginFactory?
-            val pluginFactory: KeyplePluginExtensionFactory?
-            pluginFactory = withContext(Dispatchers.IO) {
+            val pluginFactory = withContext(Dispatchers.IO) {
                 BluebirdPluginFactoryProvider.getFactory(activity)
             }
             val smartCardService = SmartCardServiceProvider.getService()
@@ -76,7 +74,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
 
     @Throws(KeyplePluginException::class)
-    override suspend fun initPoReader(): Reader? {
+    override suspend fun initPoReader(): Reader {
         val bluebirdPlugin =
             SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
         val poReader = bluebirdPlugin?.getReader(BluebirdContactlessReader.READER_NAME)
@@ -140,6 +138,8 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun getSamReaderProtocol(): String =
         ContactCardCommonProtocol.ISO_7816_3.name
 
+    override fun getSamRegex(): String = SAM_READER_NAME_REGEX
+
     override fun clear() {
         poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
@@ -166,6 +166,10 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun displayResultFailed(): Boolean {
         errorMedia.start()
         return true
+    }
+
+    companion object{
+        const val SAM_READER_NAME_REGEX = ".*ContactReader"
     }
 }
 

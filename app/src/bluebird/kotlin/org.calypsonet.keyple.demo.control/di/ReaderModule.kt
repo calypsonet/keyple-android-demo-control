@@ -23,15 +23,11 @@
  ********************************************************************************/
 package org.calypsonet.keyple.demo.control.di
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
-import org.eclipse.keyple.core.service.event.ReaderObservationExceptionHandler
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.eclipse.keyple.core.service.spi.ReaderObservationExceptionHandlerSpi
-import org.eclipse.keyple.demo.control.di.scopes.AppScoped
-import org.eclipse.keyple.demo.control.reader.IReaderRepository
+import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import timber.log.Timber
 
 @Suppress("unused")
@@ -41,18 +37,14 @@ class ReaderModule {
     @Provides
     @AppScoped
     fun provideReaderRepository(
-        context: Context,
-        readerObservationExceptionHandler: ReaderObservationExceptionHandlerSpi
+        readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
     ): IReaderRepository =
-        BluebirdReaderRepositoryImpl(
-            readerObservationExceptionHandler
-        )
+        BluebirdReaderRepositoryImpl(readerObservationExceptionHandler)
 
     @Provides
     @AppScoped
-    fun provideReaderObservationExceptionHandler(): ReaderObservationExceptionHandlerSpi =
-        ReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
+    fun provideReaderObservationExceptionHandler(): CardReaderObservationExceptionHandlerSpi =
+        CardReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
             Timber.e("An unexpected reader error occurred: $pluginName:$readerName : $e")
-            e.printStackTrace()
         }
 }

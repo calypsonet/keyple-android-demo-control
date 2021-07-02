@@ -12,9 +12,6 @@
 
 package org.calypsonet.keyple.demo.control.ticketing.procedure
 
-import org.eclipse.keyple.card.calypso.card.CalypsoCard
-import org.eclipse.keyple.card.calypso.transaction.CardTransactionService
-import org.eclipse.keyple.core.service.Reader
 import org.calypsonet.keyple.demo.control.exception.ControlException
 import org.calypsonet.keyple.demo.control.exception.EnvironmentControlException
 import org.calypsonet.keyple.demo.control.exception.EnvironmentControlExceptionKey
@@ -33,6 +30,7 @@ import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_1
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_2
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_3
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_4
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Contracts
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0A
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0B
@@ -41,32 +39,10 @@ import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0D
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EnvironmentAndHolder
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventLog
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
-import org.eclipse.keyple.demo.control.exception.EnvironmentControlException
-import org.eclipse.keyple.demo.control.exception.EnvironmentControlExceptionKey
-import org.eclipse.keyple.demo.control.exception.EventControlException
-import org.eclipse.keyple.demo.control.exception.EventControlExceptionKey
-import org.eclipse.keyple.demo.control.exception.NoLocationDefinedException
-import org.eclipse.keyple.demo.control.models.CardReaderResponse
-import org.eclipse.keyple.demo.control.models.Contract
-import org.eclipse.keyple.demo.control.models.KeypleSettings
-import org.eclipse.keyple.demo.control.models.Location
-import org.eclipse.keyple.demo.control.models.Status
-import org.eclipse.keyple.demo.control.models.Validation
-import org.eclipse.keyple.demo.control.models.mapper.ContractMapper
-import org.eclipse.keyple.demo.control.models.mapper.ValidationMapper
-import org.eclipse.keyple.demo.control.ticketing.AbstractTicketingSession
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_1
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_2
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_3
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_4
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_Contracts
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0A
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0B
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0C
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0D
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_EnvironmentAndHolder
-import org.eclipse.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventLog
+import org.calypsonet.terminal.calypso.WriteAccessLevel
+import org.calypsonet.terminal.calypso.card.CalypsoCard
+import org.eclipse.keyple.card.calypso.CalypsoExtensionService
+import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.parser.keyple.ContractStructureParser
 import org.eclipse.keyple.parser.keyple.CounterStructureParser
 import org.eclipse.keyple.parser.keyple.EnvironmentHolderStructureParser
@@ -99,6 +75,9 @@ class ControlProcedure {
         var errorTitle: String? = null
         var validation: Validation? = null
         var status: Status = Status.ERROR
+
+        val calypsoCardExtensionProvider = CalypsoExtensionService.getInstance()
+
         try {
             var inTransactionFlag: Boolean //true if a SAM is available and a secure session have been opened
             val poTransaction =
@@ -109,9 +88,9 @@ class ControlProcedure {
                          */
                         inTransactionFlag = true
 
-                        ticketingSession.setupCardResourceService(CalypsoInfo.SAM_READER_NAME_REGEX, CalypsoInfo.SAM_PROFILE_NAME)
+                        ticketingSession.setupCardResourceService(SAM_PROFILE_NAME)
 
-                        ticketingSession.calypsoCardExtensionProvider.createCardTransaction(
+                        calypsoCardExtensionProvider.createCardTransaction(
                             poReader,
                             calypsoCard,
                             ticketingSession.getSecuritySettings()
@@ -121,7 +100,7 @@ class ControlProcedure {
                          * Step 1.2 - Else, read the environment record.
                          */
                         inTransactionFlag = false
-                        ticketingSession.calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
+                        calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
                             poReader,
                             calypsoCard
                         )
@@ -129,14 +108,14 @@ class ControlProcedure {
                 } catch (e: IllegalStateException) {
                     Timber.w(e)
                     inTransactionFlag = false
-                    ticketingSession.calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
+                    calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
                         poReader,
                         calypsoCard
                     )
                 } catch (e: Exception) {
                     Timber.w(e)
                     inTransactionFlag = false
-                    ticketingSession.calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
+                    calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
                         poReader,
                         calypsoCard
                     )
@@ -154,13 +133,13 @@ class ControlProcedure {
                 /*
                  * Open a transaction to read/write the Calypso PO and read the Environment file
                  */
-                poTransaction.processOpening(PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_DEBIT)
+                poTransaction.processOpening(WriteAccessLevel.DEBIT)
             }
             else{
                 /*
                  * Read the Environment file
                  */
-                poTransaction.processPoCommands()
+                poTransaction.processCardCommands()
             }
 
             val efEnvironmentHolder =
@@ -426,10 +405,6 @@ class ControlProcedure {
         } catch (e: EnvironmentControlException) {
             Timber.e(e)
             errorMessage = e.message
-        } catch (e: Exception) {
-            Timber.e(e)
-            errorMessage = e.message
-            status = Status.ERROR
         } catch (e: EventControlException) {
             Timber.e(e)
             errorMessage = e.message
@@ -443,6 +418,7 @@ class ControlProcedure {
             Timber.e(e)
             errorTitle = e.title
             errorMessage = e.message
+            status = Status.ERROR
         } catch (e: Exception) {
             Timber.e(e)
             errorMessage = e.message

@@ -34,11 +34,10 @@ import javax.inject.Inject
 
 class LocationFileManager @Inject constructor(context: Context) {
 
-    var locationList: List<Location>? = null
+    private var locationList: List<Location>? = null
     var locationsFromResources: String
 
     init {
-//        val sdCardPath = Environment.getExternalStorageDirectory().absolutePath
         val sdCardPath = FileHelper.getExternalStoragePath()
         val dirPath = "$sdCardPath$LOCATION_DIRECTORY_PATH"
 
@@ -48,6 +47,7 @@ class LocationFileManager @Inject constructor(context: Context) {
              * Create App directory
              */
             val dirCreated = FileHelper.createDirectory(sdCardPath, LOCATION_DIRECTORY_PATH)
+            Timber.i("Locations file directory created : $dirCreated")
         }
 
         val fileExists = FileHelper.fileExist(FILE_PATH)
@@ -64,18 +64,18 @@ class LocationFileManager @Inject constructor(context: Context) {
                 name = fileName,
                 content = locationsFromResources
             )
+            Timber.i("Locations file created : $fileCreated")
         }
     }
 
     fun getLocations(): List<Location> {
         if (locationList == null) {
-            try{
+            locationList = try{
                 val file = getFileFromSdCard()
-                locationList = getGson().fromJson(file, Array<Location>::class.java).toList()
-            }
-            catch (e: FileNotFoundException){
+                getGson().fromJson(file, Array<Location>::class.java).toList()
+            } catch (e: FileNotFoundException){
                 Timber.e(e)
-                locationList = getGson().fromJson(locationsFromResources, Array<Location>::class.java).toList()
+                getGson().fromJson(locationsFromResources, Array<Location>::class.java).toList()
             }
         }
         return locationList!!

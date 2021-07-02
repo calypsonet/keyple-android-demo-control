@@ -30,9 +30,8 @@ import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Status
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
-import org.eclipse.keyple.core.service.event.ObservableReader
-import org.eclipse.keyple.core.service.event.ReaderEvent
-import org.eclipse.keyple.core.service.exception.KeyplePluginInstantiationException
+import org.calypsonet.terminal.reader.CardReaderEvent
+import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 import java.util.Timer
 import java.util.TimerTask
@@ -139,13 +138,13 @@ class CardReaderActivity : BaseActivity() {
      * @param appState
      * @param readerEvent
      */
-    private fun handleAppEvents(appState: AppState, readerEvent: ReaderEvent?) {
+    private fun handleAppEvents(appState: AppState, readerEvent: CardReaderEvent?) {
 
         var newAppState = appState
 
-        Timber.i("Current state = $currentAppState, wanted new state = $newAppState, event = ${readerEvent?.eventType}")
-        when (readerEvent?.eventType) {
-            ReaderEvent.EventType.CARD_INSERTED, ReaderEvent.EventType.CARD_MATCHED -> {
+        Timber.i("Current state = $currentAppState, wanted new state = $newAppState, event = ${readerEvent?.type}")
+        when (readerEvent?.type) {
+            CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
                 if (newAppState == AppState.WAIT_SYSTEM_READY) {
                     return
                 }
@@ -154,7 +153,7 @@ class CardReaderActivity : BaseActivity() {
                 val seSelectionResult =
                     ticketingSession.processDefaultSelection(readerEvent.scheduledCardSelectionsResponse)
 
-                if (!seSelectionResult.hasActiveSelection()) {
+                if (seSelectionResult.activeSelectionIndex == -1) {
                     Timber.e("PO Not selected")
                     val error = getString(R.string.card_invalid_aid)
                     displayResult(
@@ -201,7 +200,7 @@ class CardReaderActivity : BaseActivity() {
                 Timber.i("A Calypso PO selection succeeded.")
                 newAppState = AppState.CARD_STATUS
             }
-            ReaderEvent.EventType.CARD_REMOVED -> {
+            CardReaderEvent.Type.CARD_REMOVED -> {
                 currentAppState = AppState.WAIT_SYSTEM_READY
             }
             else -> {
@@ -215,8 +214,8 @@ class CardReaderActivity : BaseActivity() {
             }
             AppState.CARD_STATUS -> {
                 currentAppState = newAppState
-                when (readerEvent?.eventType) {
-                    ReaderEvent.EventType.CARD_INSERTED, ReaderEvent.EventType.CARD_MATCHED -> {
+                when (readerEvent?.type) {
+                    CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
                         GlobalScope.launch {
                             try {
 
@@ -347,11 +346,11 @@ class CardReaderActivity : BaseActivity() {
         const val CARD_CONTENT = "cardContent"
     }
 
-    private inner class PoObserver : ReaderObserverSpi {
+    private inner class PoObserver : CardReaderObserverSpi {
 
-        override fun onReaderEvent(readerEvent: ReaderEvent) {
-            Timber.i("New ReaderEvent received :${readerEvent.eventType.name}")
-            if (readerEvent.eventType == ReaderEvent.EventType.CARD_MATCHED &&
+        override fun onReaderEvent(readerEvent: CardReaderEvent?) {
+            Timber.i("New ReaderEvent received :${readerEvent?.type?.name}")
+            if (readerEvent?.type == CardReaderEvent.Type.CARD_MATCHED &&
                 cardReaderApi.isMockedResponse()
             ) {
                 launchMockedEvents()

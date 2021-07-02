@@ -12,31 +12,17 @@
 package org.calypsonet.keyple.demo.control.data
 
 import android.app.Activity
-import fr.devnied.bitlib.BytesUtils
-import org.eclipse.keyple.core.card.ReaderCommunicationException
-import org.eclipse.keyple.core.service.KeyplePluginException
-import org.eclipse.keyple.core.service.ObservableReader
-import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.SmartCardService
-import org.eclipse.keyple.core.service.event.ObservableReader
-import org.eclipse.keyple.core.service.exception.KeypleException
-import org.eclipse.keyple.core.service.exception.KeyplePluginInstantiationException
-import org.eclipse.keyple.core.service.exception.KeyplePluginNotFoundException
-import org.eclipse.keyple.core.service.exception.KeypleReaderIOException
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
 import org.calypsonet.keyple.demo.control.ticketing.TicketingSession
+import org.calypsonet.terminal.reader.ObservableCardReader
+import org.calypsonet.terminal.reader.ReaderCommunicationException
+import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi
+import org.eclipse.keyple.core.service.KeyplePluginException
+import org.eclipse.keyple.core.service.ObservableReader
+import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
-import org.eclipse.keyple.core.service.spi.ReaderObserverSpi
-import org.eclipse.keyple.demo.control.di.scopes.AppScoped
-import org.eclipse.keyple.demo.control.reader.IReaderRepository
-import org.eclipse.keyple.demo.control.ticketing.CardContent
-import org.eclipse.keyple.demo.control.ticketing.TicketingSession
-import org.eclipse.keyple.demo.control.ticketing.TicketingSessionManager
-import org.eclipse.keyple.demo.control.utils.CardletUtils
-import org.eclipse.keyple.parser.dto.CardletInputDto
-import org.eclipse.keyple.parser.model.CardletDto
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -54,7 +40,7 @@ class CardReaderApi @Inject constructor(
         IllegalStateException::class,
         Exception::class
     )
-    suspend fun init(observer: ReaderObserverSpi?, activity: Activity) {
+    suspend fun init(observer: CardReaderObserverSpi?, activity: Activity) {
         /*
          * Register plugin
          */
@@ -112,7 +98,7 @@ class CardReaderApi @Inject constructor(
         */
         ticketingSession?.prepareAndSetPoDefaultSelection()
 
-        (readerRepository.poReader as ObservableReader).startCardDetection(ObservableReader.PollingMode.REPEATING)
+        (readerRepository.poReader as ObservableReader).startCardDetection(ObservableCardReader.DetectionMode.REPEATING)
     }
 
     fun stopNfcDetection() {
@@ -130,7 +116,7 @@ class CardReaderApi @Inject constructor(
         return ticketingSession
     }
 
-    fun onDestroy(observer: ReaderObserverSpi?) {
+    fun onDestroy(observer: CardReaderObserverSpi?) {
         readersInitialized = false
 
         readerRepository.clear()

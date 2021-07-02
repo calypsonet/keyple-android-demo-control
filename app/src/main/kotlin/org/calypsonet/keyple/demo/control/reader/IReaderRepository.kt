@@ -22,7 +22,7 @@ interface IReaderRepository {
 
     fun registerPlugin(activity: Activity)
 
-    suspend fun initPoReader(): Reader?
+    suspend fun initPoReader(): Reader
 
     suspend fun initSamReaders(): List<Reader>
 
@@ -30,6 +30,8 @@ interface IReaderRepository {
     fun getContactlessIsoProtocol(): PoReaderProtocol?
     fun getSamReaderProtocol(): String?
     fun clear()
+    fun getPlugin(): Plugin
+    fun getSamRegex(): String
 
     fun isMockedResponse(): Boolean = false
 
