@@ -33,6 +33,7 @@ object CalypsoInfo {
      *********************************/
 
     /** AID Intercode **/
+    const val AID_HIS_STRUCTURE_2H = "315449432e49434131"
     const val AID_HIS_STRUCTURE_5H = "315449432e49434131"
     const val AID_HIS_STRUCTURE_32H = "315449432E49434133"
 
@@ -43,6 +44,7 @@ object CalypsoInfo {
      *           Card types and infos
      *********************************/
 
+    const val PO_TYPE_NAME_CALYPSO_02h = "Calypso_02h"
     const val PO_TYPE_NAME_CALYPSO_05h = "Calypso_05h"
     const val PO_TYPE_NAME_CALYPSO_32h = "Calypso_32h"
     const val PO_TYPE_NAME_NAVIGO_05h = "Navigo_05h"

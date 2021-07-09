@@ -13,6 +13,7 @@
 package org.calypsonet.keyple.demo.control.models
 
 enum class StructureEnum(val key: Int) {
+    STRUCTURE_02H(0x2),
     STRUCTURE_05H(0x5),
     STRUCTURE_13H(0x13),
     STRUCTURE_32H(0x32),
