@@ -11,28 +11,6 @@
  ********************************************************************************/
 package org.calypsonet.keyple.demo.control.ticketing
 
-import fr.devnied.bitlib.BytesUtils
-import org.eclipse.keyple.calypso.command.po.exception.CalypsoPoCommandException
-import org.eclipse.keyple.calypso.command.sam.SamRevision
-import org.eclipse.keyple.calypso.command.sam.exception.CalypsoSamCommandException
-import org.eclipse.keyple.calypso.transaction.CalypsoPo
-import org.eclipse.keyple.calypso.transaction.CalypsoSam
-import org.eclipse.keyple.calypso.transaction.PoSecuritySettings
-import org.eclipse.keyple.calypso.transaction.PoSelection
-import org.eclipse.keyple.calypso.transaction.PoSelector
-import org.eclipse.keyple.calypso.transaction.PoTransaction
-import org.eclipse.keyple.calypso.transaction.SamSelection
-import org.eclipse.keyple.calypso.transaction.SamSelector
-import org.eclipse.keyple.calypso.transaction.exception.CalypsoPoTransactionException
-import org.eclipse.keyple.core.card.selection.CardResource
-import org.eclipse.keyple.core.card.selection.CardSelectionsResult
-import org.eclipse.keyple.core.card.selection.CardSelectionsService
-import org.eclipse.keyple.core.card.selection.CardSelector
-import org.eclipse.keyple.core.card.selection.MultiSelectionProcessing
-import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.event.AbstractDefaultSelectionsResponse
-import org.eclipse.keyple.core.service.event.ObservableReader
-import org.eclipse.keyple.core.service.exception.KeypleReaderException
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.exception.ControlException
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
@@ -40,13 +18,37 @@ import org.calypsonet.keyple.demo.control.models.Location
 import org.calypsonet.keyple.demo.control.models.StructureEnum
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_HIS_STRUCTURE_32H
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_HIS_STRUCTURE_5H
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_HIS_STRUCTURE_5H_2H
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_NORMALIZED_IDF_05H
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.DEFAULT_KIF_DEBIT
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.DEFAULT_KIF_LOAD
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.DEFAULT_KIF_PERSO
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_02h
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_05h
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_32h
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_NAVIGO_05h
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_OTHER
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.calypsonet.keyple.demo.control.ticketing.procedure.ControlProcedure
+import org.calypsonet.terminal.calypso.WriteAccessLevel
+import org.calypsonet.terminal.calypso.card.CalypsoCard
+import org.calypsonet.terminal.calypso.sam.CalypsoSam
+import org.calypsonet.terminal.calypso.transaction.CardSecuritySetting
+import org.calypsonet.terminal.reader.ObservableCardReader
+import org.calypsonet.terminal.reader.selection.CardSelectionManager
+import org.calypsonet.terminal.reader.selection.CardSelectionResult
+import org.calypsonet.terminal.reader.selection.ScheduledCardSelectionsResponse
+import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.card.calypso.CalypsoExtensionService
+import org.eclipse.keyple.core.service.ObservableReader
+import org.eclipse.keyple.core.service.Plugin
+import org.eclipse.keyple.core.service.Reader
+import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.eclipse.keyple.core.service.resource.CardResourceProfileConfigurator
+import org.eclipse.keyple.core.service.resource.CardResourceService
+import org.eclipse.keyple.core.service.resource.CardResourceServiceProvider
+import org.eclipse.keyple.core.service.resource.PluginsConfigurator
+import org.eclipse.keyple.core.service.spi.PluginObservationExceptionHandlerSpi
 import org.joda.time.DateTime
 import timber.log.Timber
 import java.util.EnumMap
@@ -56,15 +58,15 @@ import javax.inject.Inject
 class TicketingSession @Inject constructor(private val readerRepository: IReaderRepository) :
     ITicketingSession {
 
-    private var calypsoPoIndex05h = 0
+    private var calypsoPoIndex05h_02h = 0
     private var calypsoPoIndex32h = 0
     private var navigoCardIndex05h = 0
 
     private var now = DateTime.now()
 
-    private lateinit var calypsoPo: CalypsoPo
+    private lateinit var calypsoCard: CalypsoCard
 
-    private lateinit var cardSelection: CardSelectionsService
+    private lateinit var cardSelectionManager: CardSelectionManager
 
     override var poTypeName: String? = null
         private set
@@ -75,13 +77,16 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
     override val samReader: Reader?
         get() = readerRepository.getSamReader()
 
-    var poStructure: StructureEnum? = null
-        private set
+    private var poStructure: StructureEnum? = null
 
     private val allowedStructures: EnumMap<StructureEnum, List<String>> =
         EnumMap(StructureEnum::class.java)
 
     init {
+        allowedStructures[StructureEnum.STRUCTURE_02H] =
+            listOf(
+                PO_TYPE_NAME_CALYPSO_02h
+            )
         allowedStructures[StructureEnum.STRUCTURE_05H] =
             listOf(
                 PO_TYPE_NAME_CALYPSO_05h,
@@ -102,81 +107,92 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
         /*
          * Prepare a PO selection
          */
-        cardSelection = CardSelectionsService(MultiSelectionProcessing.FIRST_MATCH)
+        cardSelectionManager =
+            SmartCardServiceProvider.getService().createCardSelectionManager()
+
+        /* Calypso selection: configures a PoSelector with all the desired attributes to make the selection and read additional information afterwards */
+        val calypsoCardExtensionProvider = CalypsoExtensionService.getInstance()
+
+        val smartCardService = SmartCardServiceProvider.getService()
+        smartCardService.checkCardExtension(calypsoCardExtensionProvider)
 
         /* Select Calypso */
-        val poSelectionRequest05h = PoSelection(
-            PoSelector.builder()
-                .cardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
-                .aidSelector(
-                    CardSelector.AidSelector.builder()
-                        .aidToSelect(AID_HIS_STRUCTURE_5H).build()
-                )
-                .invalidatedPo(PoSelector.InvalidatedPo.REJECT).build()
-        )
+        val poSelectionRequest05h_02h =
+            calypsoCardExtensionProvider.createCardSelection()
+        poSelectionRequest05h_02h
+            .filterByDfName(AID_HIS_STRUCTURE_5H_2H)
+            .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
          * Add the selection case to the current selection
          */
-        calypsoPoIndex05h = cardSelection.prepareSelection(poSelectionRequest05h)
+        calypsoPoIndex05h_02h = cardSelectionManager.prepareSelection(poSelectionRequest05h_02h)
 
-        val poSelectionRequest32h = PoSelection(
-            PoSelector.builder()
-                .cardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
-                .aidSelector(
-                    CardSelector.AidSelector.builder()
-                        .aidToSelect(AID_HIS_STRUCTURE_32H).build()
-                )
-                .invalidatedPo(PoSelector.InvalidatedPo.REJECT).build()
-        )
+        val poSelectionRequest32h =
+            calypsoCardExtensionProvider.createCardSelection()
+        poSelectionRequest32h
+            .filterByDfName(AID_HIS_STRUCTURE_32H)
+            .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
          * Add the selection case to the current selection
          */
-        calypsoPoIndex32h = cardSelection.prepareSelection(poSelectionRequest32h)
+        calypsoPoIndex32h = cardSelectionManager.prepareSelection(poSelectionRequest32h)
 
         /*
          * NAVIGO
          */
-        val navigoCardSelectionRequest = PoSelection(
-            PoSelector.builder()
-                .cardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
-                .aidSelector(
-                    CardSelector.AidSelector.builder()
-                        .aidToSelect(AID_NORMALIZED_IDF_05H).build()
-                )
-                .invalidatedPo(PoSelector.InvalidatedPo.REJECT).build()
-        )
-        navigoCardIndex05h = cardSelection.prepareSelection(navigoCardSelectionRequest)
+
+        val navigoCardSelectionRequest =
+            calypsoCardExtensionProvider.createCardSelection()
+        navigoCardSelectionRequest
+            .filterByDfName(AID_NORMALIZED_IDF_05H)
+            .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
-         * Provide the Reader with the selection operation to be processed when a PO is inserted.
+         * Add the selection case to the current selection
          */
-        (poReader as ObservableReader).setDefaultSelectionRequest(
-            cardSelection.defaultSelectionsRequest, ObservableReader.NotificationMode.ALWAYS
+        navigoCardIndex05h = cardSelectionManager.prepareSelection(navigoCardSelectionRequest)
+
+        /*
+        * Schedule the execution of the prepared card selection scenario as soon as a card is presented
+        */
+        cardSelectionManager.scheduleCardSelectionScenario(
+            poReader as ObservableReader,
+            ObservableCardReader.DetectionMode.REPEATING,
+            ObservableCardReader.NotificationMode.ALWAYS
         )
     }
 
-    override fun processDefaultSelection(selectionResponse: AbstractDefaultSelectionsResponse?): CardSelectionsResult {
+    override fun processDefaultSelection(selectionResponse: ScheduledCardSelectionsResponse?): CardSelectionResult {
         Timber.i("selectionResponse = $selectionResponse")
-        val selectionsResult: CardSelectionsResult =
-            cardSelection.processDefaultSelectionsResponse(selectionResponse)
-        if (selectionsResult.hasActiveSelection()) {
+        val selectionsResult: CardSelectionResult =
+            cardSelectionManager.parseScheduledCardSelectionsResponse(selectionResponse)
+        if (selectionsResult.activeSelectionIndex != -1) {
             when (selectionsResult.smartCards.keys.first()) {
-                calypsoPoIndex05h -> {
-                    calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
-                    poTypeName = PO_TYPE_NAME_CALYPSO_05h
-                    poStructure = StructureEnum.findEnumByKey(calypsoPo.applicationSubtype.toInt())
+                calypsoPoIndex05h_02h -> {
+                    calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
+                    poStructure =
+                        StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
+                    when(poStructure){
+                        StructureEnum.STRUCTURE_02H -> poTypeName = PO_TYPE_NAME_CALYPSO_02h
+                        StructureEnum.STRUCTURE_05H -> poTypeName = PO_TYPE_NAME_CALYPSO_05h
+                        else -> {
+                            //Do nothing
+                        }
+                    }
                 }
                 calypsoPoIndex32h -> {
-                    calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
+                    calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
                     poTypeName = PO_TYPE_NAME_CALYPSO_32h
-                    poStructure = StructureEnum.findEnumByKey(calypsoPo.applicationSubtype.toInt())
+                    poStructure =
+                        StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
                 }
                 navigoCardIndex05h -> {
-                    calypsoPo = selectionsResult.activeSmartCard as CalypsoPo
+                    calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
                     poTypeName = PO_TYPE_NAME_NAVIGO_05h
-                    poStructure = StructureEnum.findEnumByKey(calypsoPo.applicationSubtype.toInt())
+                    poStructure =
+                        StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
                 }
                 else -> poTypeName = PO_TYPE_NAME_OTHER
             }
@@ -191,7 +207,7 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
      *
      * @return
      */
-    override fun checkStartupInfo(): Boolean = calypsoPo.startupInfo != null
+    override fun checkStartupInfo(): Boolean = calypsoCard.startupInfoRawData != null
 
     /**
      * Check card Structure
@@ -212,14 +228,11 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
      * @return [CardReaderResponse]
      */
     @Throws(
-        CalypsoPoTransactionException::class,
-        CalypsoPoCommandException::class,
-        CalypsoSamCommandException::class,
         ControlException::class
     )
     override fun launchControlProcedure(locations: List<Location>): CardReaderResponse {
         return ControlProcedure().launch(
-            calypsoPo = calypsoPo,
+            calypsoCard = calypsoCard,
             samReader = samReader,
             ticketingSession = this@TicketingSession,
             locations = locations,
@@ -227,77 +240,116 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
         )
     }
 
+    override fun getPlugin(): Plugin = readerRepository.getPlugin()
 
-    @Throws(KeypleReaderException::class, IllegalStateException::class)
-    override fun checkSamAndOpenChannel(samReader: Reader): CardResource<CalypsoSam> {
-        /*
-         * check the availability of the SAM doing a ATR based selection, open its physical and
-         * logical channels and keep it open
-         */
-        val samSelection = CardSelectionsService(MultiSelectionProcessing.FIRST_MATCH)
+    override fun getSecuritySettings(): CardSecuritySetting? {
 
-        val samSelector = SamSelector.builder()
-            .cardProtocol(readerRepository.getSamReaderProtocol())
-            .samRevision(SamRevision.C1)
-            .build()
+        val samCardResourceExtension =
+            CalypsoExtensionService.getInstance()
 
-        samSelection.prepareSelection(SamSelection(samSelector))
+        samCardResourceExtension.createCardSecuritySetting()
 
-        return try {
-            if (samReader.isCardPresent) {
-                val selectionResult = samSelection.processExplicitSelections(samReader)
-                if (selectionResult.hasActiveSelection()) {
-                    val calypsoSam = selectionResult.activeSmartCard as CalypsoSam
-                    CardResource(samReader, calypsoSam)
-                } else {
-                    throw IllegalStateException("Sam selection failed")
-                }
-            } else {
-                throw IllegalStateException("Sam is not present in the reader")
-            }
-        } catch (e: KeypleReaderException) {
-            throw IllegalStateException("Reader exception: " + e.message)
-        }
-    }
+        // Create security settings that reference the same SAM profile requested from the card resource
+        // service and enable the multiple session mode.
+        val samResource = CardResourceServiceProvider.getService()
+            .getCardResource(SAM_PROFILE_NAME)
 
-    override fun getSecuritySettings(samResource: CardResource<CalypsoSam>?): PoSecuritySettings? {
-
-        // The default KIF values for personalization, loading and debiting
-        val DEFAULT_KIF_PERSO = 0x21.toByte()
-        val DEFAULT_KIF_LOAD = 0x27.toByte()
-        val DEFAULT_KIF_DEBIT = 0x30.toByte()
-        // The default key record number values for personalization, loading and debiting
-        // The actual value should be adjusted.
-        val DEFAULT_KEY_RECORD_NUMBER_PERSO = 0x01.toByte()
-        val DEFAULT_KEY_RECORD_NUMBER_LOAD = 0x02.toByte()
-        val DEFAULT_KEY_RECORD_NUMBER_DEBIT = 0x03.toByte()
-
-        /* define the security parameters to provide when creating PoTransaction */
-        return PoSecuritySettings.PoSecuritySettingsBuilder(samResource) //
-            .sessionDefaultKif(
-                PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_PERSO,
+        return CalypsoExtensionService.getInstance()
+            .createCardSecuritySetting()
+            .setSamResource(samResource.reader, samResource.smartCard as CalypsoSam)
+            .assignDefaultKif(
+                WriteAccessLevel.PERSONALIZATION,
                 DEFAULT_KIF_PERSO
-            ) //
-            .sessionDefaultKif(
-                PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_LOAD,
+            )
+            .assignDefaultKif(
+                WriteAccessLevel.LOAD,
                 DEFAULT_KIF_LOAD
             ) //
-            .sessionDefaultKif(
-                PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_DEBIT,
+            .assignDefaultKif(
+                WriteAccessLevel.DEBIT,
                 DEFAULT_KIF_DEBIT
             ) //
-            .sessionDefaultKeyRecordNumber(
-                PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_PERSO,
-                DEFAULT_KEY_RECORD_NUMBER_PERSO
-            ) //
-            .sessionDefaultKeyRecordNumber(
-                PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_LOAD,
-                DEFAULT_KEY_RECORD_NUMBER_LOAD
-            ) //
-            .sessionDefaultKeyRecordNumber(
-                PoTransaction.SessionSetting.AccessLevel.SESSION_LVL_DEBIT,
-                DEFAULT_KEY_RECORD_NUMBER_DEBIT
+            .enableMultipleSession()
+    }
+
+    /**
+     * Setup the [CardResourceService] to provide a Calypso SAM C1 resource when requested.
+     *
+     * @param samProfileName A string defining the SAM profile.
+     * @throws IllegalStateException If the expected card resource is not found.
+     */
+
+    override fun setupCardResourceService(samProfileName: String?) {
+        // Create a card resource extension expecting a SAM "C1".
+        val samSelection = CalypsoExtensionService.getInstance()
+            .createSamSelection()
+            .filterByProductType(CalypsoSam.ProductType.SAM_C1)
+
+        val samCardResourceExtension =
+            CalypsoExtensionService.getInstance().createSamResourceProfileExtension(samSelection)
+
+        // Get the service
+        val cardResourceService = CardResourceServiceProvider.getService()
+
+        val pluginAndReaderExceptionHandler = PluginAndReaderExceptionHandler()
+
+        // Configure the card resource service:
+        // - allocation mode is blocking with a 100 milliseconds cycle and a 10 seconds timeout.
+        // - the readers are searched in the PC/SC plugin, the observation of the plugin (for the
+        // connection/disconnection of readers) and of the readers (for the insertion/removal of cards)
+        // is activated.
+        // - two card resource profiles A and B are defined, each expecting a specific card
+        // characterized by its power-on data and placed in a specific reader.
+        // - the timeout for using the card's resources is set at 5 seconds.
+        cardResourceService
+            .configurator
+            .withBlockingAllocationMode(100, 10000)
+            .withPlugins(
+                PluginsConfigurator.builder()
+                    .addPluginWithMonitoring(
+                        getPlugin(),
+                        readerRepository.getReaderConfiguratorSpi(),
+                        pluginAndReaderExceptionHandler,
+                        pluginAndReaderExceptionHandler
+                    )
+                    .withUsageTimeout(5000)
+                    .build()
             )
-            .build()
+            .withCardResourceProfiles(
+                CardResourceProfileConfigurator.builder(samProfileName, samCardResourceExtension)
+                    .withReaderNameRegex(readerRepository.getSamRegex())
+                    .build()
+            )
+            .configure()
+
+        cardResourceService.start()
+
+        // verify the resource availability
+        val cardResource = cardResourceService.getCardResource(samProfileName)
+            ?: throw IllegalStateException(
+                java.lang.String.format(
+                    "Unable to retrieve a SAM card resource for profile '%s' from reader '%s' in plugin '%s'",
+                    samProfileName, readerRepository.getSamRegex(), getPlugin().name
+                )
+            )
+
+        // release the resource
+        cardResourceService.releaseCardResource(cardResource)
+    }
+
+    /** Class implementing the exception handler SPIs for plugin and reader monitoring.  */
+    private class PluginAndReaderExceptionHandler :
+        PluginObservationExceptionHandlerSpi, CardReaderObservationExceptionHandlerSpi {
+        override fun onPluginObservationError(pluginName: String, e: Throwable) {
+            Timber.e("An exception occurred while monitoring the plugin '${e.message}'.")
+        }
+
+        override fun onReaderObservationError(
+            pluginName: String,
+            readerName: String,
+            e: Throwable
+        ) {
+            Timber.e("An exception occurred while monitoring the plugin '${e.message}'.")
+        }
     }
 }

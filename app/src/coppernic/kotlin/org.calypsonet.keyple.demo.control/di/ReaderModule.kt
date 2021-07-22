@@ -26,9 +26,9 @@ package org.calypsonet.keyple.demo.control.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import org.eclipse.keyple.core.service.event.ReaderObservationExceptionHandler
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
+import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import timber.log.Timber
 
 @Suppress("unused")
@@ -38,15 +38,15 @@ class ReaderModule {
     @Provides
     fun provideReaderRepository(
         context: Context,
-        readerObservationExceptionHandler: ReaderObservationExceptionHandler
+        readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
     ): IReaderRepository {
         return CoppernicReaderRepositoryImpl(context, readerObservationExceptionHandler)
     }
 
     @Provides
     @AppScoped
-    fun provideReaderObservationExceptionHandler(): ReaderObservationExceptionHandler =
-        ReaderObservationExceptionHandler { pluginName, readerName, e ->
+    fun provideReaderObservationExceptionHandler(): CardReaderObservationExceptionHandlerSpi =
+        CardReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
             Timber.e("An unexpected reader error occurred: $pluginName:$readerName : $e")
         }
 }

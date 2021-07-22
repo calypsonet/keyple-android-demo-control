@@ -29,53 +29,66 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
-import org.eclipse.keyple.core.plugin.AbstractLocalReader
+import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.core.service.KeyplePluginException
+import org.eclipse.keyple.core.service.ObservableReader
+import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.core.service.SmartCardService
-import org.eclipse.keyple.core.service.event.ReaderObservationExceptionHandler
-import org.eclipse.keyple.core.service.exception.KeypleException
-import org.eclipse.keyple.flowbird.plugin.FlowbirdContactReader
-import org.eclipse.keyple.flowbird.plugin.FlowbirdContactlessReader
+import org.eclipse.keyple.core.service.SmartCardServiceProvider
+import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 import org.eclipse.keyple.flowbird.plugin.FlowbirdPlugin
-import org.eclipse.keyple.flowbird.plugin.FlowbirdPluginFactory
-import org.eclipse.keyple.flowbird.plugin.FlowbirdSupportContactlessProtocols
-import org.eclipse.keyple.flowbird.plugin.SamSlot
+import org.eclipse.keyple.flowbird.plugin.FlowbirdPluginFactoryProvider
+import org.eclipse.keyple.flowbird.plugin.FlowbirdUiManager
+import org.eclipse.keyple.flowbird.plugin.contact.FlowbirdContactReader
+import org.eclipse.keyple.flowbird.plugin.contact.SamSlot
+import org.eclipse.keyple.flowbird.plugin.contactless.FlowbirdContactlessReader
+import org.eclipse.keyple.flowbird.plugin.contactless.FlowbirdSupportContactlessProtocols
+import timber.log.Timber
 import javax.inject.Inject
 
 class FlowbirdReaderRepositoryImpl @Inject constructor(
-    private val readerObservationExceptionHandler: ReaderObservationExceptionHandler
+    private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
 ) :
     IReaderRepository {
 
     override var poReader: Reader? = null
-    override var samReaders: MutableMap<String, Reader> = mutableMapOf()
+    override var samReaders: MutableList<Reader> = mutableListOf()
 
-    @Throws(KeypleException::class)
+    @Throws(KeyplePluginException::class)
     override fun registerPlugin(activity: Activity) {
         runBlocking {
-            val pluginFactory: FlowbirdPluginFactory?
-            pluginFactory = withContext(Dispatchers.IO) {
+            val pluginFactory = withContext(Dispatchers.IO) {
+
+                /*
+                 * Init files used to sounds and colors from assets
+                 */
                 val mediaFiles: List<String> =
                     listOf("1_default_en.xml", "success.mp3", "error.mp3")
                 val situationFiles: List<String> = listOf("1_default_en.xml")
                 val translationFiles: List<String> = listOf("0_default.xml")
-                FlowbirdPluginFactory.init(
+
+                FlowbirdPluginFactoryProvider.getFactory(
                     activity = activity,
-                    readerObservationExceptionHandler = readerObservationExceptionHandler,
                     mediaFiles = mediaFiles,
                     situationFiles = situationFiles,
                     translationFiles = translationFiles
                 )
             }
-            SmartCardService.getInstance().registerPlugin(pluginFactory)
+
+            val smartCardService = SmartCardServiceProvider.getService()
+            smartCardService.registerPlugin(pluginFactory)
         }
     }
 
-    @Throws(KeypleException::class)
-    override suspend fun initPoReader(): Reader? {
-        val plugin =
-            SmartCardService.getInstance().getPlugin(FlowbirdPluginFactory.pluginName)
-        val poReader = plugin?.getReader(FlowbirdContactlessReader.READER_NAME)
+    override fun getPlugin(): Plugin =
+        SmartCardServiceProvider.getService().getPlugin(FlowbirdPlugin.PLUGIN_NAME)
+
+    @Throws(KeyplePluginException::class)
+    override suspend fun initPoReader(): Reader {
+        val flowbirdPlugin =
+            SmartCardServiceProvider.getService().getPlugin(FlowbirdPlugin.PLUGIN_NAME)
+        val poReader = flowbirdPlugin?.getReader(FlowbirdContactlessReader.READER_NAME)
+
         poReader?.let {
 
             it.activateProtocol(
@@ -86,20 +99,23 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
             this.poReader = poReader
         }
 
+        (poReader as ObservableReader).setReaderObservationExceptionHandler(
+            readerObservationExceptionHandler
+        )
+
         return poReader
     }
 
-    @Throws(KeypleException::class)
-    override suspend fun initSamReaders(): Map<String, Reader> {
-        val plugin =
-            SmartCardService.getInstance().getPlugin(FlowbirdPluginFactory.pluginName)
+    @Throws(KeyplePluginException::class)
+    override suspend fun initSamReaders(): List<Reader> {
+        val plugin = SmartCardServiceProvider.getService().getPlugin(FlowbirdPlugin.PLUGIN_NAME)
         samReaders = plugin?.readers?.filter {
-            !it.value.isContactless
-        }?.toMutableMap() ?: mutableMapOf()
+            !it.isContactless
+        }?.toMutableList() ?: mutableListOf()
 
         if (!getSamReaderProtocol().isNullOrEmpty()) {
             samReaders.forEach {
-                (it.value as AbstractLocalReader).activateProtocol(
+                it.activateProtocol(
                     getSamReaderProtocol(),
                     getSamReaderProtocol()
                 )
@@ -112,13 +128,13 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
     override fun getSamReader(): Reader? {
         return if (samReaders.isNotEmpty()) {
             val filteredByName = samReaders.filter {
-                it.value.name == SAM_READER_1_NAME
+                it.name == SAM_READER_1_NAME
             }
 
             return if (filteredByName.isNullOrEmpty()) {
-                samReaders.values.first()
+                samReaders.first()
             } else {
-                filteredByName.values.first()
+                filteredByName.first()
             }
         } else {
             null
@@ -139,7 +155,7 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
 
         if (!getSamReaderProtocol().isNullOrEmpty()) {
             samReaders.forEach {
-                (it.value as AbstractLocalReader).deactivateProtocol(
+                it.deactivateProtocol(
                     getSamReaderProtocol()
                 )
             }
@@ -147,46 +163,61 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
     }
 
     override fun displayWaiting(): Boolean {
-        val plugin = SmartCardService.getInstance().getPlugin(FlowbirdPluginFactory.pluginName)
-        plugin?.let {
-            (it as FlowbirdPlugin).displayWaiting()
-            return true
-        }
-        return false
+        FlowbirdUiManager.displayWaiting()
+        return true
     }
 
     override fun displayResultSuccess(): Boolean {
-        val plugin = SmartCardService.getInstance().getPlugin(FlowbirdPluginFactory.pluginName)
-        plugin?.let {
-            (it as FlowbirdPlugin).displayResultSuccess()
-            return true
-        }
-        return false
+        FlowbirdUiManager.displayResultSuccess()
+        return true
     }
 
     override fun displayResultFailed(): Boolean {
-        val plugin = SmartCardService.getInstance().getPlugin(FlowbirdPluginFactory.pluginName)
-        plugin?.let {
-            (it as FlowbirdPlugin).displayResultFailed()
-            return true
+        FlowbirdUiManager.displayResultFailed()
+        return true
+    }
+
+    override fun getSamRegex(): String = SAM_READER_NAME_REGEX
+
+    override fun getReaderConfiguratorSpi(): ReaderConfiguratorSpi = ReaderConfigurator()
+
+    /**
+     * Reader configurator used by the card resource service to setup the SAM reader with the required
+     * settings.
+     */
+    internal class ReaderConfigurator : ReaderConfiguratorSpi {
+        /** {@inheritDoc}  */
+        override fun setupReader(reader: Reader) {
+            // Configure the reader with parameters suitable for contactless operations.
+            try {
+                reader.getExtension(FlowbirdContactReader::class.java)
+            } catch (e: Exception) {
+                Timber.e(
+                    "Exception raised while setting up the reader ${reader.name} : ${e.message}"
+                )
+            }
         }
-        return false
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
-    companion object{
+    companion object {
         @Suppress("unused")
         val SAM_READER_1_NAME =
             "${FlowbirdContactReader.READER_NAME}_${(SamSlot.ONE.slotId)}"
+
         @Suppress("unused")
         val SAM_READER_2_NAME =
             "${FlowbirdContactReader.READER_NAME}_${(SamSlot.TWO.slotId)}"
+
         @Suppress("unused")
         val SAM_READER_3_NAME =
             "${FlowbirdContactReader.READER_NAME}_${(SamSlot.THREE.slotId)}"
+
         @Suppress("unused")
         val SAM_READER_4_NAME =
             "${FlowbirdContactReader.READER_NAME}_${(SamSlot.FOUR.slotId)}"
+
+        const val SAM_READER_NAME_REGEX = ".*ContactReader_0"
     }
 }
 

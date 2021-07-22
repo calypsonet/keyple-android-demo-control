@@ -19,7 +19,6 @@ import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.dialog.PermissionDeniedDialog
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.utils.PermissionHelper
-import java.util.ArrayList
 import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject
