@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -24,8 +12,8 @@
 package org.eclipse.keyple.parser.intercode.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
 import java.util.Date
+import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class IntercodeEnvironment(
@@ -38,7 +26,7 @@ data class IntercodeEnvironment(
     val envAuthenticator: String?,
     val envSelectList: String?,
     val envDataCardStatus: Boolean
-) : Parcelable{
+) : Parcelable {
 
     fun getIntercodeVersion(): Int {
         return envApplicationVersionNumber and 0x38 shr APPLICATION_VERSION_SIZE
@@ -49,7 +37,7 @@ data class IntercodeEnvironment(
         return envApplicationVersionNumber and 0x07
     }
 
-    companion object{
+    companion object {
         /** Size in bit of Application Version  */
         private const val APPLICATION_VERSION_SIZE = 3
     }

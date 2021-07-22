@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -20,15 +8,23 @@
  * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- ************************dis********************************************************/
+ ********************************************************************************/
 package org.calypsonet.keyple.demo.control.di
 
 import android.app.Activity
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
+import org.calypsonet.keyple.plugin.flowbird.FlowbirdPluginFactoryProvider
+import org.calypsonet.keyple.plugin.flowbird.FlowbirdUiManager
+import org.calypsonet.keyple.plugin.flowbird.contact.FlowbirdContactReader
+import org.calypsonet.keyple.plugin.flowbird.contact.SamSlot
+import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdContactlessReader
+import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdSupportContactlessProtocols
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
@@ -36,15 +32,7 @@ import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
-import org.eclipse.keyple.flowbird.plugin.FlowbirdPlugin
-import org.eclipse.keyple.flowbird.plugin.FlowbirdPluginFactoryProvider
-import org.eclipse.keyple.flowbird.plugin.FlowbirdUiManager
-import org.eclipse.keyple.flowbird.plugin.contact.FlowbirdContactReader
-import org.eclipse.keyple.flowbird.plugin.contact.SamSlot
-import org.eclipse.keyple.flowbird.plugin.contactless.FlowbirdContactlessReader
-import org.eclipse.keyple.flowbird.plugin.contactless.FlowbirdSupportContactlessProtocols
 import timber.log.Timber
-import javax.inject.Inject
 
 class FlowbirdReaderRepositoryImpl @Inject constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
@@ -123,7 +111,6 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
         }
         return samReaders
     }
-
 
     override fun getSamReader(): Reader? {
         return if (samReaders.isNotEmpty()) {
@@ -220,4 +207,3 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
         const val SAM_READER_NAME_REGEX = ".*ContactReader_0"
     }
 }
-

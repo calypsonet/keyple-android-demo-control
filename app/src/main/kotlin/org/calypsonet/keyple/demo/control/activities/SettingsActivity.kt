@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -40,7 +40,7 @@ class SettingsActivity : BaseActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        //Init location spinner
+        // Init location spinner
         val locations = locationFileManager.getLocations()
         mLocationAdapter = ArrayAdapter(
             this,
@@ -72,7 +72,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if(menuItem.itemId == android.R.id.home){
+        if (menuItem.itemId == android.R.id.home) {
             startActivity(Intent(applicationContext, SplashScreenActivity::class.java))
             finish()
         }

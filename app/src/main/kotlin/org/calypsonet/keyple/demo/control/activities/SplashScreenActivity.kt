@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -15,14 +15,13 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import java.util.Timer
+import java.util.TimerTask
+import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.dialog.PermissionDeniedDialog
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.utils.PermissionHelper
-import java.util.Timer
-import java.util.TimerTask
-import javax.inject.Inject
-
 
 class SplashScreenActivity : BaseActivity() {
 
@@ -35,7 +34,7 @@ class SplashScreenActivity : BaseActivity() {
         setContentView(R.layout.activity_splashscreen)
 
         val permissions = mutableListOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        if(!readerRepository.getPermissions().isNullOrEmpty()){
+        if (!readerRepository.getPermissions().isNullOrEmpty()) {
             permissions.addAll(readerRepository.getPermissions()!!)
         }
 

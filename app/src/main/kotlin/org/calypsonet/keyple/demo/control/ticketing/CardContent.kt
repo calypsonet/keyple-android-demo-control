@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.control.ticketing
 import java.util.SortedMap
 import java.util.TreeMap
 import org.eclipse.keyple.core.util.ByteArrayUtil
-import org.calypsonet.keyple.demo.control.models.StructureEnum
 
 class CardContent {
     var serialNumber: ByteArray? = null

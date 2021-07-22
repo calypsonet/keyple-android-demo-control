@@ -1,15 +1,14 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
+/********************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
+ * See the NOTICE file(s) distributed with this work for additional information regarding copyright
+ * ownership.
  *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- */
-
+ ********************************************************************************/
 package org.eclipse.keyple.parser.intercode.parser
 
 import fr.devnied.bitlib.BitUtils
@@ -21,8 +20,7 @@ import org.eclipse.keyple.parser.intercode.model.IntercodeEventTransportEnum
 import org.eclipse.keyple.parser.intercode.model.IntercodeEventTypeEnum
 import org.eclipse.keyple.parser.intercode.utils.PlaceUtils
 
-
-class IntercodeEventParser:
+class IntercodeEventParser :
     IParser<EventValidation> {
 
     override fun parse(content: ByteArray): EventValidation {
@@ -43,7 +41,7 @@ class IntercodeEventParser:
          * EventDisplayData
          */
         val eventDisplay: Int
-        if(eventBitmap[BITMAP_SIZE -1]){
+        if (eventBitmap[BITMAP_SIZE - 1]) {
             eventDisplay = bitUtils.getNextInteger(EVENT_DISPLAY_SIZE)
         }
 
@@ -51,7 +49,7 @@ class IntercodeEventParser:
          * EventNetworkId
          */
         val eventNetworkId: String
-        if(eventBitmap[BITMAP_SIZE -2]){
+        if (eventBitmap[BITMAP_SIZE - 2]) {
             eventNetworkId = bitUtils.getNextHexaString(EVENT_NETWORK_ID_SIZE)
         }
 
@@ -59,7 +57,7 @@ class IntercodeEventParser:
          * EventCode
          */
         val eventCode: String
-        if(eventBitmap[BITMAP_SIZE -3]){
+        if (eventBitmap[BITMAP_SIZE - 3]) {
             eventCode = bitUtils.getNextHexaString(EVENT_CODE_SIZE)
             val eventCodeBitUtils = BitUtils(BytesUtils.fromString(eventCode))
             eventCodeBitUtils.currentBitIndex = 0
@@ -72,7 +70,7 @@ class IntercodeEventParser:
          * EventResult
          */
         val eventResult: Int
-        if(eventBitmap[BITMAP_SIZE -4]){
+        if (eventBitmap[BITMAP_SIZE - 4]) {
             eventResult = bitUtils.getNextInteger(EVENT_RESULT_SIZE)
         }
 
@@ -80,7 +78,7 @@ class IntercodeEventParser:
          * EventServiceProvider
          */
         var provider: Int? = null
-        if(eventBitmap[BITMAP_SIZE -5]){
+        if (eventBitmap[BITMAP_SIZE - 5]) {
             provider = bitUtils.getNextInteger(EVENT_SERVICE_PROVIDER_SIZE)
         }
 
@@ -88,7 +86,7 @@ class IntercodeEventParser:
          * EventNotokCounter
          */
         val eventNotOkCounter: Int
-        if(eventBitmap[BITMAP_SIZE -6]){
+        if (eventBitmap[BITMAP_SIZE - 6]) {
             eventNotOkCounter = bitUtils.getNextInteger(EVENT_NOT_OK_COUNTER_SIZE)
         }
 
@@ -96,7 +94,7 @@ class IntercodeEventParser:
          * EventSerialNumber
          */
         val eventSerialNumber: Int
-        if(eventBitmap[BITMAP_SIZE -7]){
+        if (eventBitmap[BITMAP_SIZE - 7]) {
             eventSerialNumber = bitUtils.getNextInteger(EVENT_SERIAL_NUMBER_SIZE)
         }
 
@@ -104,7 +102,7 @@ class IntercodeEventParser:
          * EventDestination
          */
         val eventDestination: Int
-        if(eventBitmap[BITMAP_SIZE -8]){
+        if (eventBitmap[BITMAP_SIZE - 8]) {
             eventDestination = bitUtils.getNextInteger(EVENT_DESTINATION_SIZE)
             destination = "$eventDestination"
         }
@@ -113,7 +111,7 @@ class IntercodeEventParser:
          * EventLocationId
          */
         val eventLocationId: String?
-        if(eventBitmap[BITMAP_SIZE -9]){
+        if (eventBitmap[BITMAP_SIZE - 9]) {
             eventLocationId = bitUtils.getNextHexaString(EVENT_LOCATION_ID_SIZE)
             val bEventCode = BytesUtils.fromString(eventLocationId)
             val hVal = bEventCode[0].toInt() shr 4 and 0x0f

@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -24,6 +12,7 @@
 package org.eclipse.keyple.parser.keyple
 
 import fr.devnied.bitlib.BytesUtils
+import java.util.Calendar
 import org.eclipse.keyple.parser.model.EventStructureDto
 import org.eclipse.keyple.parser.model.type.ContractPriorityEnum
 import org.eclipse.keyple.parser.utils.DateUtils
@@ -32,8 +21,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.util.Calendar
-
 
 @RunWith(RobolectricTestRunner::class)
 class EventStructureParserTest {
@@ -61,8 +48,6 @@ class EventStructureParserTest {
         assertEquals(ContractPriorityEnum.FORBIDDEN, event.contractPriority3)
         assertEquals(ContractPriorityEnum.FORBIDDEN, event.contractPriority4)
     }
-
-
 
     @Test
     fun generateEvent1() {

@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -32,7 +20,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-
 @RunWith(RobolectricTestRunner::class)
 class IntercodeContractFFParserTest {
 
@@ -51,7 +38,7 @@ class IntercodeContractFFParserTest {
         assertEquals(3, intercodeContractFF.contractTariff)
     }
 
-    companion object{
+    companion object {
         const val DATA = "5A5060000031200550456921A4803D67B40FC8E3FC01B81FFFFFFFFFE0"
 
         const val DATA_1 = "5A 50 60 00 00 01 66 3A C0 45 81 D2 09 21 FD 81 CC 0C 54 B8 04 01 B4 00 00 00 00 00 00"

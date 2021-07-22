@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -25,18 +13,19 @@ package org.calypsonet.keyple.demo.control.di
 
 import android.app.Activity
 import android.media.MediaPlayer
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.keyple.plugin.bluebird.BluebirdContactReader
+import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessReader
+import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
+import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
+import org.calypsonet.keyple.plugin.bluebird.BluebirdSupportContactlessProtocols
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
-import org.eclipse.keyple.bluebird.plugin.BluebirdContactReader
-import org.eclipse.keyple.bluebird.plugin.BluebirdContactlessReader
-import org.eclipse.keyple.bluebird.plugin.BluebirdPlugin
-import org.eclipse.keyple.bluebird.plugin.BluebirdPluginFactoryProvider
-import org.eclipse.keyple.bluebird.plugin.BluebirdSupportContactlessProtocols
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Plugin
@@ -45,7 +34,6 @@ import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 import org.eclipse.keyple.core.util.protocol.ContactCardCommonProtocol
 import timber.log.Timber
-import javax.inject.Inject
 
 class BluebirdReaderRepositoryImpl @Inject constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
@@ -170,7 +158,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
         return true
     }
 
-    companion object{
+    companion object {
         const val SAM_READER_NAME_REGEX = ".*ContactReader"
     }
 
@@ -194,4 +182,3 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
         }
     }
 }
-

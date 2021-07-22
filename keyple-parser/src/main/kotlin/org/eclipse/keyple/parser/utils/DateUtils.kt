@@ -1,31 +1,24 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
+/********************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
+ * See the NOTICE file(s) distributed with this work for additional information regarding copyright
+ * ownership.
  *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- */
-
+ ********************************************************************************/
 package org.eclipse.keyple.parser.utils
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.Month
 import java.util.Calendar
-import java.util.Calendar.HOUR
 import java.util.Calendar.HOUR_OF_DAY
 import java.util.Calendar.MILLISECOND
 import java.util.Calendar.MINUTE
 import java.util.Calendar.SECOND
 import java.util.Date
 import java.util.Locale
-
 
 /**
  *  @author youssefamrani
@@ -38,7 +31,6 @@ object DateUtils {
     const val DD_MM_YYYY = "dd/MM/yyyy"
     const val DD_MMMM_YYYY = "dd MMMM yyyy"
     const val yyyy_MM_dd_HH_mm_ss = "yyyy-MM-dd'T'HH:mm:ss"
-
 
     const val MILLIS_PER_DAY = 1000 * 60 * 60 * 24
     const val MILLIS_PER_MINUTE = 60 * 24

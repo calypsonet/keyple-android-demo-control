@@ -1,25 +1,20 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
+/********************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
+ * See the NOTICE file(s) distributed with this work for additional information regarding copyright
+ * ownership.
  *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- */
-
+ ********************************************************************************/
 package org.eclipse.keyple.parser.keyple
 
 import fr.devnied.bitlib.BitUtils
-import fr.devnied.bitlib.BytesUtils
-import org.eclipse.keyple.parser.IParser
-import org.eclipse.keyple.parser.IParser.Companion.DATE_01_01_2010
-import org.eclipse.keyple.parser.model.EnvironmentHolderStructureDto
 import java.math.BigInteger
-import java.util.Calendar
-
+import org.eclipse.keyple.parser.IParser
+import org.eclipse.keyple.parser.model.EnvironmentHolderStructureDto
 
 class EnvironmentHolderStructureParser :
     IParser<EnvironmentHolderStructureDto> {

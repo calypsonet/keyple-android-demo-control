@@ -1,15 +1,14 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
+/********************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
+ * See the NOTICE file(s) distributed with this work for additional information regarding copyright
+ * ownership.
  *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- */
-
+ ********************************************************************************/
 package org.calypsonet.keyple.demo.control.ticketing.procedure
 
 import org.calypsonet.keyple.demo.control.exception.ControlException
@@ -79,7 +78,7 @@ class ControlProcedure {
         val calypsoCardExtensionProvider = CalypsoExtensionService.getInstance()
 
         try {
-            var inTransactionFlag: Boolean //true if a SAM is available and a secure session have been opened
+            var inTransactionFlag: Boolean // true if a SAM is available and a secure session have been opened
             val poTransaction =
                 try {
                     if (samReader != null) {
@@ -134,8 +133,7 @@ class ControlProcedure {
                  * Open a transaction to read/write the Calypso PO and read the Environment file
                  */
                 poTransaction.processOpening(WriteAccessLevel.DEBIT)
-            }
-            else{
+            } else {
                 /*
                  * Read the Environment file
                  */
@@ -312,7 +310,7 @@ class ControlProcedure {
                          * Step 14.2 - If the value of ContractSaleSam is present in the SAM Black List reject the card.
                          * <Abort Transaction if inTransactionFlag is true and exit process>
                          */
-                        //TODO: steps 14.1 & 14.2
+                        // TODO: steps 14.1 & 14.2
                     }
                     /*
                      * Step 15 - If ContractValidityEndDate points to a date in the past mark contract as expired.
@@ -335,7 +333,6 @@ class ControlProcedure {
                     if (contractValidated && contracUsed == record) {
                         validationDate = eventDateTime
                     }
-
 
                     /*
                      * Step 16.1 - If EventContractUsed points to the current contract index
@@ -408,10 +405,9 @@ class ControlProcedure {
         } catch (e: EventControlException) {
             Timber.e(e)
             errorMessage = e.message
-            status = if(e.key == EventControlExceptionKey.CLEAN_CARD){
+            status = if (e.key == EventControlExceptionKey.CLEAN_CARD) {
                 Status.EMPTY_CARD
-            }
-            else{
+            } else {
                 Status.ERROR
             }
         } catch (e: ControlException) {

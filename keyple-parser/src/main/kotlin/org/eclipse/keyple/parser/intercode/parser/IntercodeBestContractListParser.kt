@@ -1,22 +1,20 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
+/********************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
+ * See the NOTICE file(s) distributed with this work for additional information regarding copyright
+ * ownership.
  *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- */
-
+ ********************************************************************************/
 package org.eclipse.keyple.parser.intercode.parser
 
 import fr.devnied.bitlib.BitUtils
 import org.eclipse.keyple.parser.IParser
 import org.eclipse.keyple.parser.intercode.model.IntercodeBestContract
 import org.eclipse.keyple.parser.intercode.model.IntercodeBestContractList
-
 
 class IntercodeBestContractListParser :
     IParser<IntercodeBestContractList> {
@@ -36,22 +34,21 @@ class IntercodeBestContractListParser :
                 bitUtils = bitUtils
             )
             var networkId: Int? = null
-            if(bitmap[BEST_CONTRACT_BITMAP_SIZE -1] == true){
+            if (bitmap[BEST_CONTRACT_BITMAP_SIZE - 1] == true) {
                 /*
                  * Handle BestContractNetworkId
                  */
                 networkId = bitUtils.getNextInteger(BEST_CONTRACT_NETWORK_ID_SIZE)
             }
             var tariff = 0
-            if(bitmap[BEST_CONTRACT_BITMAP_SIZE -2] == true){
+            if (bitmap[BEST_CONTRACT_BITMAP_SIZE - 2] == true) {
                 /*
                  * Handle BestContractTariff
                  */
                 tariff = bitUtils.getNextInteger(BEST_CONTRACT_TARIFF_SIZE)
-
             }
             var pointer = 0
-            if(bitmap[BEST_CONTRACT_BITMAP_SIZE -3] == true){
+            if (bitmap[BEST_CONTRACT_BITMAP_SIZE - 3] == true) {
                 /*
                  * Handle BestContractPointer
                  */

@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -32,8 +20,7 @@ data class IntercodeBestContract(
     val bestContratNetworkId: Int?,
     val bestContratTariff: Int,
     val bestContractPointer: Int
-) : Parcelable{
-
+) : Parcelable {
 
     /**
      * Getter for BestContratType
@@ -53,7 +40,7 @@ data class IntercodeBestContract(
         return bestContratTariff and 0xF000 shr TYPE_OFFSET
     }
 
-    companion object{
+    companion object {
         /** Offset de la priorité du contrat  */
         private const val PRIORITY_OFFSET = 4
 

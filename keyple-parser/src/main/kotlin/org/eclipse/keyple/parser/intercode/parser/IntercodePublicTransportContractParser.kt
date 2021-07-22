@@ -1,27 +1,24 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
+/********************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
+ * See the NOTICE file(s) distributed with this work for additional information regarding copyright
+ * ownership.
  *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- */
-
+ ********************************************************************************/
 package org.eclipse.keyple.parser.intercode.parser
 
 import fr.devnied.bitlib.BitUtils
-import fr.devnied.bitlib.BytesUtils
+import java.util.Date
 import org.eclipse.keyple.parser.IParser
 import org.eclipse.keyple.parser.IParser.Companion.DATE_01_01_1997
 import org.eclipse.keyple.parser.intercode.model.AbstractIntercodeContract
 import org.eclipse.keyple.parser.intercode.model.IntercodePublicTransportContract
-import java.util.Date
 
-
-class IntercodePublicTransportContractParser:
+class IntercodePublicTransportContractParser :
     IParser<AbstractIntercodeContract> {
 
     override fun parse(content: ByteArray): IntercodePublicTransportContract {
@@ -61,7 +58,6 @@ class IntercodePublicTransportContractParser:
             contractValidityInfoBitUtils.currentBitIndex = 0
             val contractValidityInfoBitmap = parseBitmap(2, contractValidityInfoBitUtils)
 
-
             if (contractValidityInfoBitmap[1]) {
                 contractValidityStartDate = parseDate(bitUtils.getNextInteger(14), DATE_01_01_1997)
             }
@@ -75,7 +71,6 @@ class IntercodePublicTransportContractParser:
         if (bitmap[BITMAP_SIZE - 6]) {
             contractStatus = bitUtils.getNextInteger(8)
         }
-
 
         return IntercodePublicTransportContract(
             bitmap = bitmap,

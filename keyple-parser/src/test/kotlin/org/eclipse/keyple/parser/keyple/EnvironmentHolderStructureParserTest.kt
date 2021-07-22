@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -23,8 +11,9 @@
  ********************************************************************************/
 package org.eclipse.keyple.parser.keyple
 
-import fr.devnied.bitlib.BitUtils
 import fr.devnied.bitlib.BytesUtils
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import org.eclipse.keyple.parser.model.EnvironmentHolderStructureDto
 import org.eclipse.keyple.parser.utils.DateUtils
 import org.junit.Assert.assertEquals
@@ -32,14 +21,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.math.BigInteger
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.Month
-import java.time.temporal.ChronoUnit
-import java.util.Calendar
-import java.util.Locale
-
 
 @RunWith(RobolectricTestRunner::class)
 class EnvironmentHolderStructureParserTest {
@@ -145,7 +126,6 @@ class EnvironmentHolderStructureParserTest {
         assertEquals(DATA_ENV_2, BytesUtils.bytesToString(content))
     }
 
-
     companion object {
         private const val DATA_ENV_1 =
             "09 00 00 00 01 0F FB 1C 92 07 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
@@ -155,5 +135,4 @@ class EnvironmentHolderStructureParserTest {
 
         const val ENV_PADDING = 120
     }
-
 }
