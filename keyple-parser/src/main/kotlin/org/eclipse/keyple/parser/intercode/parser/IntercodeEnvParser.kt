@@ -1,29 +1,27 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
+/********************************************************************************
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
+ * See the NOTICE file(s) distributed with this work for additional information regarding copyright
+ * ownership.
  *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- */
-
+ ********************************************************************************/
 package org.eclipse.keyple.parser.intercode.parser
 
 import fr.devnied.bitlib.BitUtils
-import org.eclipse.keyple.parser.IParser
-import org.eclipse.keyple.parser.IParser.Companion.DATE_01_01_1997
-import org.eclipse.keyple.parser.IParser.Companion.DD_MM_YYYY
-import org.eclipse.keyple.parser.intercode.model.IntercodeEnvironment
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import org.eclipse.keyple.parser.IParser
+import org.eclipse.keyple.parser.IParser.Companion.DATE_01_01_1997
+import org.eclipse.keyple.parser.IParser.Companion.DD_MM_YYYY
+import org.eclipse.keyple.parser.intercode.model.IntercodeEnvironment
 
-
-class IntercodeEnvParser:
+class IntercodeEnvParser :
     IParser<IntercodeEnvironment> {
 
     override fun parse(content: ByteArray): IntercodeEnvironment {

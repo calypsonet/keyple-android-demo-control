@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.control.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_home.locationSelected
 import kotlinx.android.synthetic.main.activity_home.startBtn
 import org.calypsonet.keyple.demo.control.R
@@ -35,9 +34,8 @@ class HomeActivity : BaseActivity() {
         }
     }
 
-
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if(menuItem.itemId == android.R.id.home){
+        if (menuItem.itemId == android.R.id.home) {
             finish()
         }
 

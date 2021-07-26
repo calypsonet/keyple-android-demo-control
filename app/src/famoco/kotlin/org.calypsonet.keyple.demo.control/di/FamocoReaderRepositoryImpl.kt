@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -13,9 +13,14 @@ package org.calypsonet.keyple.demo.control.di
 
 import android.app.Activity
 import android.media.MediaPlayer
+import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPlugin
+import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPluginFactoryProvider
+import org.calypsonet.keyple.plugin.famoco.AndroidFamocoReader
+import org.calypsonet.keyple.plugin.famoco.utils.ContactCardCommonProtocols
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
@@ -24,15 +29,10 @@ import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 import org.eclipse.keyple.core.util.protocol.ContactlessCardCommonProtocol
-import org.eclipse.keyple.famoco.se.plugin.AndroidFamocoPlugin
-import org.eclipse.keyple.famoco.se.plugin.AndroidFamocoPluginFactoryProvider
-import org.eclipse.keyple.famoco.se.plugin.AndroidFamocoReader
-import org.eclipse.keyple.famoco.se.plugin.utils.ContactCardCommonProtocols
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPlugin
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
 import timber.log.Timber
-import javax.inject.Inject
 
 class FamocoReaderRepositoryImpl @Inject constructor(private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi) :
     IReaderRepository {
@@ -87,20 +87,20 @@ class FamocoReaderRepositoryImpl @Inject constructor(private val readerObservati
     }
 
     override suspend fun initSamReaders(): List<Reader> {
-        if (samReaders.isNullOrEmpty()) {
-            val samPlugin =
-                SmartCardServiceProvider.getService().getPlugin(AndroidFamocoPlugin.PLUGIN_NAME)
+        val samPlugin =
+            SmartCardServiceProvider.getService().getPlugin(AndroidFamocoPlugin.PLUGIN_NAME)
 
-            if (samPlugin != null) {
-                val samReader = samPlugin.getReader(AndroidFamocoReader.READER_NAME)
-                samReader?.let {
-                    it.activateProtocol(
-                        getSamReaderProtocol(),
-                        getSamReaderProtocol()
-                    )
+        samReaders = mutableListOf()
 
-                    samReaders.add(it)
-                }
+        if (samPlugin != null) {
+            val samReader = samPlugin.getReader(AndroidFamocoReader.READER_NAME)
+            samReader?.let {
+                it.activateProtocol(
+                    getSamReaderProtocol(),
+                    getSamReaderProtocol()
+                )
+
+                samReaders.add(it)
             }
         }
 
@@ -139,8 +139,11 @@ class FamocoReaderRepositoryImpl @Inject constructor(private val readerObservati
     override fun clear() {
         poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
-        val samReader = getSamReader()
-        samReader?.deactivateProtocol(getSamReaderProtocol())
+        samReaders.forEach {
+            it.deactivateProtocol(
+                getSamReaderProtocol()
+            )
+        }
 
         successMedia.stop()
         successMedia.release()

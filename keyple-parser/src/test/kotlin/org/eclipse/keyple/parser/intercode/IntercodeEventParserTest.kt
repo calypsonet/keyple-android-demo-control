@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -77,7 +65,7 @@ class IntercodeEventParserTest {
         assertNull(event.destination)
     }
 
-    companion object{
+    companion object {
         private const val DATA_EVENT_1 = "88 7A 2B 90 00 68 A1 88 18 96 86 88 08 00 80 40 00 00 00 00 00 00 00 00 00 00 00 00 00"
         private const val DATA_EVENT_2 = "88 86 34 90 03 68 A2 08 1C 00 80 36 98 00 68 00 10 0A 08 40 00 00 00 00 00 00 00 00 00"
         private const val DATA_EVENT_3 = "82 6E 06 90 00 68 A2 90 19 13 09 10 80 00 88 80 00 00 00 00 00 00 00 00 00 00 00 00 00"

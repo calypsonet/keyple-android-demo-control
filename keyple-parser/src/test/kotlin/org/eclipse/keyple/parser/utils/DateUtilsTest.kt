@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -23,11 +11,11 @@
  ********************************************************************************/
 package org.eclipse.keyple.parser.utils
 
+import java.util.Calendar
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.util.Calendar
 
 @RunWith(RobolectricTestRunner::class)
 class DateUtilsTest {
@@ -94,5 +82,4 @@ class DateUtilsTest {
         assertEquals(3, nb4)
         assertEquals(60, nb5)
     }
-
 }

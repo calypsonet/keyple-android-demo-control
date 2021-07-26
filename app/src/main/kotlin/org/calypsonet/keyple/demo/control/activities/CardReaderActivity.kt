@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -9,7 +9,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ********************************************************************************/
-
 package org.calypsonet.keyple.demo.control.activities
 
 import android.app.ProgressDialog
@@ -18,6 +17,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import java.util.Timer
+import java.util.TimerTask
 import kotlinx.android.synthetic.main.activity_card_reader.loadingAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -33,13 +34,9 @@ import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
 import org.calypsonet.terminal.reader.CardReaderEvent
 import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
-import java.util.Timer
-import java.util.TimerTask
-
 
 @ActivityScoped
 class CardReaderActivity : BaseActivity() {
-
 
     @Suppress("DEPRECATION") private lateinit var progress: ProgressDialog
 
@@ -73,7 +70,7 @@ class CardReaderActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if(menuItem.itemId == android.R.id.home){
+        if (menuItem.itemId == android.R.id.home) {
             finish()
         }
 
@@ -231,11 +228,10 @@ class CardReaderActivity : BaseActivity() {
                                         ticketingSession.launchControlProcedure(locationFileManager.getLocations())
                                     }
                                     withContext(Dispatchers.Main) {
-                                        if(cardReaderResponse.status == Status.EMPTY_CARD ||
-                                            cardReaderResponse.status == Status.ERROR){
+                                        if (cardReaderResponse.status == Status.EMPTY_CARD ||
+                                            cardReaderResponse.status == Status.ERROR) {
                                             cardReaderApi.displayResultFailed()
-                                        }
-                                        else{
+                                        } else {
                                             cardReaderApi.displayResultSuccess()
                                         }
                                         progress.dismiss()
@@ -256,7 +252,7 @@ class CardReaderActivity : BaseActivity() {
                         }
                     }
                     else -> {
-                        //Do nothing
+                        // Do nothing
                     }
                 }
             }

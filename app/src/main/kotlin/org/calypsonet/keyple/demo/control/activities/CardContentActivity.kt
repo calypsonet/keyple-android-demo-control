@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -52,24 +52,22 @@ class CardContentActivity : BaseActivity() {
         titleLinearLayoutManager = LinearLayoutManager(this)
         titlesList.layoutManager = titleLinearLayoutManager
 
-        if(!cardContent.titlesList.isNullOrEmpty()){
+        if (!cardContent.titlesList.isNullOrEmpty()) {
             titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
             titlesList.adapter = titlesAdapter
             titlesList.visibility = View.VISIBLE
             emptyContract.visibility = View.GONE
-        }
-        else{
+        } else {
             titlesList.visibility = View.GONE
             emptyContract.visibility = View.VISIBLE
         }
 
-        if(cardContent.lastValidationsList != null){
+        if (cardContent.lastValidationsList != null) {
             lastValidationListContainer.visibility = View.VISIBLE
             validationsAdapter = ValidationsRecyclerAdapter(cardContent.lastValidationsList)
             lastValidationList.adapter = validationsAdapter
             lastValidationList.setDivider(R.drawable.recycler_view_divider)
-        }
-        else{
+        } else {
             lastValidationListContainer.visibility = View.GONE
         }
     }

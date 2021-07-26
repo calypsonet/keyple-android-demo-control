@@ -1,17 +1,5 @@
-/*
- * Copyright (c) 2021 Calypso Networks Association https://www.calypsonet-asso.org/
- *
- * See the NOTICE file(s) distributed with this work for additional information
- * regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the terms of the
- * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
- *
- * SPDX-License-Identifier: EPL-2.0
- */
-
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -24,6 +12,7 @@
 package org.eclipse.keyple.parser.intercode
 
 import fr.devnied.bitlib.BytesUtils
+import java.text.SimpleDateFormat
 import org.eclipse.keyple.parser.intercode.parser.IntercodeEnvParser
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -32,8 +21,6 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.text.SimpleDateFormat
-
 
 @RunWith(RobolectricTestRunner::class)
 class IntercodeEnvParserTest {
@@ -130,5 +117,4 @@ class IntercodeEnvParserTest {
         private const val DATA_ENV_4 =
             "24 B9 28 48 08 15 06 59 3A 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
     }
-
 }

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020 Calypso Networks Association https://www.calypsonet-asso.org/
+ * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
  * See the NOTICE file(s) distributed with this work for additional information regarding copyright
  * ownership.
@@ -13,6 +13,7 @@ package org.calypsonet.keyple.demo.control.di
 
 import android.app.Activity
 import android.media.MediaPlayer
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.calypsonet.keyple.demo.control.R
@@ -32,7 +33,6 @@ import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
 import timber.log.Timber
-import javax.inject.Inject
 
 class OmapiReaderRepositoryImpl @Inject constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
@@ -64,7 +64,6 @@ class OmapiReaderRepositoryImpl @Inject constructor(
             e.printStackTrace()
         }
     }
-
 
     override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(AndroidNfcPlugin.PLUGIN_NAME)
 
@@ -115,10 +114,12 @@ class OmapiReaderRepositoryImpl @Inject constructor(
             }
         }
         samReaders.forEach {
-            it.activateProtocol(
-                getSamReaderProtocol(),
-                getSamReaderProtocol()
-            )
+            if(getSamReaderProtocol()?.isNotEmpty() == true){
+                it.activateProtocol(
+                    getSamReaderProtocol(),
+                    getSamReaderProtocol()
+                )
+            }
         }
 
         return samReaders
@@ -150,8 +151,10 @@ class OmapiReaderRepositoryImpl @Inject constructor(
     override fun getSamReaderProtocol(): String? = null
 
     override fun clear() {
-        samReaders.forEach {
-            it.deactivateProtocol(getSamReaderProtocol())
+        if(getSamReaderProtocol()?.isNotEmpty() == true){
+            samReaders.forEach {
+                it.deactivateProtocol(getSamReaderProtocol())
+            }
         }
 
         poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
