@@ -27,8 +27,6 @@ class HomeActivity : BaseActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         locationSelected.text = KeypleSettings.location?.toString() ?: ""
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         startBtn.setOnClickListener {
             startActivity(Intent(this, CardReaderActivity::class.java))
         }

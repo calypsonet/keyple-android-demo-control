@@ -38,8 +38,6 @@ class SettingsActivity : BaseActivity() {
         setContentView(R.layout.activity_settings)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         // Init location spinner
         val locations = locationFileManager.getLocations()
         mLocationAdapter = ArrayAdapter(
