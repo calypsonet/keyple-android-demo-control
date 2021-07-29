@@ -166,7 +166,8 @@ class CardReaderActivity : BaseActivity() {
                 if (CalypsoInfo.PO_TYPE_NAME_CALYPSO_05h != ticketingSession.poTypeName &&
                     CalypsoInfo.PO_TYPE_NAME_CALYPSO_32h != ticketingSession.poTypeName &&
                     CalypsoInfo.PO_TYPE_NAME_NAVIGO_05h != ticketingSession.poTypeName &&
-                    CalypsoInfo.PO_TYPE_NAME_CALYPSO_02h != ticketingSession.poTypeName
+                    CalypsoInfo.PO_TYPE_NAME_CALYPSO_02h != ticketingSession.poTypeName &&
+                    CalypsoInfo.PO_TYPE_NAME_CALYPSO_OTHER != ticketingSession.poTypeName
                 ) {
                     val error = getString(R.string.card_invalid_aid)
                     displayResult(

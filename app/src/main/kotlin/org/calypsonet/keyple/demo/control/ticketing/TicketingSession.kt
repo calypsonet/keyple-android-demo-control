@@ -11,8 +11,6 @@
  ********************************************************************************/
 package org.calypsonet.keyple.demo.control.ticketing
 
-import java.util.EnumMap
-import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.exception.ControlException
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
@@ -28,6 +26,7 @@ import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.DEFAULT_KIF_PERS
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_02h
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_05h
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_32h
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_OTHER
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_NAVIGO_05h
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_OTHER
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SAM_PROFILE_NAME
@@ -53,6 +52,8 @@ import org.eclipse.keyple.core.service.resource.PluginsConfigurator
 import org.eclipse.keyple.core.service.spi.PluginObservationExceptionHandlerSpi
 import org.joda.time.DateTime
 import timber.log.Timber
+import java.util.EnumMap
+import javax.inject.Inject
 
 @AppScoped
 class TicketingSession @Inject constructor(private val readerRepository: IReaderRepository) :
@@ -177,9 +178,7 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
                     when (poStructure) {
                         StructureEnum.STRUCTURE_02H -> poTypeName = PO_TYPE_NAME_CALYPSO_02h
                         StructureEnum.STRUCTURE_05H -> poTypeName = PO_TYPE_NAME_CALYPSO_05h
-                        else -> {
-                            // Do nothing
-                        }
+                        else -> poTypeName = PO_TYPE_NAME_CALYPSO_OTHER
                     }
                 }
                 calypsoPoIndex32h -> {

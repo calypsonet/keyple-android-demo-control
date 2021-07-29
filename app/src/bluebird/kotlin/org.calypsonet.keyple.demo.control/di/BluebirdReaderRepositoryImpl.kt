@@ -120,8 +120,8 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
 
     override fun getContactlessIsoProtocol(): PoReaderProtocol {
         return PoReaderProtocol(
-            BluebirdSupportContactlessProtocols.NFC_B_BB.key,
-            BluebirdSupportContactlessProtocols.NFC_B_BB.key
+            BluebirdSupportContactlessProtocols.NFC_ALL.key,
+            BluebirdSupportContactlessProtocols.NFC_ALL.key
         )
     }
 

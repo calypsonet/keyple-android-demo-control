@@ -38,6 +38,7 @@ object CalypsoInfo {
 
     const val PO_TYPE_NAME_CALYPSO_02h = "Calypso_02h"
     const val PO_TYPE_NAME_CALYPSO_05h = "Calypso_05h"
+    const val PO_TYPE_NAME_CALYPSO_OTHER = "Calypso_Other"
     const val PO_TYPE_NAME_CALYPSO_32h = "Calypso_32h"
     const val PO_TYPE_NAME_NAVIGO_05h = "Navigo_05h"
     const val PO_TYPE_NAME_OTHER = "Unknown"
