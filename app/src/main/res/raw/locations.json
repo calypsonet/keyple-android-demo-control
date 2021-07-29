@@ -1,54 +1,46 @@
 [
   {
     "id": 0,
-    "name": "Paris"
+    "name": "Bruxelles"
   },
   {
     "id": 1,
-    "name": "Marseille"
+    "name": "Konstanz"
   },
   {
     "id": 2,
-    "name": "Lyon"
+    "name": "Lisboa"
   },
   {
     "id": 3,
-    "name": "Toulouse"
+    "name": "Milan"
   },
   {
     "id": 4,
-    "name": "Nice"
+    "name": "Munich"
   },
   {
     "id": 5,
-    "name": "Nantes"
+    "name": "Paris"
   },
   {
     "id": 6,
-    "name": "Montpellier"
+    "name": "Riga"
   },
   {
     "id": 7,
-    "name": "Strasbourg"
+    "name": "Roma"
   },
   {
     "id": 8,
-    "name": "Bordeaux"
+    "name": "Strasbourg"
   },
   {
     "id": 9,
-    "name": "Lille"
+    "name": "Torino"
   },
   {
     "id": 10,
-    "name": "Rennes"
-  },
-  {
-    "id": 11,
-    "name": "Reims"
-  },
-  {
-    "id": 12,
-    "name": "Saint-Etienne"
+    "name": "Venice"
   }
 ]

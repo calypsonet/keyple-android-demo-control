@@ -83,12 +83,6 @@ subprojects{
 }
 
 ext {
-    keyple_version_1_0 = '1.0-SNAPSHOT'
-    keyple_version_1_0_plus = '1.0.+'
-
-    keyple_version_2_0 = '2.0-SNAPSHOT'
-    keyple_version_2_0_0 = '2.0.0-SNAPSHOT'
-
     android_nfc_plugin_version = '2.0.0-SNAPSHOT'
     omapi_plugin_version = '2.0.0-SNAPSHOT'
     famoco_plugin_version = '2.0.0-SNAPSHOT'

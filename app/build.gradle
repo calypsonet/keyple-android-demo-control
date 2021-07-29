@@ -44,7 +44,7 @@ android {
     productFlavors {
         omapi {
             dimension 'device'
-            resValue "string", "app_name", "Keyple OMAPI Control"
+            resValue "string", "app_name", "Keyple Control OMAPI"
             applicationIdSuffix ".omapi"
         }
         coppernic {
@@ -69,7 +69,7 @@ android {
         }
         flowbird {
             dimension 'device'
-            resValue "string", "app_name", "Keyple Flowbird Control"
+            resValue "string", "app_name", "Keyple Control Flowbird"
             applicationIdSuffix ".flowbird"
         }
     }
@@ -106,20 +106,20 @@ dependencies {
     implementation "org.eclipse.keyple:keyple-card-calypso-java-lib:2.0.0-SNAPSHOT"
     implementation "org.eclipse.keyple:keyple-service-resource-java-lib:2.0.0-SNAPSHOT"
 
-    implementation "org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.0.+"
-    implementation "org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.0.+"
-    implementation "org.calypsonet.terminal:calypsonet-terminal-card-java-api:1.0.+"
+    implementation "org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.0.0-SNAPSHOT"
+    implementation "org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.0.0-SNAPSHOT"
+    implementation "org.calypsonet.terminal:calypsonet-terminal-card-java-api:1.0.0-SNAPSHOT"
 
-    omapiImplementation "org.eclipse.keyple:keyple-util-java-lib:2.+"
-    omapiImplementation "org.eclipse.keyple:keyple-common-java-api:2.0.+"
+    omapiImplementation "org.eclipse.keyple:keyple-util-java-lib:2.0.0-SNAPSHOT"
+    omapiImplementation "org.eclipse.keyple:keyple-common-java-api:2.0.0-SNAPSHOT"
     omapiImplementation "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib:$omapi_plugin_version"
     omapiImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:$android_nfc_plugin_version"
 
     famocoImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:$android_nfc_plugin_version"
     famocoImplementation "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib:$famoco_plugin_version"
 
-    mockSamImplementation "org.eclipse.keyple:keyple-util-java-lib:2.+"
-    mockSamImplementation "org.eclipse.keyple:keyple-common-java-api:2.0.+"
+    mockSamImplementation "org.eclipse.keyple:keyple-util-java-lib:2.0.0-SNAPSHOT"
+    mockSamImplementation "org.eclipse.keyple:keyple-common-java-api:2.0.0-SNAPSHOT"
     mockSamImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:$android_nfc_plugin_version"
 
     coppernicImplementation "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:$coppernic_plugin_version"

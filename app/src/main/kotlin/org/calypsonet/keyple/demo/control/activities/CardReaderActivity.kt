@@ -59,8 +59,6 @@ class CardReaderActivity : BaseActivity() {
         setContentView(R.layout.activity_card_reader)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         @Suppress("DEPRECATION")
         progress = ProgressDialog(this)
         @Suppress("DEPRECATION")
