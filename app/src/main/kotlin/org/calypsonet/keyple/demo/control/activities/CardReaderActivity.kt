@@ -149,12 +149,11 @@ class CardReaderActivity : BaseActivity() {
                     ticketingSession.processDefaultSelection(readerEvent.scheduledCardSelectionsResponse)
 
                 if (seSelectionResult.activeSelectionIndex == -1) {
-                    Timber.e("PO Not selected")
+                    Timber.e("Card Not selected")
                     val error = getString(R.string.card_invalid_aid)
                     displayResult(
                         CardReaderResponse(
                             status = Status.INVALID_CARD,
-                            cardType = null,
                             titlesList = arrayListOf(),
                             errorMessage = error
                         )
@@ -162,18 +161,15 @@ class CardReaderActivity : BaseActivity() {
                     return
                 }
 
-                Timber.i("PO Type = ${ticketingSession.poTypeName}")
-                if (CalypsoInfo.PO_TYPE_NAME_CALYPSO_05h != ticketingSession.poTypeName &&
-                    CalypsoInfo.PO_TYPE_NAME_CALYPSO_32h != ticketingSession.poTypeName &&
-                    CalypsoInfo.PO_TYPE_NAME_NAVIGO_05h != ticketingSession.poTypeName &&
-                    CalypsoInfo.PO_TYPE_NAME_CALYPSO_02h != ticketingSession.poTypeName &&
-                    CalypsoInfo.PO_TYPE_NAME_CALYPSO_OTHER != ticketingSession.poTypeName
+                Timber.i("Card AID = ${ticketingSession.cardAid}")
+                if (CalypsoInfo.AID_1TIC_ICA_1 != ticketingSession.cardAid &&
+                    CalypsoInfo.AID_1TIC_ICA_3 != ticketingSession.cardAid &&
+                    CalypsoInfo.AID_NORMALIZED_IDF != ticketingSession.cardAid
                 ) {
                     val error = getString(R.string.card_invalid_aid)
                     displayResult(
                         CardReaderResponse(
                             status = Status.INVALID_CARD,
-                            cardType = null,
                             titlesList = arrayListOf(),
                             errorMessage = error
                         )
@@ -186,7 +182,6 @@ class CardReaderActivity : BaseActivity() {
                     displayResult(
                         CardReaderResponse(
                             status = Status.INVALID_CARD,
-                            cardType = null,
                             titlesList = arrayListOf(),
                             errorMessage = error
                         )
@@ -194,7 +189,7 @@ class CardReaderActivity : BaseActivity() {
                     return
                 }
 
-                Timber.i("A Calypso PO selection succeeded.")
+                Timber.i("A Calypso Card selection succeeded.")
                 newAppState = AppState.CARD_STATUS
             }
             CardReaderEvent.Type.CARD_REMOVED -> {
@@ -243,7 +238,6 @@ class CardReaderActivity : BaseActivity() {
                                 displayResult(
                                     CardReaderResponse(
                                         status = Status.ERROR,
-                                        cardType = "some invalid card",
                                         titlesList = arrayListOf()
                                     )
                                 )

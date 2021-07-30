@@ -67,8 +67,7 @@ class ControlProcedure {
         locations: List<Location>
     ): CardReaderResponse {
 
-        val poReader = ticketingSession.poReader
-        val poTypeName = ticketingSession.poTypeName
+        val cardReader = ticketingSession.cardReader
 
         val errorMessage: String?
         var errorTitle: String? = null
@@ -79,7 +78,7 @@ class ControlProcedure {
 
         try {
             var inTransactionFlag: Boolean // true if a SAM is available and a secure session have been opened
-            val poTransaction =
+            val cardTransaction =
                 try {
                     if (samReader != null) {
                         /*
@@ -90,7 +89,7 @@ class ControlProcedure {
                         ticketingSession.setupCardResourceService(SAM_PROFILE_NAME)
 
                         calypsoCardExtensionProvider.createCardTransaction(
-                            poReader,
+                            cardReader,
                             calypsoCard,
                             ticketingSession.getSecuritySettings()
                         )
@@ -100,7 +99,7 @@ class ControlProcedure {
                          */
                         inTransactionFlag = false
                         calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
-                            poReader,
+                            cardReader,
                             calypsoCard
                         )
                     }
@@ -108,14 +107,14 @@ class ControlProcedure {
                     Timber.w(e)
                     inTransactionFlag = false
                     calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
-                        poReader,
+                        cardReader,
                         calypsoCard
                     )
                 } catch (e: Exception) {
                     Timber.w(e)
                     inTransactionFlag = false
                     calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
-                        poReader,
+                        cardReader,
                         calypsoCard
                     )
                 }
@@ -123,21 +122,21 @@ class ControlProcedure {
             /*
              * Step 2 - Unpack environment structure from the binary present in the environment record.
              */
-            poTransaction.prepareReadRecordFile(
+            cardTransaction.prepareReadRecordFile(
                 SFI_EnvironmentAndHolder,
                 RECORD_NUMBER_1.toInt()
             )
 
             if (inTransactionFlag) {
                 /*
-                 * Open a transaction to read/write the Calypso PO and read the Environment file
+                 * Open a transaction to read/write the Calypso Card and read the Environment file
                  */
-                poTransaction.processOpening(WriteAccessLevel.DEBIT)
+                cardTransaction.processOpening(WriteAccessLevel.DEBIT)
             } else {
                 /*
                  * Read the Environment file
                  */
-                poTransaction.processCardCommands()
+                cardTransaction.processCardCommands()
             }
 
             val efEnvironmentHolder =
@@ -150,7 +149,7 @@ class ControlProcedure {
              */
             if (env.envVersionNumber != VersionNumberEnum.CURRENT_VERSION.key) {
                 if (inTransactionFlag) {
-                    poTransaction.processClosing()
+                    cardTransaction.processClosing()
                 }
                 throw EnvironmentControlException(EnvironmentControlExceptionKey.WRONG_VERSION_NUMBER)
             }
@@ -162,7 +161,7 @@ class ControlProcedure {
             val envEndDate = DateTime(env.getEnvEndDateAsDate())
             if (envEndDate.isBefore(now)) {
                 if (inTransactionFlag) {
-                    poTransaction.processClosing()
+                    cardTransaction.processClosing()
                 }
                 throw EnvironmentControlException(EnvironmentControlExceptionKey.EXPIRED)
             }
@@ -170,11 +169,11 @@ class ControlProcedure {
             /*
              * Step 5 - Read and unpack the last event record.
              */
-            poTransaction.prepareReadRecordFile(
+            cardTransaction.prepareReadRecordFile(
                 SFI_EventLog,
                 RECORD_NUMBER_1.toInt()
             )
-            poTransaction.processCardCommands()
+            cardTransaction.processCardCommands()
 
             val efEventLog = calypsoCard.getFileBySfi(SFI_EventLog)
             val event = EventStructureParser().parse(efEventLog.data.content)
@@ -187,7 +186,7 @@ class ControlProcedure {
             val eventVersionNumber = event.eventVersionNumber
             if (eventVersionNumber != VersionNumberEnum.CURRENT_VERSION.key) {
                 if (inTransactionFlag) {
-                    poTransaction.processClosing()
+                    cardTransaction.processClosing()
                 }
                 if (eventVersionNumber == VersionNumberEnum.UNDEFINED.key) {
                     throw EventControlException(EventControlExceptionKey.CLEAN_CARD)
@@ -232,19 +231,19 @@ class ControlProcedure {
             /*
              * Step 10 - CNT_READ: For each contract:
              */
-            poTransaction.prepareReadRecordFile(
+            cardTransaction.prepareReadRecordFile(
                 SFI_Contracts,
                 RECORD_NUMBER_1.toInt()
             )
-            poTransaction.prepareReadRecordFile(
+            cardTransaction.prepareReadRecordFile(
                 SFI_Contracts,
                 RECORD_NUMBER_2.toInt()
             )
-            poTransaction.prepareReadRecordFile(
+            cardTransaction.prepareReadRecordFile(
                 SFI_Contracts,
                 RECORD_NUMBER_3.toInt()
             )
-            poTransaction.processCardCommands()
+            cardTransaction.processCardCommands()
 
             val efContractParser = calypsoCard.getFileBySfi(SFI_Contracts)
             val contracts = mutableMapOf<Int, ContractStructureDto>()
@@ -349,11 +348,11 @@ class ControlProcedure {
                                 else -> throw IllegalStateException("Unhandled counter record number : $record")
                             }
 
-                            poTransaction.prepareReadRecordFile(
+                            cardTransaction.prepareReadRecordFile(
                                 counterSfi,
                                 RECORD_NUMBER_1.toInt()
                             )
-                            poTransaction.processCardCommands()
+                            cardTransaction.processCardCommands()
 
                             val efCounter = calypsoCard.getFileBySfi(counterSfi)
                             val counterContent = efCounter.data.allRecordsContent[1]!!
@@ -383,7 +382,12 @@ class ControlProcedure {
              * Step 18 - If inTransactionFlag is true, Close the session
              */
             if (inTransactionFlag) {
-                poTransaction.processClosing()
+                if(status == Status.SUCCESS){
+                    cardTransaction.processClosing()
+                }
+                else{
+                    cardTransaction.processCancel()
+                }
             }
 
             var validationList: ArrayList<Validation>? = null
@@ -395,7 +399,6 @@ class ControlProcedure {
             status = Status.TICKETS_FOUND
             return CardReaderResponse(
                 status = status,
-                cardType = poTypeName ?: "",
                 lastValidationsList = validationList,
                 titlesList = displayedContract
             )
@@ -425,8 +428,7 @@ class ControlProcedure {
             status = status,
             titlesList = arrayListOf(),
             errorTitle = errorTitle,
-            errorMessage = errorMessage,
-            cardType = ticketingSession.poTypeName
+            errorMessage = errorMessage
         )
     }
 

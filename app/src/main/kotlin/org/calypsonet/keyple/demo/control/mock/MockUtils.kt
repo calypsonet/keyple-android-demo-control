@@ -39,7 +39,7 @@ object MockUtils {
 
                 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                 cardReaderResponse = CardReaderResponse(
-                    Status.TICKETS_FOUND, "valid card",
+                    Status.TICKETS_FOUND,
                     arrayListOf(
                         Validation(
                             name = "Titre",
@@ -85,7 +85,6 @@ object MockUtils {
                 cardReaderResponse =
                     CardReaderResponse(
                         status = status,
-                        cardType = null,
                         titlesList = arrayListOf(),
                         errorMessage = error
                     )

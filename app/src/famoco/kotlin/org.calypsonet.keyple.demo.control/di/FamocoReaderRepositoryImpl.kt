@@ -16,7 +16,7 @@ import android.media.MediaPlayer
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.keyple.demo.control.reader.CardReaderProtocol
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPlugin
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPluginFactoryProvider
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoReader
@@ -40,7 +40,7 @@ class FamocoReaderRepositoryImpl @Inject constructor(private val readerObservati
     lateinit var successMedia: MediaPlayer
     lateinit var errorMedia: MediaPlayer
 
-    override var poReader: Reader? = null
+    override var cardReader: Reader? = null
     override var samReaders: MutableList<Reader> = mutableListOf()
 
     @Throws(KeyplePluginException::class)
@@ -76,7 +76,7 @@ class FamocoReaderRepositoryImpl @Inject constructor(private val readerObservati
                 getContactlessIsoProtocol().applicationProtocolName
             )
 
-            this.poReader = poReader
+            this.cardReader = poReader
         }
 
         (poReader as ObservableReader).setReaderObservationExceptionHandler(
@@ -125,8 +125,8 @@ class FamocoReaderRepositoryImpl @Inject constructor(private val readerObservati
 
     override fun getSamRegex(): String = SAM_READER_NAME_REGEX
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol {
-        return PoReaderProtocol(
+    override fun getContactlessIsoProtocol(): CardReaderProtocol {
+        return CardReaderProtocol(
             ContactlessCardCommonProtocol.ISO_14443_4.name,
             ContactlessCardCommonProtocol.ISO_14443_4.name
         )
@@ -137,7 +137,7 @@ class FamocoReaderRepositoryImpl @Inject constructor(private val readerObservati
     }
 
     override fun clear() {
-        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
+        cardReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         samReaders.forEach {
             it.deactivateProtocol(

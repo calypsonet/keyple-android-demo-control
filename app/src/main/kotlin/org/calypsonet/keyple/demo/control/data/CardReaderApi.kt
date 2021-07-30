@@ -52,7 +52,7 @@ class CardReaderApi @Inject constructor(
         }
 
         /*
-         * Init PO reader
+         * Init Card reader
          */
         val poReader: Reader?
         try {
@@ -93,18 +93,18 @@ class CardReaderApi @Inject constructor(
 
     fun startNfcDetection() {
         /*
-        * Provide the Reader with the selection operation to be processed when a PO is
+        * Provide the Reader with the selection operation to be processed when a Card is
         * inserted.
         */
-        ticketingSession?.prepareAndSetPoDefaultSelection()
+        ticketingSession?.prepareAndSetCardDefaultSelection()
 
-        (readerRepository.poReader as ObservableReader).startCardDetection(ObservableCardReader.DetectionMode.REPEATING)
+        (readerRepository.cardReader as ObservableReader).startCardDetection(ObservableCardReader.DetectionMode.REPEATING)
     }
 
     fun stopNfcDetection() {
         try {
             // notify reader that se detection has been switched off
-            (readerRepository.poReader as ObservableReader).stopCardDetection()
+            (readerRepository.cardReader as ObservableReader).stopCardDetection()
         } catch (e: KeyplePluginException) {
             Timber.e(e, "NFC Plugin not found")
         } catch (e: Exception) {
@@ -120,8 +120,8 @@ class CardReaderApi @Inject constructor(
         readersInitialized = false
 
         readerRepository.clear()
-        if (observer != null && readerRepository.poReader != null) {
-            (readerRepository.poReader as ObservableReader).removeObserver(observer)
+        if (observer != null && readerRepository.cardReader != null) {
+            (readerRepository.cardReader as ObservableReader).removeObserver(observer)
         }
 
         val smartCardService = SmartCardServiceProvider.getService()

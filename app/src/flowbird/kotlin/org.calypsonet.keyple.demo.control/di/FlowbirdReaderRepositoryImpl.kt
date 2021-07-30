@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.keyple.demo.control.reader.CardReaderProtocol
 import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 import org.calypsonet.keyple.plugin.flowbird.FlowbirdPluginFactoryProvider
 import org.calypsonet.keyple.plugin.flowbird.FlowbirdUiManager
@@ -39,7 +39,7 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
 ) :
     IReaderRepository {
 
-    override var poReader: Reader? = null
+    override var cardReader: Reader? = null
     override var samReaders: MutableList<Reader> = mutableListOf()
 
     @Throws(KeyplePluginException::class)
@@ -84,7 +84,7 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
                 getContactlessIsoProtocol().applicationProtocolName
             )
 
-            this.poReader = poReader
+            this.cardReader = poReader
         }
 
         (poReader as ObservableReader).setReaderObservationExceptionHandler(
@@ -128,8 +128,8 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol {
-        return PoReaderProtocol(
+    override fun getContactlessIsoProtocol(): CardReaderProtocol {
+        return CardReaderProtocol(
             FlowbirdSupportContactlessProtocols.ALL.key,
             FlowbirdSupportContactlessProtocols.ALL.key
         )
@@ -138,7 +138,7 @@ class FlowbirdReaderRepositoryImpl @Inject constructor(
     override fun getSamReaderProtocol(): String? = null
 
     override fun clear() {
-        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
+        cardReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         if (!getSamReaderProtocol().isNullOrEmpty()) {
             samReaders.forEach {

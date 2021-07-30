@@ -26,22 +26,14 @@ object CalypsoInfo {
      *********************************/
 
     /** AID Intercode **/
-    const val AID_HIS_STRUCTURE_5H_2H = "315449432e49434131"
-    const val AID_HIS_STRUCTURE_32H = "315449432E49434133"
+    const val AID_1TIC_ICA_1 = "315449432e49434131"
+    const val AID_1TIC_ICA_3 = "315449432E49434133"
 
     /** AID NORMALIZED IDF **/
-    const val AID_NORMALIZED_IDF_05H = "A0000004040125090101"
+    const val AID_NORMALIZED_IDF = "A0000004040125090101"
 
-    /*********************************
-     *           Card types and infos
-     *********************************/
-
-    const val PO_TYPE_NAME_CALYPSO_02h = "Calypso_02h"
-    const val PO_TYPE_NAME_CALYPSO_05h = "Calypso_05h"
-    const val PO_TYPE_NAME_CALYPSO_OTHER = "Calypso_Other"
-    const val PO_TYPE_NAME_CALYPSO_32h = "Calypso_32h"
-    const val PO_TYPE_NAME_NAVIGO_05h = "Navigo_05h"
-    const val PO_TYPE_NAME_OTHER = "Unknown"
+    /** OTHER **/
+    const val AID_OTHER = "Other"
 
     const val RECORD_NUMBER_1: Byte = 1
     const val RECORD_NUMBER_2: Byte = 2

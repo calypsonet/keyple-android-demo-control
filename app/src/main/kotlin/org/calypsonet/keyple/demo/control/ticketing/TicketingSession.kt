@@ -17,18 +17,13 @@ import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Location
 import org.calypsonet.keyple.demo.control.models.StructureEnum
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_HIS_STRUCTURE_32H
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_HIS_STRUCTURE_5H_2H
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_NORMALIZED_IDF_05H
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_1TIC_ICA_1
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_1TIC_ICA_3
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_NORMALIZED_IDF
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_OTHER
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.DEFAULT_KIF_DEBIT
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.DEFAULT_KIF_LOAD
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.DEFAULT_KIF_PERSO
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_02h
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_05h
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_32h
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_CALYPSO_OTHER
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_NAVIGO_05h
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.PO_TYPE_NAME_OTHER
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.calypsonet.keyple.demo.control.ticketing.procedure.ControlProcedure
 import org.calypsonet.terminal.calypso.WriteAccessLevel
@@ -59,26 +54,23 @@ import javax.inject.Inject
 class TicketingSession @Inject constructor(private val readerRepository: IReaderRepository) :
     ITicketingSession {
 
-    private var calypsoPoIndex05h_02h = 0
-    private var calypsoPoIndex32h = 0
+    private var calypsoCardIndex05h_02h = 0
+    private var calypsoCardIndex32h = 0
     private var navigoCardIndex05h = 0
 
-    private var now = DateTime.now()
-
     private lateinit var calypsoCard: CalypsoCard
-
     private lateinit var cardSelectionManager: CardSelectionManager
 
-    override var poTypeName: String? = null
+    override var cardAid: String? = null
         private set
 
-    override val poReader: Reader?
-        get() = readerRepository.poReader
+    override val cardReader: Reader?
+        get() = readerRepository.cardReader
 
     override val samReader: Reader?
         get() = readerRepository.getSamReader()
 
-    private var poStructure: StructureEnum? = null
+    private var fileCardStructure: StructureEnum? = null
 
     private val allowedStructures: EnumMap<StructureEnum, List<String>> =
         EnumMap(StructureEnum::class.java)
@@ -86,59 +78,59 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
     init {
         allowedStructures[StructureEnum.STRUCTURE_02H] =
             listOf(
-                PO_TYPE_NAME_CALYPSO_02h
+                AID_1TIC_ICA_1
             )
         allowedStructures[StructureEnum.STRUCTURE_05H] =
             listOf(
-                PO_TYPE_NAME_CALYPSO_05h,
-                PO_TYPE_NAME_NAVIGO_05h
+                AID_1TIC_ICA_1,
+                AID_NORMALIZED_IDF
             )
         allowedStructures[StructureEnum.STRUCTURE_32H] =
             listOf(
-                PO_TYPE_NAME_CALYPSO_32h
+                AID_1TIC_ICA_3
             )
 
-        prepareAndSetPoDefaultSelection()
+        prepareAndSetCardDefaultSelection()
     }
 
     /**
      * prepare the default selection
      */
-    override fun prepareAndSetPoDefaultSelection() {
+    override fun prepareAndSetCardDefaultSelection() {
         /*
-         * Prepare a PO selection
+         * Prepare a Card selection
          */
         cardSelectionManager =
             SmartCardServiceProvider.getService().createCardSelectionManager()
 
-        /* Calypso selection: configures a PoSelector with all the desired attributes to make the selection and read additional information afterwards */
+        /* Calypso selection: configures a CardSelector with all the desired attributes to make the selection and read additional information afterwards */
         val calypsoCardExtensionProvider = CalypsoExtensionService.getInstance()
 
         val smartCardService = SmartCardServiceProvider.getService()
         smartCardService.checkCardExtension(calypsoCardExtensionProvider)
 
         /* Select Calypso */
-        val poSelectionRequest05h_02h =
+        val cardSelectionRequest05h_02h =
             calypsoCardExtensionProvider.createCardSelection()
-        poSelectionRequest05h_02h
-            .filterByDfName(AID_HIS_STRUCTURE_5H_2H)
+        cardSelectionRequest05h_02h
+            .filterByDfName(AID_1TIC_ICA_1)
             .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
          * Add the selection case to the current selection
          */
-        calypsoPoIndex05h_02h = cardSelectionManager.prepareSelection(poSelectionRequest05h_02h)
+        calypsoCardIndex05h_02h = cardSelectionManager.prepareSelection(cardSelectionRequest05h_02h)
 
-        val poSelectionRequest32h =
+        val cardSelectionRequest32h =
             calypsoCardExtensionProvider.createCardSelection()
-        poSelectionRequest32h
-            .filterByDfName(AID_HIS_STRUCTURE_32H)
+        cardSelectionRequest32h
+            .filterByDfName(AID_1TIC_ICA_3)
             .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
          * Add the selection case to the current selection
          */
-        calypsoPoIndex32h = cardSelectionManager.prepareSelection(poSelectionRequest32h)
+        calypsoCardIndex32h = cardSelectionManager.prepareSelection(cardSelectionRequest32h)
 
         /*
          * NAVIGO
@@ -147,7 +139,7 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
         val navigoCardSelectionRequest =
             calypsoCardExtensionProvider.createCardSelection()
         navigoCardSelectionRequest
-            .filterByDfName(AID_NORMALIZED_IDF_05H)
+            .filterByDfName(AID_NORMALIZED_IDF)
             .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
@@ -159,7 +151,7 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
         * Schedule the execution of the prepared card selection scenario as soon as a card is presented
         */
         cardSelectionManager.scheduleCardSelectionScenario(
-            poReader as ObservableReader,
+            cardReader as ObservableReader,
             ObservableCardReader.DetectionMode.REPEATING,
             ObservableCardReader.NotificationMode.ALWAYS
         )
@@ -171,38 +163,34 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
             cardSelectionManager.parseScheduledCardSelectionsResponse(selectionResponse)
         if (selectionsResult.activeSelectionIndex != -1) {
             when (selectionsResult.smartCards.keys.first()) {
-                calypsoPoIndex05h_02h -> {
+                calypsoCardIndex05h_02h -> {
                     calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
-                    poStructure =
+                    fileCardStructure =
                         StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
-                    when (poStructure) {
-                        StructureEnum.STRUCTURE_02H -> poTypeName = PO_TYPE_NAME_CALYPSO_02h
-                        StructureEnum.STRUCTURE_05H -> poTypeName = PO_TYPE_NAME_CALYPSO_05h
-                        else -> poTypeName = PO_TYPE_NAME_CALYPSO_OTHER
-                    }
+                    cardAid = AID_1TIC_ICA_1
                 }
-                calypsoPoIndex32h -> {
+                calypsoCardIndex32h -> {
                     calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
-                    poTypeName = PO_TYPE_NAME_CALYPSO_32h
-                    poStructure =
+                    cardAid = AID_1TIC_ICA_3
+                    fileCardStructure =
                         StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
                 }
                 navigoCardIndex05h -> {
                     calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
-                    poTypeName = PO_TYPE_NAME_NAVIGO_05h
-                    poStructure =
+                    cardAid = AID_NORMALIZED_IDF
+                    fileCardStructure =
                         StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
                 }
-                else -> poTypeName = PO_TYPE_NAME_OTHER
+                else -> cardAid = AID_OTHER
             }
         }
 
-        Timber.i("PO type = $poTypeName")
+        Timber.i("Card AID = $cardAid")
         return selectionsResult
     }
 
     /**
-     * initial PO content analysis
+     * initial Card content analysis
      *
      * @return
      */
@@ -212,17 +200,17 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
      * Check card Structure
      */
     override fun checkStructure(): Boolean {
-        if (!allowedStructures.containsKey(poStructure)) {
+        if (!allowedStructures.containsKey(fileCardStructure)) {
             return false
         }
-        if (!allowedStructures[poStructure]!!.contains(poTypeName)) {
+        if (!allowedStructures[fileCardStructure]!!.contains(cardAid)) {
             return false
         }
         return true
     }
 
     /**
-     * Launch the control procedure of the current PO
+     * Launch the control procedure of the current Card
      *
      * @return [CardReaderResponse]
      */
@@ -235,7 +223,7 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
             samReader = samReader,
             ticketingSession = this@TicketingSession,
             locations = locations,
-            now = now
+            now = DateTime.now()
         )
     }
 

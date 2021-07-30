@@ -15,8 +15,8 @@ import android.app.Activity
 import android.media.MediaPlayer
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.reader.CardReaderProtocol
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
@@ -41,7 +41,7 @@ class MockSamReaderRepositoryImpl @Inject constructor(private val readerObservat
     lateinit var successMedia: MediaPlayer
     lateinit var errorMedia: MediaPlayer
 
-    override var poReader: Reader? = null
+    override var cardReader: Reader? = null
     override var samReaders: MutableList<Reader> = mutableListOf()
 
     @Throws(KeyplePluginException::class)
@@ -59,13 +59,13 @@ class MockSamReaderRepositoryImpl @Inject constructor(private val readerObservat
     @Throws(KeyplePluginException::class)
     override suspend fun initPoReader(): Reader? {
         val readerPlugin = SmartCardServiceProvider.getService().getPlugin(AndroidNfcPlugin.PLUGIN_NAME)
-        poReader = readerPlugin.getReader(AndroidNfcReader.READER_NAME)
+        cardReader = readerPlugin.getReader(AndroidNfcReader.READER_NAME)
 
-        poReader?.let {
+        cardReader?.let {
             Timber.d("Initialize SEProxy with Android Plugin")
 
             // define task as an observer for ReaderEvents
-            Timber.d("PO (NFC) reader name: ${it.name}")
+            Timber.d("Card (NFC) reader name: ${it.name}")
 
 //            androidNfcReader.presenceCheckDelay = 100
 //            androidNfcReader.noPlateformSound = false
@@ -78,11 +78,11 @@ class MockSamReaderRepositoryImpl @Inject constructor(private val readerObservat
             )
         }
 
-        (poReader as ObservableReader).setReaderObservationExceptionHandler(
+        (cardReader as ObservableReader).setReaderObservationExceptionHandler(
             readerObservationExceptionHandler
         )
 
-        return poReader
+        return cardReader
     }
 
     override suspend fun initSamReaders(): List<Reader> {
@@ -94,8 +94,8 @@ class MockSamReaderRepositoryImpl @Inject constructor(private val readerObservat
         return null
     }
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol {
-        return PoReaderProtocol(
+    override fun getContactlessIsoProtocol(): CardReaderProtocol {
+        return CardReaderProtocol(
             ContactlessCardCommonProtocol.ISO_14443_4.name,
             ContactlessCardCommonProtocol.ISO_14443_4.name
         )
@@ -109,7 +109,7 @@ class MockSamReaderRepositoryImpl @Inject constructor(private val readerObservat
 
     override fun clear() {
         // with this protocol settings we activate the nfc for ISO1443_4 protocol
-        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
+        cardReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         successMedia.stop()
         successMedia.release()

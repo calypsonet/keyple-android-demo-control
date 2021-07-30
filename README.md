@@ -256,7 +256,7 @@ Mainly used to manage the lifecycle of the Keyple plugin.
 This class is used to initialize the plugin and manage the card detection phase.
 It is called on the different steps of the card reader activity lifecycle:
 - onResume:
-  - Initialize the plugin (PO and SAM readers...)
+  - Initialize the plugin (Card and SAM readers...)
   - Get the ticketing session
   - Start NFC detection
 - onPause:
@@ -270,8 +270,8 @@ The purpose of this class is to communicate with the card.
 
 First it prepares the default selection that will be sent to the card when a card is detected by setting the AID(s) and the reader protocol(s) of the cards we want to detect and read.
 
-Once a card is detected, the TicketingSession processes the default selection by retrieving the current CalypsoPO object. 
-This CalypsoPO contains information about the card (SerialNumber, PORevision...)
+Once a card is detected, the TicketingSession processes the default selection by retrieving the current CalypsoCard object.
+This CalypsoCard contains information about the card (SerialNumber, PORevision...)
 
 Finally, this class is responsible for launching the control procedure and returning its result.
 

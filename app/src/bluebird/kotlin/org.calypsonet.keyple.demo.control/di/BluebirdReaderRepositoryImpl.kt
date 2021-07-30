@@ -19,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.keyple.demo.control.reader.CardReaderProtocol
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactReader
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessReader
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
@@ -43,7 +43,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     private lateinit var successMedia: MediaPlayer
     private lateinit var errorMedia: MediaPlayer
 
-    override var poReader: Reader? = null
+    override var cardReader: Reader? = null
     override var samReaders: MutableList<Reader> = mutableListOf()
 
     @Throws(KeyplePluginException::class)
@@ -75,7 +75,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
                 getContactlessIsoProtocol().applicationProtocolName
             )
 
-            this.poReader = poReader
+            this.cardReader = poReader
         }
 
         (poReader as ObservableReader).setReaderObservationExceptionHandler(
@@ -118,8 +118,8 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol {
-        return PoReaderProtocol(
+    override fun getContactlessIsoProtocol(): CardReaderProtocol {
+        return CardReaderProtocol(
             BluebirdSupportContactlessProtocols.NFC_ALL.key,
             BluebirdSupportContactlessProtocols.NFC_ALL.key
         )
@@ -131,7 +131,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun getSamRegex(): String = SAM_READER_NAME_REGEX
 
     override fun clear() {
-        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
+        cardReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         samReaders.forEach {
             it.deactivateProtocol(
