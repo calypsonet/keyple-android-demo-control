@@ -149,7 +149,7 @@ class ControlProcedure {
              */
             if (env.envVersionNumber != VersionNumberEnum.CURRENT_VERSION.key) {
                 if (inTransactionFlag) {
-                    cardTransaction.processClosing()
+                    cardTransaction.processCancel()
                 }
                 throw EnvironmentControlException(EnvironmentControlExceptionKey.WRONG_VERSION_NUMBER)
             }
@@ -161,7 +161,7 @@ class ControlProcedure {
             val envEndDate = DateTime(env.getEnvEndDateAsDate())
             if (envEndDate.isBefore(now)) {
                 if (inTransactionFlag) {
-                    cardTransaction.processClosing()
+                    cardTransaction.processCancel()
                 }
                 throw EnvironmentControlException(EnvironmentControlExceptionKey.EXPIRED)
             }
@@ -186,7 +186,7 @@ class ControlProcedure {
             val eventVersionNumber = event.eventVersionNumber
             if (eventVersionNumber != VersionNumberEnum.CURRENT_VERSION.key) {
                 if (inTransactionFlag) {
-                    cardTransaction.processClosing()
+                    cardTransaction.processCancel()
                 }
                 if (eventVersionNumber == VersionNumberEnum.UNDEFINED.key) {
                     throw EventControlException(EventControlExceptionKey.CLEAN_CARD)
@@ -378,14 +378,16 @@ class ControlProcedure {
                 }
             }
 
+            Timber.i("Control procedure result : STATUS_OK")
+            status = Status.TICKETS_FOUND
+
             /*
              * Step 18 - If inTransactionFlag is true, Close the session
              */
             if (inTransactionFlag) {
-                if(status == Status.SUCCESS){
+                if (status == Status.TICKETS_FOUND) {
                     cardTransaction.processClosing()
-                }
-                else{
+                } else {
                     cardTransaction.processCancel()
                 }
             }
@@ -394,9 +396,6 @@ class ControlProcedure {
             if (validation != null) {
                 validationList = arrayListOf(validation)
             }
-
-            Timber.i("Control procedure result : STATUS_OK")
-            status = Status.TICKETS_FOUND
             return CardReaderResponse(
                 status = status,
                 lastValidationsList = validationList,
