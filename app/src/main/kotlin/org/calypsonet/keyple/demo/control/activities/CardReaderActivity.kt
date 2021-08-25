@@ -40,7 +40,7 @@ class CardReaderActivity : BaseActivity() {
 
     @Suppress("DEPRECATION") private lateinit var progress: ProgressDialog
 
-    private var poReaderObserver: PoObserver? = null
+    private var cardReaderObserver: CardReaderObserver? = null
 
     private lateinit var ticketingSession: ITicketingSession
 
@@ -87,8 +87,8 @@ class CardReaderActivity : BaseActivity() {
 
                 withContext(Dispatchers.IO) {
                     try {
-                        poReaderObserver = PoObserver()
-                        cardReaderApi.init(poReaderObserver, this@CardReaderActivity)
+                        cardReaderObserver = CardReaderObserver()
+                        cardReaderApi.init(cardReaderObserver, this@CardReaderActivity)
                         ticketingSession = cardReaderApi.getTicketingSession()!!
                         cardReaderApi.readersInitialized = true
                         handleAppEvents(AppState.WAIT_CARD, null)
@@ -122,8 +122,8 @@ class CardReaderActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        cardReaderApi.onDestroy(poReaderObserver)
-        poReaderObserver = null
+        cardReaderApi.onDestroy(cardReaderObserver)
+        cardReaderObserver = null
         super.onDestroy()
     }
 
@@ -336,7 +336,7 @@ class CardReaderActivity : BaseActivity() {
         const val CARD_CONTENT = "cardContent"
     }
 
-    private inner class PoObserver : CardReaderObserverSpi {
+    private inner class CardReaderObserver : CardReaderObserverSpi {
 
         override fun onReaderEvent(readerEvent: CardReaderEvent?) {
             Timber.i("New ReaderEvent received :${readerEvent?.type?.name}")

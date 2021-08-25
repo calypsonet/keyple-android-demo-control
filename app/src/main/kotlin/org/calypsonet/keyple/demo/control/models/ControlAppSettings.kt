@@ -11,23 +11,7 @@
  ********************************************************************************/
 package org.calypsonet.keyple.demo.control.models
 
-enum class StructureEnum(val key: Int) {
-    STRUCTURE_02H(0x2),
-    STRUCTURE_05H(0x5),
-    STRUCTURE_13H(0x13),
-    STRUCTURE_32H(0x32),
-    STRUCTURE_42H(0x42);
-
-    override fun toString(): String {
-        return "Structure ${Integer.toHexString(key)}h"
-    }
-
-    companion object {
-        fun findEnumByKey(key: Int): StructureEnum? {
-            val values = values()
-            return values.find {
-                it.key == key
-            }
-        }
-    }
+object ControlAppSettings {
+    var location: Location? = null
+    var validationPeriod: Int? = null
 }

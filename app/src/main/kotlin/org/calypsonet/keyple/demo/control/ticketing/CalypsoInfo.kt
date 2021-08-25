@@ -41,12 +41,9 @@ object CalypsoInfo {
     const val RECORD_NUMBER_4: Byte = 4
 
     const val SFI_EnvironmentAndHolder = 0x07.toByte()
-    const val SFI_EventLog = 0x08.toByte()
+    const val SFI_EventsLog = 0x08.toByte()
     const val SFI_Contracts = 0x09.toByte()
-    const val SFI_Counter_0A = 0x0A.toByte()
-    const val SFI_Counter_0B = 0x0B.toByte()
-    const val SFI_Counter_0C = 0x0C.toByte()
-    const val SFI_Counter_0D = 0x0D.toByte()
+    const val SFI_Counter = 0x19.toByte()
 
     /*********************************
      *      Security Settings

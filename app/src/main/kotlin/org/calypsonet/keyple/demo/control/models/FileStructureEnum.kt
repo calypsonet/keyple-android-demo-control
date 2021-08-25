@@ -11,7 +11,21 @@
  ********************************************************************************/
 package org.calypsonet.keyple.demo.control.models
 
-object KeypleSettings {
-    var location: Location? = null
-    var validationPeriod: Int? = null
+enum class FileStructureEnum(val key: Int) {
+    FILE_STRUCTURE_02H(0x2),
+    FILE_STRUCTURE_05H(0x5),
+    FILE_STRUCTURE_32H(0x32);
+
+    override fun toString(): String {
+        return "Structure ${Integer.toHexString(key)}h"
+    }
+
+    companion object {
+        fun findEnumByKey(key: Int): FileStructureEnum? {
+            val values = values()
+            return values.find {
+                it.key == key
+            }
+        }
+    }
 }

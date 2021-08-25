@@ -19,31 +19,24 @@ import org.calypsonet.keyple.demo.control.exception.EventControlExceptionKey
 import org.calypsonet.keyple.demo.control.exception.NoLocationDefinedException
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Contract
-import org.calypsonet.keyple.demo.control.models.KeypleSettings
+import org.calypsonet.keyple.demo.control.models.ControlAppSettings
 import org.calypsonet.keyple.demo.control.models.Location
 import org.calypsonet.keyple.demo.control.models.Status
 import org.calypsonet.keyple.demo.control.models.Validation
 import org.calypsonet.keyple.demo.control.models.mapper.ContractMapper
 import org.calypsonet.keyple.demo.control.models.mapper.ValidationMapper
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_1
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_2
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_3
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_4
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Contracts
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0A
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0B
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0C
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0D
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EnvironmentAndHolder
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventLog
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventsLog
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
 import org.calypsonet.terminal.calypso.WriteAccessLevel
 import org.calypsonet.terminal.calypso.card.CalypsoCard
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.parser.keyple.ContractStructureParser
-import org.eclipse.keyple.parser.keyple.CounterStructureParser
 import org.eclipse.keyple.parser.keyple.EnvironmentHolderStructureParser
 import org.eclipse.keyple.parser.keyple.EventStructureParser
 import org.eclipse.keyple.parser.model.ContractStructureDto
@@ -170,12 +163,12 @@ class ControlProcedure {
              * Step 5 - Read and unpack the last event record.
              */
             cardTransaction.prepareReadRecordFile(
-                SFI_EventLog,
+                SFI_EventsLog,
                 RECORD_NUMBER_1.toInt()
             )
             cardTransaction.processCardCommands()
 
-            val efEventLog = calypsoCard.getFileBySfi(SFI_EventLog)
+            val efEventLog = calypsoCard.getFileBySfi(SFI_EventsLog)
             val event = EventStructureParser().parse(efEventLog.data.content)
 
             /*
@@ -195,20 +188,20 @@ class ControlProcedure {
                 }
             }
 
-            var contratEventNotValid = false
-            val contracUsed = event.eventContractUsed
+            var contractEventNotValid = false
+            val contractUsed = event.eventContractUsed
 
             val eventDateTime = DateTime(event.getEventDate())
             val eventValidityEndDate =
-                eventDateTime.plusMinutes(KeypleSettings.validationPeriod ?: 0)
+                eventDateTime.plusMinutes(ControlAppSettings.validationPeriod ?: 0)
 
             /*
              * Step 7 - If EventLocation != value configured in the control terminal set the validated contract not valid flag as true and go to point CNT_READ.
              */
-            if (KeypleSettings.location == null) {
+            if (ControlAppSettings.location == null) {
                 throw NoLocationDefinedException()
-            } else if (KeypleSettings.location!!.id != event.eventLocation) {
-                contratEventNotValid = true
+            } else if (ControlAppSettings.location!!.id != event.eventLocation) {
+                contractEventNotValid = true
             }
             /*
              * Step 8 - Else If EventDateStamp points to a date in the past
@@ -217,7 +210,7 @@ class ControlProcedure {
             else if (eventDateTime.withTimeAtStartOfDay()
                     .isBefore(now.withTimeAtStartOfDay())
             ) {
-                contratEventNotValid = true
+                contractEventNotValid = true
             }
 
             /*
@@ -225,7 +218,7 @@ class ControlProcedure {
              *  -> set the validated contract not valid flag as true.
              */
             else if (eventValidityEndDate.isBefore(now)) {
-                contratEventNotValid = true
+                contractEventNotValid = true
             }
 
             /*
@@ -233,15 +226,9 @@ class ControlProcedure {
              */
             cardTransaction.prepareReadRecordFile(
                 SFI_Contracts,
-                RECORD_NUMBER_1.toInt()
-            )
-            cardTransaction.prepareReadRecordFile(
-                SFI_Contracts,
-                RECORD_NUMBER_2.toInt()
-            )
-            cardTransaction.prepareReadRecordFile(
-                SFI_Contracts,
-                RECORD_NUMBER_3.toInt()
+                RECORD_NUMBER_1.toInt(),
+                COUNTER_RECORDS_NB,
+                CONTRACT_RECORD_SIZE
             )
             cardTransaction.processCardCommands()
 
@@ -277,6 +264,18 @@ class ControlProcedure {
                         locations = locations
                     )
                 }
+
+
+            /*
+             * Read counters content
+             */
+            cardTransaction.prepareReadCounterFile(
+                SFI_Counter,
+                COUNTER_RECORDS_NB
+            )
+            cardTransaction.processCardCommands()
+
+            val efCounter = calypsoCard.getFileBySfi(SFI_Counter)
 
             val displayedContract = arrayListOf<Contract>()
             contracts.forEach {
@@ -324,40 +323,22 @@ class ControlProcedure {
                      * Step 16 - If EventContractUsed points to the current contract index
                      * & not valid flag is false then mark it as Validated.
                      */
-                    if (contracUsed == record && !contratEventNotValid) {
+                    if (contractUsed == record && !contractEventNotValid) {
                         contractValidated = true
                     }
 
                     var validationDate: DateTime? = null
-                    if (contractValidated && contracUsed == record) {
+                    if (contractValidated && contractUsed == record) {
                         validationDate = eventDateTime
                     }
 
                     /*
                      * Step 16.1 - If EventContractUsed points to the current contract index
                      * & not valid flag is false then mark it as Validated.
-                     * //TODO: Add this step to control procedure in order to determine the amount of trips left
                      */
                     val nbTicketsLeft =
                         if (contract.contractTariff == ContractPriorityEnum.MULTI_TRIP) {
-                            val counterSfi = when (record) {
-                                RECORD_NUMBER_1.toInt() -> SFI_Counter_0A
-                                RECORD_NUMBER_2.toInt() -> SFI_Counter_0B
-                                RECORD_NUMBER_3.toInt() -> SFI_Counter_0C
-                                RECORD_NUMBER_4.toInt() -> SFI_Counter_0D
-                                else -> throw IllegalStateException("Unhandled counter record number : $record")
-                            }
-
-                            cardTransaction.prepareReadRecordFile(
-                                counterSfi,
-                                RECORD_NUMBER_1.toInt()
-                            )
-                            cardTransaction.processCardCommands()
-
-                            val efCounter = calypsoCard.getFileBySfi(counterSfi)
-                            val counterContent = efCounter.data.allRecordsContent[1]!!
-
-                            CounterStructureParser().parse(counterContent).counterValue
+                            efCounter.data.getContentAsCounterValue(record)
                         } else {
                             null
                         }
@@ -436,5 +417,10 @@ class ControlProcedure {
      */
     private fun isValidEvent(event: EventStructureDto): Boolean {
         return event.eventTimeStamp != 0 || event.eventDateStamp != 0
+    }
+
+    companion object{
+        const val COUNTER_RECORDS_NB = 4
+        const val CONTRACT_RECORD_SIZE = 0x1D
     }
 }

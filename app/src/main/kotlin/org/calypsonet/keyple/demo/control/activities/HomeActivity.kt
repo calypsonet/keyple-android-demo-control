@@ -17,7 +17,7 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_home.locationSelected
 import kotlinx.android.synthetic.main.activity_home.startBtn
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.models.KeypleSettings
+import org.calypsonet.keyple.demo.control.models.ControlAppSettings
 
 class HomeActivity : BaseActivity() {
 
@@ -25,7 +25,7 @@ class HomeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         setSupportActionBar(findViewById(R.id.toolbar))
-        locationSelected.text = KeypleSettings.location?.toString() ?: ""
+        locationSelected.text = ControlAppSettings.location?.toString() ?: ""
 
         startBtn.setOnClickListener {
             startActivity(Intent(this, CardReaderActivity::class.java))

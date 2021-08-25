@@ -15,7 +15,7 @@ import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.exception.ControlException
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Location
-import org.calypsonet.keyple.demo.control.models.StructureEnum
+import org.calypsonet.keyple.demo.control.models.FileStructureEnum
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_1TIC_ICA_1
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.AID_1TIC_ICA_3
@@ -54,9 +54,9 @@ import javax.inject.Inject
 class TicketingSession @Inject constructor(private val readerRepository: IReaderRepository) :
     ITicketingSession {
 
-    private var calypsoCardIndex05h_02h = 0
-    private var calypsoCardIndex32h = 0
-    private var navigoCardIndex05h = 0
+    private var calypsoCardIndexAid_1TIC_ICA_1 = 0
+    private var calypsoCardIndexAid_1TIC_ICA_3 = 0
+    private var calypsoCardIndexAid_IDF = 0
 
     private lateinit var calypsoCard: CalypsoCard
     private lateinit var cardSelectionManager: CardSelectionManager
@@ -70,22 +70,22 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
     override val samReader: Reader?
         get() = readerRepository.getSamReader()
 
-    private var fileCardStructure: StructureEnum? = null
+    private var fileStructure: FileStructureEnum? = null
 
-    private val allowedStructures: EnumMap<StructureEnum, List<String>> =
-        EnumMap(StructureEnum::class.java)
+    private val allowedFileStructures: EnumMap<FileStructureEnum, List<String>> =
+        EnumMap(FileStructureEnum::class.java)
 
     init {
-        allowedStructures[StructureEnum.STRUCTURE_02H] =
+        allowedFileStructures[FileStructureEnum.FILE_STRUCTURE_02H] =
             listOf(
                 AID_1TIC_ICA_1
             )
-        allowedStructures[StructureEnum.STRUCTURE_05H] =
+        allowedFileStructures[FileStructureEnum.FILE_STRUCTURE_05H] =
             listOf(
                 AID_1TIC_ICA_1,
                 AID_NORMALIZED_IDF
             )
-        allowedStructures[StructureEnum.STRUCTURE_32H] =
+        allowedFileStructures[FileStructureEnum.FILE_STRUCTURE_32H] =
             listOf(
                 AID_1TIC_ICA_3
             )
@@ -110,42 +110,42 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
         smartCardService.checkCardExtension(calypsoCardExtensionProvider)
 
         /* Select Calypso */
-        val cardSelectionRequest05h_02h =
+        val cardSelectionRequest_1TIC_ICA_1 =
             calypsoCardExtensionProvider.createCardSelection()
-        cardSelectionRequest05h_02h
+        cardSelectionRequest_1TIC_ICA_1
             .filterByDfName(AID_1TIC_ICA_1)
             .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
          * Add the selection case to the current selection
          */
-        calypsoCardIndex05h_02h = cardSelectionManager.prepareSelection(cardSelectionRequest05h_02h)
+        calypsoCardIndexAid_1TIC_ICA_1 = cardSelectionManager.prepareSelection(cardSelectionRequest_1TIC_ICA_1)
 
-        val cardSelectionRequest32h =
+        val cardSelectionRequest_1TIC_ICA_3 =
             calypsoCardExtensionProvider.createCardSelection()
-        cardSelectionRequest32h
+        cardSelectionRequest_1TIC_ICA_3
             .filterByDfName(AID_1TIC_ICA_3)
             .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
          * Add the selection case to the current selection
          */
-        calypsoCardIndex32h = cardSelectionManager.prepareSelection(cardSelectionRequest32h)
+        calypsoCardIndexAid_1TIC_ICA_3 = cardSelectionManager.prepareSelection(cardSelectionRequest_1TIC_ICA_3)
 
         /*
          * NAVIGO
          */
 
-        val navigoCardSelectionRequest =
+        val cardSelectionRequest_AID_IDF =
             calypsoCardExtensionProvider.createCardSelection()
-        navigoCardSelectionRequest
+        cardSelectionRequest_AID_IDF
             .filterByDfName(AID_NORMALIZED_IDF)
             .filterByCardProtocol(readerRepository.getContactlessIsoProtocol()!!.applicationProtocolName)
 
         /*
          * Add the selection case to the current selection
          */
-        navigoCardIndex05h = cardSelectionManager.prepareSelection(navigoCardSelectionRequest)
+        calypsoCardIndexAid_IDF = cardSelectionManager.prepareSelection(cardSelectionRequest_AID_IDF)
 
         /*
         * Schedule the execution of the prepared card selection scenario as soon as a card is presented
@@ -163,23 +163,23 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
             cardSelectionManager.parseScheduledCardSelectionsResponse(selectionResponse)
         if (selectionsResult.activeSelectionIndex != -1) {
             when (selectionsResult.smartCards.keys.first()) {
-                calypsoCardIndex05h_02h -> {
+                calypsoCardIndexAid_1TIC_ICA_1 -> {
                     calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
-                    fileCardStructure =
-                        StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
+                    fileStructure =
+                        FileStructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
                     cardAid = AID_1TIC_ICA_1
                 }
-                calypsoCardIndex32h -> {
+                calypsoCardIndexAid_1TIC_ICA_3 -> {
                     calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
                     cardAid = AID_1TIC_ICA_3
-                    fileCardStructure =
-                        StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
+                    fileStructure =
+                        FileStructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
                 }
-                navigoCardIndex05h -> {
+                calypsoCardIndexAid_IDF -> {
                     calypsoCard = selectionsResult.activeSmartCard as CalypsoCard
                     cardAid = AID_NORMALIZED_IDF
-                    fileCardStructure =
-                        StructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
+                    fileStructure =
+                        FileStructureEnum.findEnumByKey(calypsoCard.applicationSubtype.toInt())
                 }
                 else -> cardAid = AID_OTHER
             }
@@ -200,10 +200,10 @@ class TicketingSession @Inject constructor(private val readerRepository: IReader
      * Check card Structure
      */
     override fun checkStructure(): Boolean {
-        if (!allowedStructures.containsKey(fileCardStructure)) {
+        if (!allowedFileStructures.containsKey(fileStructure)) {
             return false
         }
-        if (!allowedStructures[fileCardStructure]!!.contains(cardAid)) {
+        if (!allowedFileStructures[fileStructure]!!.contains(cardAid)) {
             return false
         }
         return true

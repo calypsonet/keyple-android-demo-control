@@ -26,6 +26,7 @@ import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
 import org.calypsonet.keyple.plugin.bluebird.BluebirdSupportContactlessProtocols
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.core.service.ConfigurableReader
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Plugin
@@ -67,22 +68,22 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override suspend fun initPoReader(): Reader {
         val bluebirdPlugin =
             SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
-        val poReader = bluebirdPlugin?.getReader(BluebirdContactlessReader.READER_NAME)
-        poReader?.let {
+        val cardReader = bluebirdPlugin?.getReader(BluebirdContactlessReader.READER_NAME)
+        cardReader?.let {
 
-            it.activateProtocol(
+            (it as ConfigurableReader).activateProtocol(
                 getContactlessIsoProtocol().readerProtocolName,
                 getContactlessIsoProtocol().applicationProtocolName
             )
 
-            this.cardReader = poReader
+            this.cardReader = cardReader
         }
 
-        (poReader as ObservableReader).setReaderObservationExceptionHandler(
+        (cardReader as ObservableReader).setReaderObservationExceptionHandler(
             readerObservationExceptionHandler
         )
 
-        return poReader
+        return cardReader
     }
 
     @Throws(KeyplePluginException::class)
@@ -93,12 +94,6 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
             !it.isContactless
         }?.toMutableList() ?: mutableListOf()
 
-        samReaders.forEach { reader ->
-            reader.activateProtocol(
-                getSamReaderProtocol(),
-                getSamReaderProtocol()
-            )
-        }
         return samReaders
     }
 
@@ -131,13 +126,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun getSamRegex(): String = SAM_READER_NAME_REGEX
 
     override fun clear() {
-        cardReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
-
-        samReaders.forEach {
-            it.deactivateProtocol(
-                getSamReaderProtocol()
-            )
-        }
+        (cardReader as ConfigurableReader).deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         successMedia.stop()
         successMedia.release()
