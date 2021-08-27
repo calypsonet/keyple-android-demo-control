@@ -9,20 +9,23 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ********************************************************************************/
-package org.calypsonet.keyple.demo.control.models.mapper
+package org.calypsonet.keyple.parser.intercode.model
 
-import org.calypsonet.keyple.demo.control.models.Location
-import org.calypsonet.keyple.parser.model.EventStructureDto
+import java.util.Date
 
 /**
  *
  *  @author youssefamrani
  */
 
-object LocationMapper {
-    fun map(locations: List<Location>, event: EventStructureDto): Location {
-        return locations.filter {
-            event.eventLocation == it.id
-        }[0]
-    }
-}
+data class IntercodePublicTransportContract(
+    val bitmap: BooleanArray,
+    val contractProvider: Int?,
+    val contractTariffval: Int?,
+    val contractSerialNumber: Int?,
+    val contractPassengerClass: Int?,
+    val contractValidityInfo: ByteArray?,
+    val contractValidityStartDate: Date?,
+    val contractValidityEndDate: Date?,
+    val contractStatus: Int?
+) : AbstractIntercodeContract()

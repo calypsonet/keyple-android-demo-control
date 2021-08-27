@@ -32,17 +32,17 @@ import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EnvironmentAndHolder
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventsLog
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
+import org.calypsonet.keyple.parser.keyple.ContractStructureParser
+import org.calypsonet.keyple.parser.keyple.EnvironmentHolderStructureParser
+import org.calypsonet.keyple.parser.keyple.EventStructureParser
+import org.calypsonet.keyple.parser.model.ContractStructureDto
+import org.calypsonet.keyple.parser.model.EventStructureDto
+import org.calypsonet.keyple.parser.model.type.ContractPriorityEnum
+import org.calypsonet.keyple.parser.model.type.VersionNumberEnum
 import org.calypsonet.terminal.calypso.WriteAccessLevel
 import org.calypsonet.terminal.calypso.card.CalypsoCard
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.parser.keyple.ContractStructureParser
-import org.eclipse.keyple.parser.keyple.EnvironmentHolderStructureParser
-import org.eclipse.keyple.parser.keyple.EventStructureParser
-import org.eclipse.keyple.parser.model.ContractStructureDto
-import org.eclipse.keyple.parser.model.EventStructureDto
-import org.eclipse.keyple.parser.model.type.ContractPriorityEnum
-import org.eclipse.keyple.parser.model.type.VersionNumberEnum
 import org.joda.time.DateTime
 import timber.log.Timber
 

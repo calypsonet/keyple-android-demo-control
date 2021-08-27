@@ -20,8 +20,8 @@ import kotlinx.android.synthetic.main.title_recycler_row.view.validImg
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.inflate
 import org.calypsonet.keyple.demo.control.models.Contract
-import org.eclipse.keyple.parser.model.type.ContractPriorityEnum
-import org.eclipse.keyple.parser.utils.DateUtils
+import org.calypsonet.keyple.parser.model.type.ContractPriorityEnum
+import org.calypsonet.keyple.parser.utils.DateUtils
 
 class TitlesRecyclerAdapter(
     private val titles: ArrayList<Contract>

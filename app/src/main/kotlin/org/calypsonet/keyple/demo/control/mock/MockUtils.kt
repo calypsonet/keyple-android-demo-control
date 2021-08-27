@@ -20,8 +20,8 @@ import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Contract
 import org.calypsonet.keyple.demo.control.models.Status
 import org.calypsonet.keyple.demo.control.models.Validation
-import org.eclipse.keyple.parser.model.type.ContractPriorityEnum
-import org.eclipse.keyple.parser.utils.DateUtils
+import org.calypsonet.keyple.parser.model.type.ContractPriorityEnum
+import org.calypsonet.keyple.parser.utils.DateUtils
 import org.joda.time.DateTime
 
 /**

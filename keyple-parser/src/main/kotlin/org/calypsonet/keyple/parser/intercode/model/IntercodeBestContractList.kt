@@ -9,20 +9,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ********************************************************************************/
-package org.calypsonet.keyple.demo.control.models.mapper
+package org.calypsonet.keyple.parser.intercode.model
 
-import org.calypsonet.keyple.demo.control.models.Location
-import org.calypsonet.keyple.parser.model.EventStructureDto
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-/**
- *
- *  @author youssefamrani
- */
-
-object LocationMapper {
-    fun map(locations: List<Location>, event: EventStructureDto): Location {
-        return locations.filter {
-            event.eventLocation == it.id
-        }[0]
-    }
-}
+@Parcelize
+data class IntercodeBestContractList(
+    val bestContracts: List<IntercodeBestContract>
+) : Parcelable

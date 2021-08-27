@@ -9,20 +9,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ********************************************************************************/
-package org.calypsonet.keyple.demo.control.models.mapper
-
-import org.calypsonet.keyple.demo.control.models.Location
-import org.calypsonet.keyple.parser.model.EventStructureDto
+package org.calypsonet.keyple.parser.intercode.model
 
 /**
  *
  *  @author youssefamrani
  */
 
-object LocationMapper {
-    fun map(locations: List<Location>, event: EventStructureDto): Location {
-        return locations.filter {
-            event.eventLocation == it.id
-        }[0]
-    }
-}
+abstract class AbstractIntercodeContract

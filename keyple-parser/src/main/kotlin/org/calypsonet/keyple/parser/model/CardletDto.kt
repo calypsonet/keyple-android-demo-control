@@ -9,20 +9,16 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ********************************************************************************/
-package org.calypsonet.keyple.demo.control.models.mapper
-
-import org.calypsonet.keyple.demo.control.models.Location
-import org.calypsonet.keyple.parser.model.EventStructureDto
+package org.calypsonet.keyple.parser.model
 
 /**
  *
  *  @author youssefamrani
  */
 
-object LocationMapper {
-    fun map(locations: List<Location>, event: EventStructureDto): Location {
-        return locations.filter {
-            event.eventLocation == it.id
-        }[0]
-    }
-}
+data class CardletDto(
+    val environmentHolderStructureDto: EnvironmentHolderStructureDto,
+    val contractStructureDtos: MutableList<ContractStructureDto>,
+    val eventStructureDtos: MutableList<EventStructureDto>,
+    val counterStructureDtos: MutableList<CounterStructureDto>
+)
