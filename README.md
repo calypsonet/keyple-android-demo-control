@@ -29,6 +29,7 @@ The demo works with the cards provided in the [Test kit](https://calypsonet.org/
 
 This demo can be used with Calypso cards with the following configurations:
 * AID 315449432E49434131h - File Structure 05h (CD Light/GTML Compatibility)
+* AID 315449432E49434131h - File Structure 02h (Revision 2 Minimum with MF files)
 * AID 315449432E49434133h - File Structure 32h (Calypso Light Classic)
 * AID A0000004040125090101h - File Structure 05h (CD Light/GTML Compatibility)
 
@@ -131,13 +132,17 @@ This procedure's main steps are as follows:
     - Else If EventDateStamp points to a date in the past set the validated contract **not valid** flag as true and go to **Contract Analysis**.
     - Else If (EventTimeStamp + Validation period configure in the control terminal) < current time of the control terminal set the validated contract **not valid** flag as true.
 - **Contract Analysis**: For each contract:
-  - Read and unpack the contract.
+  - Read all contracts and the counter file.
+  - For each contract:
+  - Unpack the contract
   - If the ContractVersionNumber == 0 then the contract is blank, move on to the next contract.
   - If ContractVersionNumber is not the expected one (==1 for the current version) reject the card. Abort Transaction if inTransactionFlag is true.
   - If ContractValidityEndDate points to a date in the past mark contract as Expired.
   - If EventContractUsed points to the current contract index & **not valid** flag is false then mark it as Validated.
+  - If the ContractTariff value for the contract is 2 or 3, unpack the counter associated to the contract to extract the counter value.
   - Add contract data to the list of contracts read to return to the upper layer.
   - If inTransactionFlag is true, close the Validation session.
+  - Return the status of the operation to the upper layer. <Exit process>
 
 ## Screens
 

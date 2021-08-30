@@ -23,8 +23,7 @@ interface IReaderRepository {
 
     fun registerPlugin(activity: Activity)
 
-    suspend fun initPoReader(): Reader?
-
+    suspend fun initCardReader(): Reader?
     suspend fun initSamReaders(): List<Reader>
 
     fun getSamReader(): Reader?

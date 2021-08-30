@@ -222,7 +222,7 @@ class ControlProcedure {
             }
 
             /*
-             * Step 10 - CNT_READ: For each contract:
+             * Step 10 - CNT_READ: Read all contracts and the counter file
              */
             cardTransaction.prepareReadRecordFile(
                 SFI_Contracts,
@@ -230,13 +230,25 @@ class ControlProcedure {
                 COUNTER_RECORDS_NB,
                 CONTRACT_RECORD_SIZE
             )
+
+            //Read counters content
+            cardTransaction.prepareReadCounterFile(
+                SFI_Counter,
+                COUNTER_RECORDS_NB
+            )
             cardTransaction.processCardCommands()
+
+            val efCounter = calypsoCard.getFileBySfi(SFI_Counter)
 
             val efContractParser = calypsoCard.getFileBySfi(SFI_Contracts)
             val contracts = mutableMapOf<Int, ContractStructureDto>()
+
+            /*
+             * Step 11 - For each contract:
+             */
             efContractParser.data.allRecordsContent.forEach {
                 /*
-                 * Step 11 - Read and unpack the contract
+                 * Step 12 - Unpack the contract
                  */
                 contracts[it.key] = ContractStructureParser().parse(it.value)
             }
@@ -250,7 +262,7 @@ class ControlProcedure {
                 it.second
             }
 
-            if (isValidEvent(event))
+            if (isValidEvent(event)) {
                 if (eventContract.isNotEmpty()) {
                     validation = ValidationMapper.map(
                         event = event,
@@ -264,18 +276,7 @@ class ControlProcedure {
                         locations = locations
                     )
                 }
-
-
-            /*
-             * Read counters content
-             */
-            cardTransaction.prepareReadCounterFile(
-                SFI_Counter,
-                COUNTER_RECORDS_NB
-            )
-            cardTransaction.processCardCommands()
-
-            val efCounter = calypsoCard.getFileBySfi(SFI_Counter)
+            }
 
             val displayedContract = arrayListOf<Contract>()
             contracts.forEach {
@@ -286,32 +287,32 @@ class ControlProcedure {
 
                 if (contract.contractVersionNumber == VersionNumberEnum.UNDEFINED) {
                     /*
-                     * Step 12 - If the ContractVersionNumber == 0 then the contract is blank, move on to the next contract.
+                     * Step 13 - If the ContractVersionNumber == 0 then the contract is blank, move on to the next contract.
                      */
                 } else if (contract.contractVersionNumber != VersionNumberEnum.CURRENT_VERSION) {
                     /*
-                     * Step 13 - If ContractVersionNumber is not the expected one (==1 for the current version) reject the card.
+                     * Step 14 - If ContractVersionNumber is not the expected one (==1 for the current version) reject the card.
                      * <Abort Transaction if inTransactionFlag is true and exit process>
                      */
                 } else {
                     /*
-                     * Step 14 - If SAM available and ContractAuthenticator is not 0 perform the verification of the value
+                     * Step 15 - If SAM available and ContractAuthenticator is not 0 perform the verification of the value
                      * by using the PSO Verify Signature command of the SAM.
                      */
                     @Suppress("ControlFlowWithEmptyBody")
                     if (inTransactionFlag && contract.contractAuthenticator != 0) {
                         /*
-                         * Step 14.1 - If the value is wrong reject the card.
+                         * Step 15.1 - If the value is wrong reject the card.
                          * <Abort Transaction if inTransactionFlag is true and exit process>
                          */
                         /*
-                         * Step 14.2 - If the value of ContractSaleSam is present in the SAM Black List reject the card.
+                         * Step 15.2 - If the value of ContractSaleSam is present in the SAM Black List reject the card.
                          * <Abort Transaction if inTransactionFlag is true and exit process>
                          */
-                        // TODO: steps 14.1 & 14.2
+                        // TODO: steps 15.1 & 15.2
                     }
                     /*
-                     * Step 15 - If ContractValidityEndDate points to a date in the past mark contract as expired.
+                     * Step 16 - If ContractValidityEndDate points to a date in the past mark contract as expired.
                      */
                     val contractValidityEndDate =
                         DateTime(contract.getContractValidityEndDateAsDate())
@@ -320,7 +321,7 @@ class ControlProcedure {
                     }
 
                     /*
-                     * Step 16 - If EventContractUsed points to the current contract index
+                     * Step 17 - If EventContractUsed points to the current contract index
                      * & not valid flag is false then mark it as Validated.
                      */
                     if (contractUsed == record && !contractEventNotValid) {
@@ -333,8 +334,7 @@ class ControlProcedure {
                     }
 
                     /*
-                     * Step 16.1 - If EventContractUsed points to the current contract index
-                     * & not valid flag is false then mark it as Validated.
+                     * Step 18 -   If the ContractTariff value for the contract is 2 or 3, unpack the counter associated to the contract to extract the counter value.
                      */
                     val nbTicketsLeft =
                         if (contract.contractTariff == ContractPriorityEnum.MULTI_TRIP) {
@@ -344,7 +344,7 @@ class ControlProcedure {
                         }
 
                     /*
-                     * Step 17 - Add contract data to the list of contracts read to return to the upper layer.
+                     * Step 19 - Add contract data to the list of contracts read to return to the upper layer.
                      */
                     displayedContract.add(
                         ContractMapper.map(
@@ -363,7 +363,7 @@ class ControlProcedure {
             status = Status.TICKETS_FOUND
 
             /*
-             * Step 18 - If inTransactionFlag is true, Close the session
+             * Step 20 - If inTransactionFlag is true, Close the session
              */
             if (inTransactionFlag) {
                 if (status == Status.TICKETS_FOUND) {
@@ -377,6 +377,10 @@ class ControlProcedure {
             if (validation != null) {
                 validationList = arrayListOf(validation)
             }
+
+            /*
+             * Step 21 - Return the status of the operation to the upper layer. <Exit process>
+             */
             return CardReaderResponse(
                 status = status,
                 lastValidationsList = validationList,
@@ -419,7 +423,7 @@ class ControlProcedure {
         return event.eventTimeStamp != 0 || event.eventDateStamp != 0
     }
 
-    companion object{
+    companion object {
         const val COUNTER_RECORDS_NB = 4
         const val CONTRACT_RECORD_SIZE = 0x1D
     }

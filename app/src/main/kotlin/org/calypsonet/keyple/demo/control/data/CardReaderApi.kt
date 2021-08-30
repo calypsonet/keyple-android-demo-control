@@ -54,9 +54,9 @@ class CardReaderApi @Inject constructor(
         /*
          * Init Card reader
          */
-        val poReader: Reader?
+        val cardReader: Reader?
         try {
-            poReader = readerRepository.initPoReader()
+            cardReader = readerRepository.initCardReader()
         } catch (e: KeyplePluginException) {
             Timber.e(e)
             throw IllegalStateException(e.message)
@@ -83,7 +83,7 @@ class CardReaderApi @Inject constructor(
             Timber.w("No SAM reader available")
         }
 
-        poReader?.let { reader ->
+        cardReader?.let { reader ->
             /* remove the observer if it already exist */
             (reader as ObservableReader).addObserver(observer)
 

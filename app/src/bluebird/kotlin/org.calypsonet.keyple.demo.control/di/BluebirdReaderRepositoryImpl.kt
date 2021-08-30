@@ -65,7 +65,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
 
     @Throws(KeyplePluginException::class)
-    override suspend fun initPoReader(): Reader {
+    override suspend fun initCardReader(): Reader {
         val bluebirdPlugin =
             SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
         val cardReader = bluebirdPlugin?.getReader(BluebirdContactlessReader.READER_NAME)
