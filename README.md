@@ -29,6 +29,7 @@ The demo works with the cards provided in the [Test kit](https://calypsonet.org/
 
 This demo can be used with Calypso cards with the following configurations:
 * AID 315449432E49434131h - File Structure 05h (CD Light/GTML Compatibility)
+* AID 315449432E49434131h - File Structure 02h (Revision 2 Minimum with MF files)
 * AID 315449432E49434133h - File Structure 32h (Calypso Light Classic)
 * AID A0000004040125090101h - File Structure 05h (CD Light/GTML Compatibility)
 
@@ -131,13 +132,17 @@ This procedure's main steps are as follows:
     - Else If EventDateStamp points to a date in the past set the validated contract **not valid** flag as true and go to **Contract Analysis**.
     - Else If (EventTimeStamp + Validation period configure in the control terminal) < current time of the control terminal set the validated contract **not valid** flag as true.
 - **Contract Analysis**: For each contract:
-  - Read and unpack the contract.
+  - Read all contracts and the counter file.
+  - For each contract:
+  - Unpack the contract
   - If the ContractVersionNumber == 0 then the contract is blank, move on to the next contract.
   - If ContractVersionNumber is not the expected one (==1 for the current version) reject the card. Abort Transaction if inTransactionFlag is true.
   - If ContractValidityEndDate points to a date in the past mark contract as Expired.
   - If EventContractUsed points to the current contract index & **not valid** flag is false then mark it as Validated.
+  - If the ContractTariff value for the contract is 2 or 3, unpack the counter associated to the contract to extract the counter value.
   - Add contract data to the list of contracts read to return to the upper layer.
   - If inTransactionFlag is true, close the Validation session.
+  - Return the status of the operation to the upper layer. <Exit process>
 
 ## Screens
 
@@ -162,8 +167,15 @@ The demo needs multiple dependencies to work.
 First we need to import the Keyple related dependencies in the `build.gradle` file:
 
 ```groovy
-    implementation "org.eclipse.keyple:keyple-java-core:1.0.0"
-    implementation "org.eclipse.keyple:keyple-java-calypso:1.0.0"
+    implementation "org.eclipse.keyple:keyple-service-java-lib:2.0.0-SNAPSHOT"
+    implementation "org.eclipse.keyple:keyple-card-calypso-java-lib:2.0.0-SNAPSHOT"
+    implementation "org.eclipse.keyple:keyple-service-resource-java-lib:2.0.0-SNAPSHOT"
+    implementation "org.eclipse.keyple:keyple-util-java-lib:2.0.0-SNAPSHOT"
+    implementation "org.eclipse.keyple:keyple-common-java-api:2.0.0-SNAPSHOT"
+
+    implementation "org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.0.0-SNAPSHOT"
+    implementation "org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.0.0-SNAPSHOT"
+    implementation "org.calypsonet.terminal:calypsonet-terminal-card-java-api:1.0.0-SNAPSHOT"
 ```
 
 Then each device needs its own dependencies imported. In our case, we use the flavour feature to import only the currently flavour specific device needed dependency.
@@ -172,29 +184,29 @@ Here are some examples:
 
 - NFC Reader / OMAPI device:
 ```groovy
-    omapiImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:1.0.0"
-    omapiImplementation "org.eclipse.keyple:keyple-android-plugin-omapi:1.0.0"
+    omapiImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.0"
+    omapiImplementation "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib:2.0.0"
 ```
 
 - Coppernic device:
 ```groovy
-    coppernicImplementation "org.eclipse.keyple:keyple-android-plugin-coppernic-ask:1.0.0"
+    coppernicImplementation "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:2.0.0"
 ```
 
 - Famoco device:
 ```groovy
-    famocoImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:1.0.0"
-    famocoImplementation "org.eclipse.keyple:keyple-android-plugin-famoco-se-communication:1.0.0"
+    famocoImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.0"
+    famocoImplementation "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib:2.0.0"
 ```
 
 - Flowbird device:
 ```groovy
-    flowbirdImplementation "org.eclipse.keyple:keyple-android-plugin-flowbird:1.1.0"
+    flowbirdImplementation "org.calypsonet.keyple:keyple-plugin-cna-flowbird-android-java-lib:2.0.0"
 ```
 
 - Bluebird device:
 ```groovy
-    bluebirdImplementation "org.eclipse.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:1.0.0"
+    bluebirdImplementation "org.calypsonet.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:2.0.0"
 ```
 
 ## Device specific flavours
@@ -239,7 +251,7 @@ Declare the sourceSet folder associated to the flavour in the `build.gradle` fil
 Import the associated plugin dependencies using the specific implementation syntax.  
 This way it will only be imported if the specific flavours is active.
 ```groovy
-    coppernicImplementation "org.eclipse.keyple:keyple-android-plugin-coppernic-ask:1.0.0"
+    coppernicImplementation "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:2.0.0"
 ```
 
 ## Ticketing implementation
@@ -248,7 +260,7 @@ As we have seen previously, the first step in implementing the ticketing layer i
 Below are the other classes useful for implementing the ticketing layer:
 - CardReaderApi
 - TicketingSession
-- PoObserver
+- CardReaderObserver
 
 ### CardReaderApi
 
@@ -256,7 +268,7 @@ Mainly used to manage the lifecycle of the Keyple plugin.
 This class is used to initialize the plugin and manage the card detection phase.
 It is called on the different steps of the card reader activity lifecycle:
 - onResume:
-  - Initialize the plugin (PO and SAM readers...)
+  - Initialize the plugin (Card and SAM readers...)
   - Get the ticketing session
   - Start NFC detection
 - onPause:
@@ -270,17 +282,17 @@ The purpose of this class is to communicate with the card.
 
 First it prepares the default selection that will be sent to the card when a card is detected by setting the AID(s) and the reader protocol(s) of the cards we want to detect and read.
 
-Once a card is detected, the TicketingSession processes the default selection by retrieving the current CalypsoPO object. 
-This CalypsoPO contains information about the card (SerialNumber, PORevision...)
+Once a card is detected, the TicketingSession processes the default selection by retrieving the current CalypsoCard object.
+This CalypsoCard contains information about the card (SerialNumber, PORevision...)
 
 Finally, this class is responsible for launching the control procedure and returning its result.
 
-### PoObserver
+### CardReaderObserver
 
 This class is the reader observer and inherits from Keyple's class:
 ```groovy
-    ObservableReader.ReaderObserver
+    CardReaderObserverSpi
 ```
-It is called each time a new ReaderEvent (CARD_INSERTED, CARD_MATCHED...) is launched by the Keyple plugin.
+It is called each time a new CardReaderEvent (CARD_INSERTED, CARD_MATCHED...) is launched by the Keyple plugin.
 This reader is registered when the reader is registered and removed when the reader is unregistered.
 

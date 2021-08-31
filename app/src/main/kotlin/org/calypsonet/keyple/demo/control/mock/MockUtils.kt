@@ -20,8 +20,8 @@ import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Contract
 import org.calypsonet.keyple.demo.control.models.Status
 import org.calypsonet.keyple.demo.control.models.Validation
-import org.eclipse.keyple.parser.model.type.ContractPriorityEnum
-import org.eclipse.keyple.parser.utils.DateUtils
+import org.calypsonet.keyple.parser.model.type.ContractPriorityEnum
+import org.calypsonet.keyple.parser.utils.DateUtils
 import org.joda.time.DateTime
 
 /**
@@ -39,7 +39,7 @@ object MockUtils {
 
                 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                 cardReaderResponse = CardReaderResponse(
-                    Status.TICKETS_FOUND, "valid card",
+                    Status.TICKETS_FOUND,
                     arrayListOf(
                         Validation(
                             name = "Titre",
@@ -85,7 +85,6 @@ object MockUtils {
                 cardReaderResponse =
                     CardReaderResponse(
                         status = status,
-                        cardType = null,
                         titlesList = arrayListOf(),
                         errorMessage = error
                     )

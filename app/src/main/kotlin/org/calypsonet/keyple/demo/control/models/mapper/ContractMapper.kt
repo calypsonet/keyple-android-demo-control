@@ -12,7 +12,7 @@
 package org.calypsonet.keyple.demo.control.models.mapper
 
 import org.calypsonet.keyple.demo.control.models.Contract
-import org.eclipse.keyple.parser.model.ContractStructureDto
+import org.calypsonet.keyple.parser.model.ContractStructureDto
 import org.joda.time.DateTime
 
 /**

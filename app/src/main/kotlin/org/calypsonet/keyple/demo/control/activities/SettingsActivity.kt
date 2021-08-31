@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.activity_settings.timeBtn
 import kotlinx.android.synthetic.main.activity_settings.validationPeriodEdit
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.models.KeypleSettings
+import org.calypsonet.keyple.demo.control.models.ControlAppSettings
 import org.calypsonet.keyple.demo.control.models.Location
 
 class SettingsActivity : BaseActivity() {
@@ -51,11 +51,11 @@ class SettingsActivity : BaseActivity() {
         }
 
         startBtn.setOnClickListener {
-            KeypleSettings.location = spinnerLocationList.selectedItem as Location
+            ControlAppSettings.location = spinnerLocationList.selectedItem as Location
             val validationPeriod = validationPeriodEdit.text.toString()
-            KeypleSettings.validationPeriod =
+            ControlAppSettings.validationPeriod =
                 if (validationPeriod.isBlank()) 0 else validationPeriod.toInt()
-            if (KeypleSettings.location != null && KeypleSettings.validationPeriod != 0) {
+            if (ControlAppSettings.location != null && ControlAppSettings.validationPeriod != 0) {
                 startActivity(Intent(this, HomeActivity::class.java))
             } else {
                 Toast.makeText(this, R.string.msg_location_period_empty, Toast.LENGTH_LONG).show()

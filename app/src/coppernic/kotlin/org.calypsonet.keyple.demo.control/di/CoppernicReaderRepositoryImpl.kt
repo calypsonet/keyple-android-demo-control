@@ -14,13 +14,12 @@ package org.calypsonet.keyple.demo.control.di
 import android.app.Activity
 import android.content.Context
 import android.media.MediaPlayer
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.reader.CardReaderProtocol
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
 import org.calypsonet.keyple.plugin.coppernic.Cone2ContactReader
 import org.calypsonet.keyple.plugin.coppernic.Cone2ContactlessReader
 import org.calypsonet.keyple.plugin.coppernic.Cone2Plugin
@@ -29,6 +28,7 @@ import org.calypsonet.keyple.plugin.coppernic.Cone2PluginFactoryProvider
 import org.calypsonet.keyple.plugin.coppernic.ParagonSupportedContactProtocols
 import org.calypsonet.keyple.plugin.coppernic.ParagonSupportedContactlessProtocols
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.core.service.ConfigurableReader
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Plugin
@@ -36,6 +36,7 @@ import org.eclipse.keyple.core.service.Reader
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 import timber.log.Timber
+import javax.inject.Inject
 
 class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationContext: Context, private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi) :
     IReaderRepository {
@@ -43,7 +44,7 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
     lateinit var successMedia: MediaPlayer
     lateinit var errorMedia: MediaPlayer
 
-    override var poReader: Reader? = null
+    override var cardReader: Reader? = null
     override var samReaders: MutableList<Reader> = mutableListOf()
 
     @Throws(KeyplePluginException::class)
@@ -65,25 +66,25 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
     override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(Cone2Plugin.PLUGIN_NAME)
 
     @Throws(KeyplePluginException::class)
-    override suspend fun initPoReader(): Reader? {
+    override suspend fun initCardReader(): Reader? {
         val askPlugin =
             SmartCardServiceProvider.getService().getPlugin(Cone2Plugin.PLUGIN_NAME)
-        val poReader = askPlugin?.getReader(Cone2ContactlessReader.READER_NAME)
-        poReader?.let {
+        val cardReader = askPlugin?.getReader(Cone2ContactlessReader.READER_NAME)
+        cardReader?.let {
 
-            it.activateProtocol(
+            (it as ConfigurableReader).activateProtocol(
                 getContactlessIsoProtocol().readerProtocolName,
                 getContactlessIsoProtocol().applicationProtocolName
             )
 
-            (poReader as ObservableReader).setReaderObservationExceptionHandler(
+            (cardReader as ObservableReader).setReaderObservationExceptionHandler(
                 readerObservationExceptionHandler
             )
 
-            this.poReader = poReader
+            this.cardReader = cardReader
         }
 
-        return poReader
+        return cardReader
     }
 
     @Throws(KeyplePluginException::class)
@@ -95,7 +96,7 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
         }?.toMutableList() ?: mutableListOf()
 
         samReaders.forEach {
-            it.activateProtocol(
+            (it as ConfigurableReader).activateProtocol(
                 getSamReaderProtocol(),
                 getSamReaderProtocol()
             )
@@ -119,8 +120,8 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
         }
     }
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol {
-        return PoReaderProtocol(
+    override fun getContactlessIsoProtocol(): CardReaderProtocol {
+        return CardReaderProtocol(
             ParagonSupportedContactlessProtocols.ISO_14443.name,
             ParagonSupportedContactlessProtocols.ISO_14443.name
         )
@@ -133,10 +134,10 @@ class CoppernicReaderRepositoryImpl @Inject constructor(private val applicationC
     override fun getReaderConfiguratorSpi(): ReaderConfiguratorSpi = ReaderConfigurator()
 
     override fun clear() {
-        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
+        (cardReader as ConfigurableReader).deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         samReaders.forEach {
-            it.deactivateProtocol(
+            (it as ConfigurableReader).deactivateProtocol(
                 getSamReaderProtocol()
             )
         }

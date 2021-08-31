@@ -13,13 +13,13 @@ package org.calypsonet.keyple.demo.control.di
 
 import android.app.Activity
 import android.media.MediaPlayer
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.reader.CardReaderProtocol
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.core.service.ConfigurableReader
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Plugin
@@ -33,6 +33,7 @@ import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
 import timber.log.Timber
+import javax.inject.Inject
 
 class OmapiReaderRepositoryImpl @Inject constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
@@ -42,7 +43,7 @@ class OmapiReaderRepositoryImpl @Inject constructor(
     lateinit var successMedia: MediaPlayer
     lateinit var errorMedia: MediaPlayer
 
-    override var poReader: Reader? = null
+    override var cardReader: Reader? = null
     override var samReaders: MutableList<Reader> = mutableListOf()
 
     @Throws(KeyplePluginException::class)
@@ -70,24 +71,21 @@ class OmapiReaderRepositoryImpl @Inject constructor(
     override fun getSamRegex(): String = ""
 
     @Throws(KeyplePluginException::class)
-    override suspend fun initPoReader(): Reader? {
+    override suspend fun initCardReader(): Reader? {
         val readerPlugin = SmartCardServiceProvider.getService().getPlugin(AndroidNfcPlugin.PLUGIN_NAME)
-        poReader = readerPlugin.getReader(AndroidNfcReader.READER_NAME)
+        cardReader = readerPlugin.getReader(AndroidNfcReader.READER_NAME)
 
-        poReader?.let {
+        // with this protocol settings we activate the nfc for ISO1443_4 protocol
+        (cardReader as ConfigurableReader).activateProtocol(
+            getContactlessIsoProtocol().readerProtocolName,
+            getContactlessIsoProtocol().applicationProtocolName
+        )
 
-            // with this protocol settings we activate the nfc for ISO1443_4 protocol
-            it.activateProtocol(
-                getContactlessIsoProtocol().readerProtocolName,
-                getContactlessIsoProtocol().applicationProtocolName
-            )
-        }
-
-        (poReader as ObservableReader).setReaderObservationExceptionHandler(
+        (cardReader as ObservableReader).setReaderObservationExceptionHandler(
             readerObservationExceptionHandler
         )
 
-        return poReader
+        return cardReader
     }
 
     @Throws(KeyplePluginException::class)
@@ -115,7 +113,7 @@ class OmapiReaderRepositoryImpl @Inject constructor(
         }
         samReaders.forEach {
             if(getSamReaderProtocol()?.isNotEmpty() == true){
-                it.activateProtocol(
+                (it as ConfigurableReader).activateProtocol(
                     getSamReaderProtocol(),
                     getSamReaderProtocol()
                 )
@@ -141,8 +139,8 @@ class OmapiReaderRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol {
-        return PoReaderProtocol(
+    override fun getContactlessIsoProtocol(): CardReaderProtocol {
+        return CardReaderProtocol(
             ContactlessCardCommonProtocol.ISO_14443_4.name,
             ContactlessCardCommonProtocol.ISO_14443_4.name
         )
@@ -153,11 +151,11 @@ class OmapiReaderRepositoryImpl @Inject constructor(
     override fun clear() {
         if(getSamReaderProtocol()?.isNotEmpty() == true){
             samReaders.forEach {
-                it.deactivateProtocol(getSamReaderProtocol())
+                (it as ConfigurableReader).deactivateProtocol(getSamReaderProtocol())
             }
         }
 
-        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
+        (cardReader as ConfigurableReader).deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         successMedia.stop()
         successMedia.release()

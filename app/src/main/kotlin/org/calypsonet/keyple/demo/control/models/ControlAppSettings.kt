@@ -11,14 +11,7 @@
  ********************************************************************************/
 package org.calypsonet.keyple.demo.control.models
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
-@Parcelize
-data class CardReaderResponse(
-    val status: Status,
-    val lastValidationsList: ArrayList<Validation>? = null,
-    val titlesList: ArrayList<Contract>,
-    val errorTitle: String? = null,
-    val errorMessage: String? = null
-) : Parcelable
+object ControlAppSettings {
+    var location: Location? = null
+    var validationPeriod: Int? = null
+}

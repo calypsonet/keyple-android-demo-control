@@ -9,16 +9,16 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ********************************************************************************/
-package org.calypsonet.keyple.demo.control.models
+package org.calypsonet.keyple.parser.model
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+/**
+ *
+ *  @author youssefamrani
+ */
 
-@Parcelize
-data class CardReaderResponse(
-    val status: Status,
-    val lastValidationsList: ArrayList<Validation>? = null,
-    val titlesList: ArrayList<Contract>,
-    val errorTitle: String? = null,
-    val errorMessage: String? = null
-) : Parcelable
+data class CardletDto(
+    val environmentHolderStructureDto: EnvironmentHolderStructureDto,
+    val contractStructureDtos: MutableList<ContractStructureDto>,
+    val eventStructureDtos: MutableList<EventStructureDto>,
+    val counterStructureDtos: MutableList<CounterStructureDto>
+)

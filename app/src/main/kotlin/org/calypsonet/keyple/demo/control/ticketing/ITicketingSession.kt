@@ -20,11 +20,11 @@ import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.Reader
 
 interface ITicketingSession {
-    val poReader: Reader?
+    val cardReader: Reader?
     val samReader: Reader?
-    val poTypeName: String?
+    val cardAid: String?
 
-    fun prepareAndSetPoDefaultSelection()
+    fun prepareAndSetCardDefaultSelection()
     fun processDefaultSelection(selectionResponse: ScheduledCardSelectionsResponse?): CardSelectionResult
     fun checkStructure(): Boolean
     fun checkStartupInfo(): Boolean

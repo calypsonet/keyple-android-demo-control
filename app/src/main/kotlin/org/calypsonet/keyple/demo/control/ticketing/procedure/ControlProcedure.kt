@@ -19,37 +19,30 @@ import org.calypsonet.keyple.demo.control.exception.EventControlExceptionKey
 import org.calypsonet.keyple.demo.control.exception.NoLocationDefinedException
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Contract
-import org.calypsonet.keyple.demo.control.models.KeypleSettings
+import org.calypsonet.keyple.demo.control.models.ControlAppSettings
 import org.calypsonet.keyple.demo.control.models.Location
 import org.calypsonet.keyple.demo.control.models.Status
 import org.calypsonet.keyple.demo.control.models.Validation
 import org.calypsonet.keyple.demo.control.models.mapper.ContractMapper
 import org.calypsonet.keyple.demo.control.models.mapper.ValidationMapper
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_1
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_2
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_3
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.RECORD_NUMBER_4
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Contracts
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0A
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0B
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0C
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter_0D
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EnvironmentAndHolder
-import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventLog
+import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventsLog
 import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
+import org.calypsonet.keyple.parser.keyple.ContractStructureParser
+import org.calypsonet.keyple.parser.keyple.EnvironmentHolderStructureParser
+import org.calypsonet.keyple.parser.keyple.EventStructureParser
+import org.calypsonet.keyple.parser.model.ContractStructureDto
+import org.calypsonet.keyple.parser.model.EventStructureDto
+import org.calypsonet.keyple.parser.model.type.ContractPriorityEnum
+import org.calypsonet.keyple.parser.model.type.VersionNumberEnum
 import org.calypsonet.terminal.calypso.WriteAccessLevel
 import org.calypsonet.terminal.calypso.card.CalypsoCard
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.core.service.Reader
-import org.eclipse.keyple.parser.keyple.ContractStructureParser
-import org.eclipse.keyple.parser.keyple.CounterStructureParser
-import org.eclipse.keyple.parser.keyple.EnvironmentHolderStructureParser
-import org.eclipse.keyple.parser.keyple.EventStructureParser
-import org.eclipse.keyple.parser.model.ContractStructureDto
-import org.eclipse.keyple.parser.model.EventStructureDto
-import org.eclipse.keyple.parser.model.type.ContractPriorityEnum
-import org.eclipse.keyple.parser.model.type.VersionNumberEnum
 import org.joda.time.DateTime
 import timber.log.Timber
 
@@ -67,8 +60,7 @@ class ControlProcedure {
         locations: List<Location>
     ): CardReaderResponse {
 
-        val poReader = ticketingSession.poReader
-        val poTypeName = ticketingSession.poTypeName
+        val cardReader = ticketingSession.cardReader
 
         val errorMessage: String?
         var errorTitle: String? = null
@@ -79,7 +71,7 @@ class ControlProcedure {
 
         try {
             var inTransactionFlag: Boolean // true if a SAM is available and a secure session have been opened
-            val poTransaction =
+            val cardTransaction =
                 try {
                     if (samReader != null) {
                         /*
@@ -90,7 +82,7 @@ class ControlProcedure {
                         ticketingSession.setupCardResourceService(SAM_PROFILE_NAME)
 
                         calypsoCardExtensionProvider.createCardTransaction(
-                            poReader,
+                            cardReader,
                             calypsoCard,
                             ticketingSession.getSecuritySettings()
                         )
@@ -100,7 +92,7 @@ class ControlProcedure {
                          */
                         inTransactionFlag = false
                         calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
-                            poReader,
+                            cardReader,
                             calypsoCard
                         )
                     }
@@ -108,14 +100,14 @@ class ControlProcedure {
                     Timber.w(e)
                     inTransactionFlag = false
                     calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
-                        poReader,
+                        cardReader,
                         calypsoCard
                     )
                 } catch (e: Exception) {
                     Timber.w(e)
                     inTransactionFlag = false
                     calypsoCardExtensionProvider.createCardTransactionWithoutSecurity(
-                        poReader,
+                        cardReader,
                         calypsoCard
                     )
                 }
@@ -123,21 +115,21 @@ class ControlProcedure {
             /*
              * Step 2 - Unpack environment structure from the binary present in the environment record.
              */
-            poTransaction.prepareReadRecordFile(
+            cardTransaction.prepareReadRecordFile(
                 SFI_EnvironmentAndHolder,
                 RECORD_NUMBER_1.toInt()
             )
 
             if (inTransactionFlag) {
                 /*
-                 * Open a transaction to read/write the Calypso PO and read the Environment file
+                 * Open a transaction to read/write the Calypso Card and read the Environment file
                  */
-                poTransaction.processOpening(WriteAccessLevel.DEBIT)
+                cardTransaction.processOpening(WriteAccessLevel.DEBIT)
             } else {
                 /*
                  * Read the Environment file
                  */
-                poTransaction.processCardCommands()
+                cardTransaction.processCardCommands()
             }
 
             val efEnvironmentHolder =
@@ -150,7 +142,7 @@ class ControlProcedure {
              */
             if (env.envVersionNumber != VersionNumberEnum.CURRENT_VERSION.key) {
                 if (inTransactionFlag) {
-                    poTransaction.processClosing()
+                    cardTransaction.processCancel()
                 }
                 throw EnvironmentControlException(EnvironmentControlExceptionKey.WRONG_VERSION_NUMBER)
             }
@@ -162,7 +154,7 @@ class ControlProcedure {
             val envEndDate = DateTime(env.getEnvEndDateAsDate())
             if (envEndDate.isBefore(now)) {
                 if (inTransactionFlag) {
-                    poTransaction.processClosing()
+                    cardTransaction.processCancel()
                 }
                 throw EnvironmentControlException(EnvironmentControlExceptionKey.EXPIRED)
             }
@@ -170,13 +162,13 @@ class ControlProcedure {
             /*
              * Step 5 - Read and unpack the last event record.
              */
-            poTransaction.prepareReadRecordFile(
-                SFI_EventLog,
+            cardTransaction.prepareReadRecordFile(
+                SFI_EventsLog,
                 RECORD_NUMBER_1.toInt()
             )
-            poTransaction.processCardCommands()
+            cardTransaction.processCardCommands()
 
-            val efEventLog = calypsoCard.getFileBySfi(SFI_EventLog)
+            val efEventLog = calypsoCard.getFileBySfi(SFI_EventsLog)
             val event = EventStructureParser().parse(efEventLog.data.content)
 
             /*
@@ -187,7 +179,7 @@ class ControlProcedure {
             val eventVersionNumber = event.eventVersionNumber
             if (eventVersionNumber != VersionNumberEnum.CURRENT_VERSION.key) {
                 if (inTransactionFlag) {
-                    poTransaction.processClosing()
+                    cardTransaction.processCancel()
                 }
                 if (eventVersionNumber == VersionNumberEnum.UNDEFINED.key) {
                     throw EventControlException(EventControlExceptionKey.CLEAN_CARD)
@@ -196,20 +188,20 @@ class ControlProcedure {
                 }
             }
 
-            var contratEventNotValid = false
-            val contracUsed = event.eventContractUsed
+            var contractEventNotValid = false
+            val contractUsed = event.eventContractUsed
 
             val eventDateTime = DateTime(event.getEventDate())
             val eventValidityEndDate =
-                eventDateTime.plusMinutes(KeypleSettings.validationPeriod ?: 0)
+                eventDateTime.plusMinutes(ControlAppSettings.validationPeriod ?: 0)
 
             /*
              * Step 7 - If EventLocation != value configured in the control terminal set the validated contract not valid flag as true and go to point CNT_READ.
              */
-            if (KeypleSettings.location == null) {
+            if (ControlAppSettings.location == null) {
                 throw NoLocationDefinedException()
-            } else if (KeypleSettings.location!!.id != event.eventLocation) {
-                contratEventNotValid = true
+            } else if (ControlAppSettings.location!!.id != event.eventLocation) {
+                contractEventNotValid = true
             }
             /*
              * Step 8 - Else If EventDateStamp points to a date in the past
@@ -218,7 +210,7 @@ class ControlProcedure {
             else if (eventDateTime.withTimeAtStartOfDay()
                     .isBefore(now.withTimeAtStartOfDay())
             ) {
-                contratEventNotValid = true
+                contractEventNotValid = true
             }
 
             /*
@@ -226,31 +218,37 @@ class ControlProcedure {
              *  -> set the validated contract not valid flag as true.
              */
             else if (eventValidityEndDate.isBefore(now)) {
-                contratEventNotValid = true
+                contractEventNotValid = true
             }
 
             /*
-             * Step 10 - CNT_READ: For each contract:
+             * Step 10 - CNT_READ: Read all contracts and the counter file
              */
-            poTransaction.prepareReadRecordFile(
+            cardTransaction.prepareReadRecordFile(
                 SFI_Contracts,
-                RECORD_NUMBER_1.toInt()
+                RECORD_NUMBER_1.toInt(),
+                COUNTER_RECORDS_NB,
+                CONTRACT_RECORD_SIZE
             )
-            poTransaction.prepareReadRecordFile(
-                SFI_Contracts,
-                RECORD_NUMBER_2.toInt()
+
+            //Read counters content
+            cardTransaction.prepareReadCounterFile(
+                SFI_Counter,
+                COUNTER_RECORDS_NB
             )
-            poTransaction.prepareReadRecordFile(
-                SFI_Contracts,
-                RECORD_NUMBER_3.toInt()
-            )
-            poTransaction.processCardCommands()
+            cardTransaction.processCardCommands()
+
+            val efCounter = calypsoCard.getFileBySfi(SFI_Counter)
 
             val efContractParser = calypsoCard.getFileBySfi(SFI_Contracts)
             val contracts = mutableMapOf<Int, ContractStructureDto>()
+
+            /*
+             * Step 11 - For each contract:
+             */
             efContractParser.data.allRecordsContent.forEach {
                 /*
-                 * Step 11 - Read and unpack the contract
+                 * Step 12 - Unpack the contract
                  */
                 contracts[it.key] = ContractStructureParser().parse(it.value)
             }
@@ -264,7 +262,7 @@ class ControlProcedure {
                 it.second
             }
 
-            if (isValidEvent(event))
+            if (isValidEvent(event)) {
                 if (eventContract.isNotEmpty()) {
                     validation = ValidationMapper.map(
                         event = event,
@@ -278,6 +276,7 @@ class ControlProcedure {
                         locations = locations
                     )
                 }
+            }
 
             val displayedContract = arrayListOf<Contract>()
             contracts.forEach {
@@ -288,32 +287,32 @@ class ControlProcedure {
 
                 if (contract.contractVersionNumber == VersionNumberEnum.UNDEFINED) {
                     /*
-                     * Step 12 - If the ContractVersionNumber == 0 then the contract is blank, move on to the next contract.
+                     * Step 13 - If the ContractVersionNumber == 0 then the contract is blank, move on to the next contract.
                      */
                 } else if (contract.contractVersionNumber != VersionNumberEnum.CURRENT_VERSION) {
                     /*
-                     * Step 13 - If ContractVersionNumber is not the expected one (==1 for the current version) reject the card.
+                     * Step 14 - If ContractVersionNumber is not the expected one (==1 for the current version) reject the card.
                      * <Abort Transaction if inTransactionFlag is true and exit process>
                      */
                 } else {
                     /*
-                     * Step 14 - If SAM available and ContractAuthenticator is not 0 perform the verification of the value
+                     * Step 15 - If SAM available and ContractAuthenticator is not 0 perform the verification of the value
                      * by using the PSO Verify Signature command of the SAM.
                      */
                     @Suppress("ControlFlowWithEmptyBody")
                     if (inTransactionFlag && contract.contractAuthenticator != 0) {
                         /*
-                         * Step 14.1 - If the value is wrong reject the card.
+                         * Step 15.1 - If the value is wrong reject the card.
                          * <Abort Transaction if inTransactionFlag is true and exit process>
                          */
                         /*
-                         * Step 14.2 - If the value of ContractSaleSam is present in the SAM Black List reject the card.
+                         * Step 15.2 - If the value of ContractSaleSam is present in the SAM Black List reject the card.
                          * <Abort Transaction if inTransactionFlag is true and exit process>
                          */
-                        // TODO: steps 14.1 & 14.2
+                        // TODO: steps 15.1 & 15.2
                     }
                     /*
-                     * Step 15 - If ContractValidityEndDate points to a date in the past mark contract as expired.
+                     * Step 16 - If ContractValidityEndDate points to a date in the past mark contract as expired.
                      */
                     val contractValidityEndDate =
                         DateTime(contract.getContractValidityEndDateAsDate())
@@ -322,49 +321,30 @@ class ControlProcedure {
                     }
 
                     /*
-                     * Step 16 - If EventContractUsed points to the current contract index
+                     * Step 17 - If EventContractUsed points to the current contract index
                      * & not valid flag is false then mark it as Validated.
                      */
-                    if (contracUsed == record && !contratEventNotValid) {
+                    if (contractUsed == record && !contractEventNotValid) {
                         contractValidated = true
                     }
 
                     var validationDate: DateTime? = null
-                    if (contractValidated && contracUsed == record) {
+                    if (contractValidated && contractUsed == record) {
                         validationDate = eventDateTime
                     }
 
                     /*
-                     * Step 16.1 - If EventContractUsed points to the current contract index
-                     * & not valid flag is false then mark it as Validated.
-                     * //TODO: Add this step to control procedure in order to determine the amount of trips left
+                     * Step 18 -   If the ContractTariff value for the contract is 2 or 3, unpack the counter associated to the contract to extract the counter value.
                      */
                     val nbTicketsLeft =
                         if (contract.contractTariff == ContractPriorityEnum.MULTI_TRIP) {
-                            val counterSfi = when (record) {
-                                RECORD_NUMBER_1.toInt() -> SFI_Counter_0A
-                                RECORD_NUMBER_2.toInt() -> SFI_Counter_0B
-                                RECORD_NUMBER_3.toInt() -> SFI_Counter_0C
-                                RECORD_NUMBER_4.toInt() -> SFI_Counter_0D
-                                else -> throw IllegalStateException("Unhandled counter record number : $record")
-                            }
-
-                            poTransaction.prepareReadRecordFile(
-                                counterSfi,
-                                RECORD_NUMBER_1.toInt()
-                            )
-                            poTransaction.processCardCommands()
-
-                            val efCounter = calypsoCard.getFileBySfi(counterSfi)
-                            val counterContent = efCounter.data.allRecordsContent[1]!!
-
-                            CounterStructureParser().parse(counterContent).counterValue
+                            efCounter.data.getContentAsCounterValue(record)
                         } else {
                             null
                         }
 
                     /*
-                     * Step 17 - Add contract data to the list of contracts read to return to the upper layer.
+                     * Step 19 - Add contract data to the list of contracts read to return to the upper layer.
                      */
                     displayedContract.add(
                         ContractMapper.map(
@@ -379,11 +359,18 @@ class ControlProcedure {
                 }
             }
 
+            Timber.i("Control procedure result : STATUS_OK")
+            status = Status.TICKETS_FOUND
+
             /*
-             * Step 18 - If inTransactionFlag is true, Close the session
+             * Step 20 - If inTransactionFlag is true, Close the session
              */
             if (inTransactionFlag) {
-                poTransaction.processClosing()
+                if (status == Status.TICKETS_FOUND) {
+                    cardTransaction.processClosing()
+                } else {
+                    cardTransaction.processCancel()
+                }
             }
 
             var validationList: ArrayList<Validation>? = null
@@ -391,11 +378,11 @@ class ControlProcedure {
                 validationList = arrayListOf(validation)
             }
 
-            Timber.i("Control procedure result : STATUS_OK")
-            status = Status.TICKETS_FOUND
+            /*
+             * Step 21 - Return the status of the operation to the upper layer. <Exit process>
+             */
             return CardReaderResponse(
                 status = status,
-                cardType = poTypeName ?: "",
                 lastValidationsList = validationList,
                 titlesList = displayedContract
             )
@@ -425,8 +412,7 @@ class ControlProcedure {
             status = status,
             titlesList = arrayListOf(),
             errorTitle = errorTitle,
-            errorMessage = errorMessage,
-            cardType = ticketingSession.poTypeName
+            errorMessage = errorMessage
         )
     }
 
@@ -435,5 +421,10 @@ class ControlProcedure {
      */
     private fun isValidEvent(event: EventStructureDto): Boolean {
         return event.eventTimeStamp != 0 || event.eventDateStamp != 0
+    }
+
+    companion object {
+        const val COUNTER_RECORDS_NB = 4
+        const val CONTRACT_RECORD_SIZE = 0x1D
     }
 }

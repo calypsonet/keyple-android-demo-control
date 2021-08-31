@@ -12,7 +12,7 @@
 package org.calypsonet.keyple.demo.control.models.mapper
 
 import org.calypsonet.keyple.demo.control.models.Location
-import org.eclipse.keyple.parser.model.EventStructureDto
+import org.calypsonet.keyple.parser.model.EventStructureDto
 
 /**
  *

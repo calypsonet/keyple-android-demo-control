@@ -19,13 +19,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.reader.PoReaderProtocol
+import org.calypsonet.keyple.demo.control.reader.CardReaderProtocol
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactReader
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessReader
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPluginFactoryProvider
 import org.calypsonet.keyple.plugin.bluebird.BluebirdSupportContactlessProtocols
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keyple.core.service.ConfigurableReader
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.ObservableReader
 import org.eclipse.keyple.core.service.Plugin
@@ -43,7 +44,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     private lateinit var successMedia: MediaPlayer
     private lateinit var errorMedia: MediaPlayer
 
-    override var poReader: Reader? = null
+    override var cardReader: Reader? = null
     override var samReaders: MutableList<Reader> = mutableListOf()
 
     @Throws(KeyplePluginException::class)
@@ -64,25 +65,25 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
 
     @Throws(KeyplePluginException::class)
-    override suspend fun initPoReader(): Reader {
+    override suspend fun initCardReader(): Reader {
         val bluebirdPlugin =
             SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
-        val poReader = bluebirdPlugin?.getReader(BluebirdContactlessReader.READER_NAME)
-        poReader?.let {
+        val cardReader = bluebirdPlugin?.getReader(BluebirdContactlessReader.READER_NAME)
+        cardReader?.let {
 
-            it.activateProtocol(
+            (it as ConfigurableReader).activateProtocol(
                 getContactlessIsoProtocol().readerProtocolName,
                 getContactlessIsoProtocol().applicationProtocolName
             )
 
-            this.poReader = poReader
+            this.cardReader = cardReader
         }
 
-        (poReader as ObservableReader).setReaderObservationExceptionHandler(
+        (cardReader as ObservableReader).setReaderObservationExceptionHandler(
             readerObservationExceptionHandler
         )
 
-        return poReader
+        return cardReader
     }
 
     @Throws(KeyplePluginException::class)
@@ -93,12 +94,6 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
             !it.isContactless
         }?.toMutableList() ?: mutableListOf()
 
-        samReaders.forEach { reader ->
-            reader.activateProtocol(
-                getSamReaderProtocol(),
-                getSamReaderProtocol()
-            )
-        }
         return samReaders
     }
 
@@ -118,8 +113,8 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getContactlessIsoProtocol(): PoReaderProtocol {
-        return PoReaderProtocol(
+    override fun getContactlessIsoProtocol(): CardReaderProtocol {
+        return CardReaderProtocol(
             BluebirdSupportContactlessProtocols.NFC_ALL.key,
             BluebirdSupportContactlessProtocols.NFC_ALL.key
         )
@@ -131,13 +126,7 @@ class BluebirdReaderRepositoryImpl @Inject constructor(
     override fun getSamRegex(): String = SAM_READER_NAME_REGEX
 
     override fun clear() {
-        poReader?.deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
-
-        samReaders.forEach {
-            it.deactivateProtocol(
-                getSamReaderProtocol()
-            )
-        }
+        (cardReader as ConfigurableReader).deactivateProtocol(getContactlessIsoProtocol().readerProtocolName)
 
         successMedia.stop()
         successMedia.release()
