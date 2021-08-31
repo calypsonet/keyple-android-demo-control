@@ -167,8 +167,15 @@ The demo needs multiple dependencies to work.
 First we need to import the Keyple related dependencies in the `build.gradle` file:
 
 ```groovy
-    implementation "org.eclipse.keyple:keyple-java-core:1.0.0"
-    implementation "org.eclipse.keyple:keyple-java-calypso:1.0.0"
+    implementation "org.eclipse.keyple:keyple-service-java-lib:2.0.0-SNAPSHOT"
+    implementation "org.eclipse.keyple:keyple-card-calypso-java-lib:2.0.0-SNAPSHOT"
+    implementation "org.eclipse.keyple:keyple-service-resource-java-lib:2.0.0-SNAPSHOT"
+    implementation "org.eclipse.keyple:keyple-util-java-lib:2.0.0-SNAPSHOT"
+    implementation "org.eclipse.keyple:keyple-common-java-api:2.0.0-SNAPSHOT"
+
+    implementation "org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.0.0-SNAPSHOT"
+    implementation "org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.0.0-SNAPSHOT"
+    implementation "org.calypsonet.terminal:calypsonet-terminal-card-java-api:1.0.0-SNAPSHOT"
 ```
 
 Then each device needs its own dependencies imported. In our case, we use the flavour feature to import only the currently flavour specific device needed dependency.
@@ -177,29 +184,29 @@ Here are some examples:
 
 - NFC Reader / OMAPI device:
 ```groovy
-    omapiImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:1.0.0"
-    omapiImplementation "org.eclipse.keyple:keyple-android-plugin-omapi:1.0.0"
+    omapiImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.0"
+    omapiImplementation "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib:2.0.0"
 ```
 
 - Coppernic device:
 ```groovy
-    coppernicImplementation "org.eclipse.keyple:keyple-android-plugin-coppernic-ask:1.0.0"
+    coppernicImplementation "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:2.0.0"
 ```
 
 - Famoco device:
 ```groovy
-    famocoImplementation "org.eclipse.keyple:keyple-android-plugin-nfc:1.0.0"
-    famocoImplementation "org.eclipse.keyple:keyple-android-plugin-famoco-se-communication:1.0.0"
+    famocoImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.0"
+    famocoImplementation "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib:2.0.0"
 ```
 
 - Flowbird device:
 ```groovy
-    flowbirdImplementation "org.eclipse.keyple:keyple-android-plugin-flowbird:1.1.0"
+    flowbirdImplementation "org.calypsonet.keyple:keyple-plugin-cna-flowbird-android-java-lib:2.0.0"
 ```
 
 - Bluebird device:
 ```groovy
-    bluebirdImplementation "org.eclipse.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:1.0.0"
+    bluebirdImplementation "org.calypsonet.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:2.0.0"
 ```
 
 ## Device specific flavours
@@ -244,7 +251,7 @@ Declare the sourceSet folder associated to the flavour in the `build.gradle` fil
 Import the associated plugin dependencies using the specific implementation syntax.  
 This way it will only be imported if the specific flavours is active.
 ```groovy
-    coppernicImplementation "org.eclipse.keyple:keyple-android-plugin-coppernic-ask:1.0.0"
+    coppernicImplementation "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:2.0.0"
 ```
 
 ## Ticketing implementation
@@ -253,7 +260,7 @@ As we have seen previously, the first step in implementing the ticketing layer i
 Below are the other classes useful for implementing the ticketing layer:
 - CardReaderApi
 - TicketingSession
-- PoObserver
+- CardReaderObserver
 
 ### CardReaderApi
 
@@ -280,12 +287,12 @@ This CalypsoCard contains information about the card (SerialNumber, PORevision..
 
 Finally, this class is responsible for launching the control procedure and returning its result.
 
-### PoObserver
+### CardReaderObserver
 
 This class is the reader observer and inherits from Keyple's class:
 ```groovy
-    ObservableReader.ReaderObserver
+    CardReaderObserverSpi
 ```
-It is called each time a new ReaderEvent (CARD_INSERTED, CARD_MATCHED...) is launched by the Keyple plugin.
+It is called each time a new CardReaderEvent (CARD_INSERTED, CARD_MATCHED...) is launched by the Keyple plugin.
 This reader is registered when the reader is registered and removed when the reader is unregistered.
 

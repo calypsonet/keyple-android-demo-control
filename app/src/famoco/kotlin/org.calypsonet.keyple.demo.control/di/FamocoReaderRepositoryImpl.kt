@@ -96,11 +96,6 @@ class FamocoReaderRepositoryImpl @Inject constructor(private val readerObservati
         if (samPlugin != null) {
             val samReader = samPlugin.getReader(AndroidFamocoReader.READER_NAME)
             samReader?.let {
-//                it.activateProtocol(
-//                    getSamReaderProtocol(),
-//                    getSamReaderProtocol()
-//                )
-
                 samReaders.add(it)
             }
         }
