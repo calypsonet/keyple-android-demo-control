@@ -1,14 +1,14 @@
-/********************************************************************************
+/* **************************************************************************************
  * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information regarding copyright
- * ownership.
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
  *
- * This program and the accompanying materials are made available under the terms of the Eclipse
- * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the
+ * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- ********************************************************************************/
+ ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.activities
 
 import android.app.ProgressDialog
@@ -38,315 +38,287 @@ import timber.log.Timber
 @ActivityScoped
 class CardReaderActivity : BaseActivity() {
 
-    @Suppress("DEPRECATION") private lateinit var progress: ProgressDialog
+  @Suppress("DEPRECATION") private lateinit var progress: ProgressDialog
 
-    private var cardReaderObserver: CardReaderObserver? = null
+  private var cardReaderObserver: CardReaderObserver? = null
 
-    private lateinit var ticketingSession: ITicketingSession
+  private lateinit var ticketingSession: ITicketingSession
 
-    var currentAppState = AppState.WAIT_SYSTEM_READY
+  var currentAppState = AppState.WAIT_SYSTEM_READY
 
-    /* application states */
-    enum class AppState {
-        UNSPECIFIED,
-        WAIT_SYSTEM_READY,
-        WAIT_CARD,
-        CARD_STATUS
+  /* application states */
+  enum class AppState {
+    UNSPECIFIED,
+    WAIT_SYSTEM_READY,
+    WAIT_CARD,
+    CARD_STATUS
+  }
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_card_reader)
+    setSupportActionBar(findViewById(R.id.toolbar))
+
+    @Suppress("DEPRECATION")
+    progress = ProgressDialog(this)
+    @Suppress("DEPRECATION")
+    progress.setMessage(getString(R.string.please_wait))
+
+    progress.setCancelable(false)
+  }
+
+  override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+    if (menuItem.itemId == android.R.id.home) {
+      finish()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_card_reader)
-        setSupportActionBar(findViewById(R.id.toolbar))
+    return super.onOptionsItemSelected(menuItem)
+  }
 
-        @Suppress("DEPRECATION")
-        progress = ProgressDialog(this)
-        @Suppress("DEPRECATION")
-        progress.setMessage(getString(R.string.please_wait))
+  override fun onResume() {
+    super.onResume()
+    loadingAnimation.playAnimation()
 
-        progress.setCancelable(false)
-    }
+    if (!cardReaderApi.readersInitialized) {
+      GlobalScope.launch {
+        withContext(Dispatchers.Main) { showProgress() }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if (menuItem.itemId == android.R.id.home) {
-            finish()
-        }
-
-        return super.onOptionsItemSelected(menuItem)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadingAnimation.playAnimation()
-
-        if (!cardReaderApi.readersInitialized) {
-            GlobalScope.launch {
-                withContext(Dispatchers.Main) {
-                    showProgress()
-                }
-
-                withContext(Dispatchers.IO) {
-                    try {
-                        cardReaderObserver = CardReaderObserver()
-                        cardReaderApi.init(cardReaderObserver, this@CardReaderActivity)
-                        ticketingSession = cardReaderApi.getTicketingSession()!!
-                        cardReaderApi.readersInitialized = true
-                        handleAppEvents(AppState.WAIT_CARD, null)
-                        cardReaderApi.startNfcDetection()
-                    } catch (e: Exception) {
-                        Timber.e(e)
-                        withContext(Dispatchers.Main) {
-                            dismissProgress()
-                            showNoProxyReaderDialog(e)
-                        }
-                    }
-                }
-                if (cardReaderApi.readersInitialized) {
-                    withContext(Dispatchers.Main) {
-                        dismissProgress()
-                    }
-                }
-            }
-        } else {
+        withContext(Dispatchers.IO) {
+          try {
+            cardReaderObserver = CardReaderObserver()
+            cardReaderApi.init(cardReaderObserver, this@CardReaderActivity)
+            ticketingSession = cardReaderApi.getTicketingSession()!!
+            cardReaderApi.readersInitialized = true
+            handleAppEvents(AppState.WAIT_CARD, null)
             cardReaderApi.startNfcDetection()
+          } catch (e: Exception) {
+            Timber.e(e)
+            withContext(Dispatchers.Main) {
+              dismissProgress()
+              showNoProxyReaderDialog(e)
+            }
+          }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        loadingAnimation.cancelAnimation()
         if (cardReaderApi.readersInitialized) {
-            cardReaderApi.stopNfcDetection()
-            Timber.d("stopNfcDetection")
+          withContext(Dispatchers.Main) { dismissProgress() }
         }
+      }
+    } else {
+      cardReaderApi.startNfcDetection()
+    }
+  }
+
+  override fun onPause() {
+    super.onPause()
+    loadingAnimation.cancelAnimation()
+    if (cardReaderApi.readersInitialized) {
+      cardReaderApi.stopNfcDetection()
+      Timber.d("stopNfcDetection")
+    }
+  }
+
+  override fun onDestroy() {
+    cardReaderApi.onDestroy(cardReaderObserver)
+    cardReaderObserver = null
+    super.onDestroy()
+  }
+
+  /**
+   * main app state machine handle
+   *
+   * @param appState
+   * @param readerEvent
+   */
+  private fun handleAppEvents(appState: AppState, readerEvent: CardReaderEvent?) {
+
+    var newAppState = appState
+
+    Timber.i(
+        "Current state = $currentAppState, wanted new state = $newAppState, event = ${readerEvent?.type}")
+    when (readerEvent?.type) {
+      CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
+        if (newAppState == AppState.WAIT_SYSTEM_READY) {
+          return
+        }
+        Timber.i("Process default selection...")
+
+        val seSelectionResult =
+            ticketingSession.processDefaultSelection(readerEvent.scheduledCardSelectionsResponse)
+
+        if (seSelectionResult.activeSelectionIndex == -1) {
+          Timber.e("Card Not selected")
+          val error = getString(R.string.card_invalid_aid)
+          displayResult(
+              CardReaderResponse(
+                  status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
+          return
+        }
+
+        Timber.i("Card AID = ${ticketingSession.cardAid}")
+        if (CalypsoInfo.AID_1TIC_ICA_1 != ticketingSession.cardAid &&
+            CalypsoInfo.AID_1TIC_ICA_3 != ticketingSession.cardAid &&
+            CalypsoInfo.AID_NORMALIZED_IDF != ticketingSession.cardAid) {
+          val error = getString(R.string.card_invalid_aid)
+          displayResult(
+              CardReaderResponse(
+                  status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
+          return
+        }
+
+        if (!ticketingSession.checkStructure()) {
+          val error = getString(R.string.card_invalid_structure)
+          displayResult(
+              CardReaderResponse(
+                  status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
+          return
+        }
+
+        Timber.i("A Calypso Card selection succeeded.")
+        newAppState = AppState.CARD_STATUS
+      }
+      CardReaderEvent.Type.CARD_REMOVED -> {
+        currentAppState = AppState.WAIT_SYSTEM_READY
+      }
+      else -> {
+        Timber.w("Event type not handled.")
+      }
     }
 
-    override fun onDestroy() {
-        cardReaderApi.onDestroy(cardReaderObserver)
-        cardReaderObserver = null
-        super.onDestroy()
-    }
-
-    /**
-     * main app state machine handle
-     *
-     * @param appState
-     * @param readerEvent
-     */
-    private fun handleAppEvents(appState: AppState, readerEvent: CardReaderEvent?) {
-
-        var newAppState = appState
-
-        Timber.i("Current state = $currentAppState, wanted new state = $newAppState, event = ${readerEvent?.type}")
+    when (newAppState) {
+      AppState.WAIT_SYSTEM_READY, AppState.WAIT_CARD -> {
+        currentAppState = newAppState
+      }
+      AppState.CARD_STATUS -> {
+        currentAppState = newAppState
         when (readerEvent?.type) {
-            CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
-                if (newAppState == AppState.WAIT_SYSTEM_READY) {
-                    return
-                }
-                Timber.i("Process default selection...")
+          CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
+            GlobalScope.launch {
+              try {
 
-                val seSelectionResult =
-                    ticketingSession.processDefaultSelection(readerEvent.scheduledCardSelectionsResponse)
-
-                if (seSelectionResult.activeSelectionIndex == -1) {
-                    Timber.e("Card Not selected")
-                    val error = getString(R.string.card_invalid_aid)
-                    displayResult(
-                        CardReaderResponse(
-                            status = Status.INVALID_CARD,
-                            titlesList = arrayListOf(),
-                            errorMessage = error
-                        )
-                    )
-                    return
-                }
-
-                Timber.i("Card AID = ${ticketingSession.cardAid}")
-                if (CalypsoInfo.AID_1TIC_ICA_1 != ticketingSession.cardAid &&
-                    CalypsoInfo.AID_1TIC_ICA_3 != ticketingSession.cardAid &&
-                    CalypsoInfo.AID_NORMALIZED_IDF != ticketingSession.cardAid
-                ) {
-                    val error = getString(R.string.card_invalid_aid)
-                    displayResult(
-                        CardReaderResponse(
-                            status = Status.INVALID_CARD,
-                            titlesList = arrayListOf(),
-                            errorMessage = error
-                        )
-                    )
-                    return
-                }
-
-                if (!ticketingSession.checkStructure()) {
-                    val error = getString(R.string.card_invalid_structure)
-                    displayResult(
-                        CardReaderResponse(
-                            status = Status.INVALID_CARD,
-                            titlesList = arrayListOf(),
-                            errorMessage = error
-                        )
-                    )
-                    return
-                }
-
-                Timber.i("A Calypso Card selection succeeded.")
-                newAppState = AppState.CARD_STATUS
-            }
-            CardReaderEvent.Type.CARD_REMOVED -> {
-                currentAppState = AppState.WAIT_SYSTEM_READY
-            }
-            else -> {
-                Timber.w("Event type not handled.")
-            }
-        }
-
-        when (newAppState) {
-            AppState.WAIT_SYSTEM_READY, AppState.WAIT_CARD -> {
-                currentAppState = newAppState
-            }
-            AppState.CARD_STATUS -> {
-                currentAppState = newAppState
-                when (readerEvent?.type) {
-                    CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
-                        GlobalScope.launch {
-                            try {
-
-                                if (ticketingSession.checkStartupInfo()) {
-                                    /*
-                                     * LAUNCH CONTROL PROCEDURE
-                                     */
-                                    withContext(Dispatchers.Main) {
-                                        progress.show()
-                                    }
-                                    val cardReaderResponse = withContext(Dispatchers.IO) {
-                                        ticketingSession.launchControlProcedure(locationFileManager.getLocations())
-                                    }
-                                    withContext(Dispatchers.Main) {
-                                        if (cardReaderResponse.status == Status.EMPTY_CARD ||
-                                            cardReaderResponse.status == Status.ERROR) {
-                                            cardReaderApi.displayResultFailed()
-                                        } else {
-                                            cardReaderApi.displayResultSuccess()
-                                        }
-                                        progress.dismiss()
-                                        displayResult(cardReaderResponse)
-                                    }
-                                }
-                            } catch (e: IllegalStateException) {
-                                Timber.e(e)
-                                Timber.e("Load ERROR page after exception = ${e.message}")
-                                displayResult(
-                                    CardReaderResponse(
-                                        status = Status.ERROR,
-                                        titlesList = arrayListOf()
-                                    )
-                                )
-                            }
-                        }
+                if (ticketingSession.checkStartupInfo()) {
+                  /*
+                   * LAUNCH CONTROL PROCEDURE
+                   */
+                  withContext(Dispatchers.Main) { progress.show() }
+                  val cardReaderResponse =
+                      withContext(Dispatchers.IO) {
+                        ticketingSession.launchControlProcedure(locationFileManager.getLocations())
+                      }
+                  withContext(Dispatchers.Main) {
+                    if (cardReaderResponse.status == Status.EMPTY_CARD ||
+                        cardReaderResponse.status == Status.ERROR) {
+                      cardReaderApi.displayResultFailed()
+                    } else {
+                      cardReaderApi.displayResultSuccess()
                     }
-                    else -> {
-                        // Do nothing
-                    }
-                }
-            }
-            AppState.UNSPECIFIED -> {
-                Toast.makeText(this, getString(R.string.status_unspecified), Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
-        Timber.i("New state = $currentAppState")
-    }
-
-    /**
-     * Used to mock card responses -> display chosen result screen
-     */
-    private fun launchMockedEvents() {
-        Timber.i("Launch STUB Card event !!")
-        // STUB Card event
-        val timer = Timer()
-        timer.schedule(object : TimerTask() {
-            override fun run() {
-                /*
-                 * Change this value to see other status screens
-                 */
-                val status: Status = Status.TICKETS_FOUND
-
-                val cardReaderResponse = MockUtils.getMockedResult(this@CardReaderActivity, status)
-                if (cardReaderResponse != null) {
+                    progress.dismiss()
                     displayResult(cardReaderResponse)
+                  }
                 }
+              } catch (e: IllegalStateException) {
+                Timber.e(e)
+                Timber.e("Load ERROR page after exception = ${e.message}")
+                displayResult(CardReaderResponse(status = Status.ERROR, titlesList = arrayListOf()))
+              }
             }
-        }, 1000)
+          }
+          else -> {
+            // Do nothing
+          }
+        }
+      }
+      AppState.UNSPECIFIED -> {
+        Toast.makeText(this, getString(R.string.status_unspecified), Toast.LENGTH_SHORT).show()
+      }
     }
+    Timber.i("New state = $currentAppState")
+  }
 
-    private fun displayResult(cardReaderResponse: CardReaderResponse?) {
-        if (cardReaderResponse != null) {
+  /** Used to mock card responses -> display chosen result screen */
+  private fun launchMockedEvents() {
+    Timber.i("Launch STUB Card event !!")
+    // STUB Card event
+    val timer = Timer()
+    timer.schedule(
+        object : TimerTask() {
+          override fun run() {
+            /*
+             * Change this value to see other status screens
+             */
+            val status: Status = Status.TICKETS_FOUND
 
-            runOnUiThread {
-                loadingAnimation.cancelAnimation()
+            val cardReaderResponse = MockUtils.getMockedResult(this@CardReaderActivity, status)
+            if (cardReaderResponse != null) {
+              displayResult(cardReaderResponse)
             }
+          }
+        },
+        1000)
+  }
 
-            when (cardReaderResponse.status) {
-                Status.TICKETS_FOUND, Status.EMPTY_CARD -> {
-                    val intent = Intent(this@CardReaderActivity, CardContentActivity::class.java)
-                    intent.putExtra(CARD_CONTENT, cardReaderResponse)
-                    startActivity(intent)
-                }
-                Status.LOADING, Status.ERROR, Status.SUCCESS, Status.INVALID_CARD -> {
-                    cardReaderApi.displayResultFailed()
-                    val intent = Intent(this@CardReaderActivity, NetworkInvalidActivity::class.java)
-                    intent.putExtra(CARD_CONTENT, cardReaderResponse)
-                    startActivity(intent)
-                }
-                Status.WRONG_CARD -> {
-                    // Do nothing
-                }
-                Status.DEVICE_CONNECTED -> {
-                    // Do nothing
-                }
-            }
+  private fun displayResult(cardReaderResponse: CardReaderResponse?) {
+    if (cardReaderResponse != null) {
+
+      runOnUiThread { loadingAnimation.cancelAnimation() }
+
+      when (cardReaderResponse.status) {
+        Status.TICKETS_FOUND, Status.EMPTY_CARD -> {
+          val intent = Intent(this@CardReaderActivity, CardContentActivity::class.java)
+          intent.putExtra(CARD_CONTENT, cardReaderResponse)
+          startActivity(intent)
         }
-    }
-
-    private fun showNoProxyReaderDialog(t: Throwable) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.error_title)
-        builder.setMessage(t.message)
-        builder.setNegativeButton(R.string.quit) { _, _ ->
-            finish()
+        Status.LOADING, Status.ERROR, Status.SUCCESS, Status.INVALID_CARD -> {
+          cardReaderApi.displayResultFailed()
+          val intent = Intent(this@CardReaderActivity, NetworkInvalidActivity::class.java)
+          intent.putExtra(CARD_CONTENT, cardReaderResponse)
+          startActivity(intent)
         }
-        val dialog = builder.create()
-        dialog.setCancelable(false)
-        dialog.show()
-    }
-
-    private fun showProgress() {
-        if (!progress.isShowing) {
-            progress.show()
+        Status.WRONG_CARD -> {
+          // Do nothing
         }
-    }
-
-    private fun dismissProgress() {
-        if (progress.isShowing) {
-            progress.dismiss()
+        Status.DEVICE_CONNECTED -> {
+          // Do nothing
         }
+      }
     }
+  }
 
-    companion object {
-        const val CARD_CONTENT = "cardContent"
+  private fun showNoProxyReaderDialog(t: Throwable) {
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle(R.string.error_title)
+    builder.setMessage(t.message)
+    builder.setNegativeButton(R.string.quit) { _, _ -> finish() }
+    val dialog = builder.create()
+    dialog.setCancelable(false)
+    dialog.show()
+  }
+
+  private fun showProgress() {
+    if (!progress.isShowing) {
+      progress.show()
     }
+  }
 
-    private inner class CardReaderObserver : CardReaderObserverSpi {
-
-        override fun onReaderEvent(readerEvent: CardReaderEvent?) {
-            Timber.i("New ReaderEvent received :${readerEvent?.type?.name}")
-            if (readerEvent?.type == CardReaderEvent.Type.CARD_MATCHED &&
-                cardReaderApi.isMockedResponse()
-            ) {
-                launchMockedEvents()
-            } else {
-                handleAppEvents(currentAppState, readerEvent)
-            }
-        }
+  private fun dismissProgress() {
+    if (progress.isShowing) {
+      progress.dismiss()
     }
+  }
+
+  companion object {
+    const val CARD_CONTENT = "cardContent"
+  }
+
+  private inner class CardReaderObserver : CardReaderObserverSpi {
+
+    override fun onReaderEvent(readerEvent: CardReaderEvent?) {
+      Timber.i("New ReaderEvent received :${readerEvent?.type?.name}")
+      if (readerEvent?.type == CardReaderEvent.Type.CARD_MATCHED &&
+          cardReaderApi.isMockedResponse()) {
+        launchMockedEvents()
+      } else {
+        handleAppEvents(currentAppState, readerEvent)
+      }
+    }
+  }
 }
