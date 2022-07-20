@@ -15,6 +15,7 @@ import dagger.Module
 import dagger.Provides
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
 import org.calypsonet.keyple.demo.control.reader.IReaderRepository
+import org.calypsonet.keyple.demo.control.reader.ReaderRepositoryImpl
 import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import timber.log.Timber
 

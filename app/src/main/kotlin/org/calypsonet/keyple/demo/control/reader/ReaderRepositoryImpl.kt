@@ -9,7 +9,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.di
+package org.calypsonet.keyple.demo.control.reader
 
 import android.app.Activity
 import android.media.MediaPlayer
@@ -18,8 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.reader.CardReaderProtocol
-import org.calypsonet.keyple.demo.control.reader.IReaderRepository
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactReader
 import org.calypsonet.keyple.plugin.bluebird.BluebirdContactlessReader
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
@@ -40,34 +38,72 @@ constructor(
     private val readerObservationExceptionHandler: CardReaderObservationExceptionHandlerSpi
 ) : IReaderRepository {
 
+  private lateinit var readerType: ReaderType
+  private lateinit var pluginName: String
+  // Card
+  private lateinit var contactlessReaderName: String
+  private lateinit var contactlessProtocolPhysicalName: String
+  private lateinit var contactlessProtocolLogicalName: String
+  // SAM
+  private lateinit var contactReaderNameRegex: String
+  private lateinit var contactReaderName: String
+  private lateinit var contactProtocolPhysicalName: String
+  private lateinit var contactProtocolLogicalName: String
+  // Permissions
+  private lateinit var permissions: Array<String>
+
   private lateinit var successMedia: MediaPlayer
   private lateinit var errorMedia: MediaPlayer
 
   override var cardReader: CardReader? = null
   override var samReaders: MutableList<CardReader> = mutableListOf()
 
+  private fun initReaderType() {
+    // TODO Init reader type
+    readerType = ReaderType.BLUEBIRD
+    pluginName = BluebirdPlugin.PLUGIN_NAME
+    contactlessReaderName = BluebirdContactlessReader.READER_NAME
+    contactlessProtocolPhysicalName = BluebirdSupportContactlessProtocols.NFC_ALL.key
+    contactlessProtocolLogicalName = BluebirdSupportContactlessProtocols.NFC_ALL.key
+    contactReaderNameRegex = ".*ContactReader"
+    contactReaderName = BluebirdContactReader.READER_NAME
+    contactProtocolPhysicalName = "ISO_7816_3"
+    contactProtocolLogicalName = "ISO_7816_3"
+    permissions = arrayOf(BluebirdPlugin.BLUEBIRD_SAM_PERMISSION)
+  }
+
   @Throws(KeyplePluginException::class)
   override fun registerPlugin(activity: Activity) {
+    initReaderType()
     successMedia = MediaPlayer.create(activity, R.raw.success)
     errorMedia = MediaPlayer.create(activity, R.raw.error)
     runBlocking {
       val pluginFactory =
-          withContext(Dispatchers.IO) { BluebirdPluginFactoryProvider.getFactory(activity) }
+          withContext(Dispatchers.IO) {
+            when (readerType) {
+              ReaderType.BLUEBIRD -> BluebirdPluginFactoryProvider.getFactory(activity)
+              ReaderType.COPPERNIC -> null // TODO
+              ReaderType.FAMOCO -> null // TODO
+              ReaderType.FLOWBIRD -> null // TODO
+              ReaderType.MOCK_SAM -> null // TODO
+              ReaderType.OMAPI -> null // TODO
+            }
+          }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
     }
   }
 
-  override fun getPlugin(): Plugin =
-      SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
+  override fun getPlugin(): Plugin = SmartCardServiceProvider.getService().getPlugin(pluginName)
 
   @Throws(KeyplePluginException::class)
   override suspend fun initCardReader(): CardReader? {
-    val plugin = SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
-    cardReader = plugin?.getReader(BluebirdContactlessReader.READER_NAME)
+    cardReader =
+        SmartCardServiceProvider.getService()
+            .getPlugin(pluginName)
+            ?.getReader(contactlessReaderName)
     cardReader?.let {
       (it as ConfigurableCardReader).activateProtocol(
-          getContactlessIsoProtocol().readerProtocolName,
-          getContactlessIsoProtocol().applicationProtocolName)
+          contactlessProtocolPhysicalName, contactlessProtocolLogicalName)
       (cardReader as ObservableCardReader).setReaderObservationExceptionHandler(
           readerObservationExceptionHandler)
     }
@@ -76,11 +112,16 @@ constructor(
 
   @Throws(KeyplePluginException::class)
   override suspend fun initSamReaders(): List<CardReader> {
-    val plugin = SmartCardServiceProvider.getService().getPlugin(BluebirdPlugin.PLUGIN_NAME)
-    samReaders = plugin?.readers?.filter { !it.isContactless }?.toMutableList() ?: mutableListOf()
+    samReaders =
+        SmartCardServiceProvider.getService()
+            .getPlugin(pluginName)
+            ?.readers
+            ?.filter { !it.isContactless }
+            ?.toMutableList()
+            ?: mutableListOf()
     samReaders.forEach {
       if (it is ConfigurableCardReader) {
-        it.activateProtocol(getSamReaderProtocol(), getSamReaderProtocol())
+        it.activateProtocol(contactProtocolPhysicalName, contactProtocolLogicalName)
       }
     }
     return samReaders
@@ -88,7 +129,7 @@ constructor(
 
   override fun getSamReader(): CardReader? {
     return if (samReaders.isNotEmpty()) {
-      val filteredByName = samReaders.filter { it.name == BluebirdContactReader.READER_NAME }
+      val filteredByName = samReaders.filter { it.name == contactReaderName }
       return if (filteredByName.isEmpty()) {
         samReaders.first()
       } else {
@@ -100,24 +141,21 @@ constructor(
   }
 
   override fun getContactlessIsoProtocol(): CardReaderProtocol {
-    return CardReaderProtocol(
-        BluebirdSupportContactlessProtocols.NFC_ALL.key,
-        BluebirdSupportContactlessProtocols.NFC_ALL.key)
+    return CardReaderProtocol(contactlessProtocolPhysicalName, contactlessProtocolLogicalName)
   }
 
-  override fun getSamReaderProtocol(): String = "ISO_7816_3"
+  override fun getSamReaderProtocol(): String = contactProtocolPhysicalName
 
-  override fun getSamRegex(): String = SAM_READER_NAME_REGEX
+  override fun getSamRegex(): String = contactReaderNameRegex
 
   override fun getReaderConfiguratorSpi(): ReaderConfiguratorSpi = ReaderConfigurator()
 
   override fun clear() {
-    (cardReader as ConfigurableCardReader).deactivateProtocol(
-        getContactlessIsoProtocol().readerProtocolName)
+    (cardReader as ConfigurableCardReader).deactivateProtocol(contactlessProtocolPhysicalName)
 
     samReaders.forEach {
       if (it is ConfigurableCardReader) {
-        it.deactivateProtocol(getSamReaderProtocol())
+        it.deactivateProtocol(contactProtocolPhysicalName)
       }
     }
 
@@ -128,7 +166,7 @@ constructor(
     errorMedia.release()
   }
 
-  override fun getPermissions(): Array<String> = arrayOf(BluebirdPlugin.BLUEBIRD_SAM_PERMISSION)
+  override fun getPermissions(): Array<String> = permissions
 
   override fun displayResultSuccess(): Boolean {
     successMedia.start()
@@ -138,10 +176,6 @@ constructor(
   override fun displayResultFailed(): Boolean {
     errorMedia.start()
     return true
-  }
-
-  companion object {
-    const val SAM_READER_NAME_REGEX = ".*ContactReader"
   }
 
   /**
