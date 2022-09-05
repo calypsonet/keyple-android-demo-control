@@ -1,60 +1,64 @@
-/********************************************************************************
+/* **************************************************************************************
  * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information regarding copyright
- * ownership.
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
  *
- * This program and the accompanying materials are made available under the terms of the Eclipse
- * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the
+ * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- ********************************************************************************/
+ ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.ticketing
 
 /**
  * Helper class to provide specific elements to handle Calypso cards.
  *
- *  * AID application selection (default Calypso AID)
- *  * SAM_C1_ATR_REGEX regular expression matching the expected C1 SAM ATR
- *  * Files infos (SFI, rec number, etc)
- *
+ * * AID application selection (default Calypso AID)
+ * * SAM_C1_ATR_REGEX regular expression matching the expected C1 SAM ATR
+ * * Files infos (SFI, rec number, etc)
  */
 object CalypsoInfo {
 
-    /*********************************
-     *              AIDs
-     *********************************/
+  /**
+   * *******************************
+   * ```
+   *              AIDs
+   * ```
+   */
 
-    /** AID Intercode **/
-    const val AID_1TIC_ICA_1 = "315449432e49434131"
-    const val AID_1TIC_ICA_3 = "315449432E49434133"
+  /** AID Intercode */
+  const val AID_1TIC_ICA_1 = "315449432e49434131"
+  const val AID_1TIC_ICA_3 = "315449432E49434133"
 
-    /** AID NORMALIZED IDF **/
-    const val AID_NORMALIZED_IDF = "A0000004040125090101"
+  /** AID NORMALIZED IDF */
+  const val AID_NORMALIZED_IDF = "A0000004040125090101"
 
-    /** OTHER **/
-    const val AID_OTHER = "Other"
+  /** OTHER */
+  const val AID_OTHER = "Other"
 
-    const val RECORD_NUMBER_1: Byte = 1
-    const val RECORD_NUMBER_2: Byte = 2
-    const val RECORD_NUMBER_3: Byte = 3
-    const val RECORD_NUMBER_4: Byte = 4
+  const val RECORD_NUMBER_1: Byte = 1
+  const val RECORD_NUMBER_2: Byte = 2
+  const val RECORD_NUMBER_3: Byte = 3
+  const val RECORD_NUMBER_4: Byte = 4
 
-    const val SFI_EnvironmentAndHolder = 0x07.toByte()
-    const val SFI_EventsLog = 0x08.toByte()
-    const val SFI_Contracts = 0x09.toByte()
-    const val SFI_Counter = 0x19.toByte()
+  const val SFI_EnvironmentAndHolder = 0x07.toByte()
+  const val SFI_EventsLog = 0x08.toByte()
+  const val SFI_Contracts = 0x09.toByte()
+  const val SFI_Counter = 0x19.toByte()
 
-    /*********************************
-     *      Security Settings
-     *********************************/
+  /**
+   * *******************************
+   * ```
+   *      Security Settings
+   * ```
+   */
+  const val SAM_PROFILE_NAME = "SAM C1"
 
-    const val SAM_PROFILE_NAME = "SAM C1"
-
-    /*
-     * The default KIF values for personalization, loading and debiting
-     */
-    const val DEFAULT_KIF_PERSO = 0x21.toByte()
-    const val DEFAULT_KIF_LOAD = 0x27.toByte()
-    const val DEFAULT_KIF_DEBIT = 0x30.toByte()
+  /*
+   * The default KIF values for personalization, loading and debiting
+   */
+  const val DEFAULT_KIF_PERSO = 0x21.toByte()
+  const val DEFAULT_KIF_LOAD = 0x27.toByte()
+  const val DEFAULT_KIF_DEBIT = 0x30.toByte()
 }

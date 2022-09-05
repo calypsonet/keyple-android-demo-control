@@ -1,14 +1,14 @@
-/********************************************************************************
+/* **************************************************************************************
  * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information regarding copyright
- * ownership.
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
  *
- * This program and the accompanying materials are made available under the terms of the Eclipse
- * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the
+ * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- ********************************************************************************/
+ ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.activities
 
 import android.os.Bundle
@@ -28,56 +28,53 @@ import org.calypsonet.keyple.demo.control.setDivider
 import timber.log.Timber
 
 class CardContentActivity : BaseActivity() {
-    private lateinit var validationLinearLayoutManager: LinearLayoutManager
-    private lateinit var titleLinearLayoutManager: LinearLayoutManager
-    private lateinit var validationsAdapter: ValidationsRecyclerAdapter
-    private lateinit var titlesAdapter: TitlesRecyclerAdapter
+  private lateinit var validationLinearLayoutManager: LinearLayoutManager
+  private lateinit var titleLinearLayoutManager: LinearLayoutManager
+  private lateinit var validationsAdapter: ValidationsRecyclerAdapter
+  private lateinit var titlesAdapter: TitlesRecyclerAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_card_content)
-        setSupportActionBar(findViewById(R.id.toolbar))
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_card_content)
+    setSupportActionBar(findViewById(R.id.toolbar))
 
-        presentBtn.setOnClickListener {
-            onBackPressed()
-        }
+    presentBtn.setOnClickListener { onBackPressed() }
 
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        val cardContent: CardReaderResponse =
-            intent.getParcelableExtra(CARD_CONTENT)
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    val cardContent: CardReaderResponse = intent.getParcelableExtra(CARD_CONTENT)
 
-        validationLinearLayoutManager = LinearLayoutManager(this)
-        lastValidationList.layoutManager = validationLinearLayoutManager
+    validationLinearLayoutManager = LinearLayoutManager(this)
+    lastValidationList.layoutManager = validationLinearLayoutManager
 
-        titleLinearLayoutManager = LinearLayoutManager(this)
-        titlesList.layoutManager = titleLinearLayoutManager
+    titleLinearLayoutManager = LinearLayoutManager(this)
+    titlesList.layoutManager = titleLinearLayoutManager
 
-        if (!cardContent.titlesList.isNullOrEmpty()) {
-            titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
-            titlesList.adapter = titlesAdapter
-            titlesList.visibility = View.VISIBLE
-            emptyContract.visibility = View.GONE
-        } else {
-            titlesList.visibility = View.GONE
-            emptyContract.visibility = View.VISIBLE
-        }
-
-        if (cardContent.lastValidationsList != null) {
-            lastValidationListContainer.visibility = View.VISIBLE
-            validationsAdapter = ValidationsRecyclerAdapter(cardContent.lastValidationsList)
-            lastValidationList.adapter = validationsAdapter
-            lastValidationList.setDivider(R.drawable.recycler_view_divider)
-        } else {
-            lastValidationListContainer.visibility = View.GONE
-        }
+    if (!cardContent.titlesList.isNullOrEmpty()) {
+      titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
+      titlesList.adapter = titlesAdapter
+      titlesList.visibility = View.VISIBLE
+      emptyContract.visibility = View.GONE
+    } else {
+      titlesList.visibility = View.GONE
+      emptyContract.visibility = View.VISIBLE
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        if (cardReaderApi.readersInitialized) {
-            cardReaderApi.stopNfcDetection()
-            Timber.d("stopNfcDetection")
-        }
+    if (cardContent.lastValidationsList != null) {
+      lastValidationListContainer.visibility = View.VISIBLE
+      validationsAdapter = ValidationsRecyclerAdapter(cardContent.lastValidationsList)
+      lastValidationList.adapter = validationsAdapter
+      lastValidationList.setDivider(R.drawable.recycler_view_divider)
+    } else {
+      lastValidationListContainer.visibility = View.GONE
     }
+  }
+
+  override fun onResume() {
+    super.onResume()
+
+    if (cardReaderApi.readersInitialized) {
+      cardReaderApi.stopNfcDetection()
+      Timber.d("stopNfcDetection")
+    }
+  }
 }

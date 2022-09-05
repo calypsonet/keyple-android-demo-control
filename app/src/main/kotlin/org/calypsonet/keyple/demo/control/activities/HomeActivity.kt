@@ -1,14 +1,14 @@
-/********************************************************************************
+/* **************************************************************************************
  * Copyright (c) 2021 Calypso Networks Association https://calypsonet.org/
  *
- * See the NOTICE file(s) distributed with this work for additional information regarding copyright
- * ownership.
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
  *
- * This program and the accompanying materials are made available under the terms of the Eclipse
- * Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
+ * This program and the accompanying materials are made available under the terms of the
+ * Eclipse Public License 2.0 which is available at http://www.eclipse.org/legal/epl-2.0
  *
  * SPDX-License-Identifier: EPL-2.0
- ********************************************************************************/
+ ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.activities
 
 import android.content.Intent
@@ -21,22 +21,20 @@ import org.calypsonet.keyple.demo.control.models.ControlAppSettings
 
 class HomeActivity : BaseActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
-        setSupportActionBar(findViewById(R.id.toolbar))
-        locationSelected.text = ControlAppSettings.location?.toString() ?: ""
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_home)
+    setSupportActionBar(findViewById(R.id.toolbar))
+    locationSelected.text = ControlAppSettings.location?.toString() ?: ""
 
-        startBtn.setOnClickListener {
-            startActivity(Intent(this, CardReaderActivity::class.java))
-        }
+    startBtn.setOnClickListener { startActivity(Intent(this, CardReaderActivity::class.java)) }
+  }
+
+  override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+    if (menuItem.itemId == android.R.id.home) {
+      finish()
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if (menuItem.itemId == android.R.id.home) {
-            finish()
-        }
-
-        return super.onOptionsItemSelected(menuItem)
-    }
+    return super.onOptionsItemSelected(menuItem)
+  }
 }
