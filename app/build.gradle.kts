@@ -58,6 +58,7 @@ android {
         isAbortOnError = false
     }
 
+    /*
     flavorDimensions("device")
     productFlavors {
         create("omapi") {
@@ -91,17 +92,18 @@ android {
             applicationIdSuffix = ".flowbird"
         }
     }
+    */
 
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
         getByName("test").java.srcDirs("src/test/kotlin")
 
-        getByName("omapi").java.srcDirs("src/omapi/kotlin")
+        /*getByName("omapi").java.srcDirs("src/omapi/kotlin")
         getByName("coppernic").java.srcDirs("src/coppernic/kotlin")
         getByName("famoco").java.srcDirs("src/famoco/kotlin")
         getByName("mockSam").java.srcDirs("src/mockSam/kotlin")
         getByName("bluebird").java.srcDirs("src/bluebird/kotlin")
-        getByName("flowbird").java.srcDirs("src/flowbird/kotlin")
+        getByName("flowbird").java.srcDirs("src/flowbird/kotlin")*/
     }
 }
 
@@ -120,6 +122,7 @@ dependencies {
 
     implementation("org.calypsonet.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:2.0.0-rc1")
 
+    /*
     "omapiImplementation"("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.1")
     "omapiImplementation"("org.eclipse.keyple:keyple-plugin-android-omapi-java-lib:2.0.1")
 
@@ -133,6 +136,7 @@ dependencies {
     "bluebirdImplementation"("org.calypsonet.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:2.0.0-rc1")
 
     "flowbirdImplementation"("org.calypsonet.keyple:keyple-plugin-cna-flowbird-android-java-lib:2.0.0-rc1")
+    */
 
     // Android components
     implementation("androidx.appcompat:appcompat:1.2.0")
