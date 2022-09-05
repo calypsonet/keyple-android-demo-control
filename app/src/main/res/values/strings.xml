@@ -11,7 +11,7 @@
   -->
 
 <resources>
-    <string name="app_name">Keyple Demo - Control</string>
+    <!--string name="app_name">Keyple Demo - Control</string-->
 
     <string name="action_settings">Settings</string>
 
