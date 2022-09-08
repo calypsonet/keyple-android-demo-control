@@ -16,27 +16,24 @@ import org.calypsonet.terminal.reader.CardReader
 import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 
-interface IReaderRepository {
-
-  var cardReader: CardReader?
-  var samReaders: MutableList<CardReader>
+interface ReaderRepository {
 
   fun registerPlugin(activity: Activity)
 
   suspend fun initCardReader(): CardReader?
-  suspend fun initSamReaders(): List<CardReader>
+  fun getCardReader(): CardReader?
+  fun getCardReaderProtocol(): CardReaderProtocol?
 
+  suspend fun initSamReaders(): List<CardReader>
+  fun getSamPlugin(): Plugin
   fun getSamReader(): CardReader?
-  fun getContactlessIsoProtocol(): CardReaderProtocol?
-  fun getSamReaderProtocol(): String?
+  fun getSamReaderNameRegex(): String?
+  fun getSamReaderConfiguratorSpi(): ReaderConfiguratorSpi?
+  fun getSamPermissions(): Array<String>? = null
+
   fun clear()
-  fun getPlugin(): Plugin
-  fun getSamRegex(): String?
-  fun getReaderConfiguratorSpi(): ReaderConfiguratorSpi?
 
   fun isMockedResponse(): Boolean = false
-
-  fun getPermissions(): Array<String>? = null
 
   /** Method to update color and sound at runtime if needed */
   fun displayWaiting(): Boolean = false
@@ -47,5 +44,3 @@ interface IReaderRepository {
   /** Method to update color and sound at runtime if needed */
   fun displayResultFailed(): Boolean = false
 }
-
-data class CardReaderProtocol(val readerProtocolName: String, val applicationProtocolName: String)

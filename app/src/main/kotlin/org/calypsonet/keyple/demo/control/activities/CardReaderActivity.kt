@@ -30,7 +30,7 @@ import org.calypsonet.keyple.demo.control.mock.MockUtils
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Status
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo
-import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
+import org.calypsonet.keyple.demo.control.ticketing.TicketingSession
 import org.calypsonet.terminal.reader.CardReaderEvent
 import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
@@ -42,7 +42,7 @@ class CardReaderActivity : BaseActivity() {
 
   private var cardReaderObserver: CardReaderObserver? = null
 
-  private lateinit var ticketingSession: ITicketingSession
+  private lateinit var ticketingSession: TicketingSession
 
   var currentAppState = AppState.WAIT_SYSTEM_READY
 
@@ -154,10 +154,10 @@ class CardReaderActivity : BaseActivity() {
           return
         }
 
-        Timber.i("Card AID = ${ticketingSession.cardAid}")
-        if (CalypsoInfo.AID_1TIC_ICA_1 != ticketingSession.cardAid &&
-            CalypsoInfo.AID_1TIC_ICA_3 != ticketingSession.cardAid &&
-            CalypsoInfo.AID_NORMALIZED_IDF != ticketingSession.cardAid) {
+        Timber.i("Card AID = ${ticketingSession.getCardAid()}")
+        if (CalypsoInfo.AID_1TIC_ICA_1 != ticketingSession.getCardAid() &&
+            CalypsoInfo.AID_1TIC_ICA_3 != ticketingSession.getCardAid() &&
+            CalypsoInfo.AID_NORMALIZED_IDF != ticketingSession.getCardAid()) {
           val error = getString(R.string.card_invalid_aid)
           displayResult(
               CardReaderResponse(

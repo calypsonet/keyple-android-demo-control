@@ -21,12 +21,12 @@ import java.util.TimerTask
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.dialog.PermissionDeniedDialog
-import org.calypsonet.keyple.demo.control.reader.IReaderRepository
+import org.calypsonet.keyple.demo.control.reader.ReaderRepository
 import org.calypsonet.keyple.demo.control.utils.PermissionHelper
 
 class SplashScreenActivity : BaseActivity() {
 
-  @Inject lateinit var readerRepository: IReaderRepository
+  @Inject lateinit var readerRepository: ReaderRepository
 
   override fun onCreate(savedInstanceState: Bundle?) {
     // Make sure this is before calling super.onCreate
@@ -34,8 +34,8 @@ class SplashScreenActivity : BaseActivity() {
     setContentView(R.layout.activity_splashscreen)
 
     val permissions = mutableListOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-    if (!readerRepository.getPermissions().isNullOrEmpty()) {
-      permissions.addAll(readerRepository.getPermissions()!!)
+    if (!readerRepository.getSamPermissions().isNullOrEmpty()) {
+      permissions.addAll(readerRepository.getSamPermissions()!!)
     }
 
     val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())

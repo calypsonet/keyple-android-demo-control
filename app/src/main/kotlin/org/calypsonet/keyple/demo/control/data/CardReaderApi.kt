@@ -14,9 +14,9 @@ package org.calypsonet.keyple.demo.control.data
 import android.app.Activity
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.di.scopes.AppScoped
-import org.calypsonet.keyple.demo.control.reader.IReaderRepository
-import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
+import org.calypsonet.keyple.demo.control.reader.ReaderRepository
 import org.calypsonet.keyple.demo.control.ticketing.TicketingSession
+import org.calypsonet.keyple.demo.control.ticketing.TicketingSessionAdapter
 import org.calypsonet.terminal.reader.CardReader
 import org.calypsonet.terminal.reader.ObservableCardReader
 import org.calypsonet.terminal.reader.ReaderCommunicationException
@@ -26,9 +26,9 @@ import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import timber.log.Timber
 
 @AppScoped
-class CardReaderApi @Inject constructor(private var readerRepository: IReaderRepository) {
+class CardReaderApi @Inject constructor(private var readerRepository: ReaderRepository) {
 
-  private var ticketingSession: ITicketingSession? = null
+  private var ticketingSession: TicketingSession? = null
 
   var readersInitialized = false
 
@@ -80,7 +80,7 @@ class CardReaderApi @Inject constructor(private var readerRepository: IReaderRep
       /* remove the observer if it already exist */
       (reader as ObservableCardReader).addObserver(observer)
 
-      ticketingSession = TicketingSession(readerRepository)
+      ticketingSession = TicketingSessionAdapter(readerRepository)
     }
   }
 
@@ -91,14 +91,14 @@ class CardReaderApi @Inject constructor(private var readerRepository: IReaderRep
      */
     ticketingSession?.prepareAndSetCardDefaultSelection()
 
-    (readerRepository.cardReader as ObservableCardReader).startCardDetection(
+    (readerRepository.getCardReader() as ObservableCardReader).startCardDetection(
         ObservableCardReader.DetectionMode.REPEATING)
   }
 
   fun stopNfcDetection() {
     try {
       // notify reader that se detection has been switched off
-      (readerRepository.cardReader as ObservableCardReader).stopCardDetection()
+      (readerRepository.getCardReader() as ObservableCardReader).stopCardDetection()
     } catch (e: KeyplePluginException) {
       Timber.e(e, "NFC Plugin not found")
     } catch (e: Exception) {
@@ -106,7 +106,7 @@ class CardReaderApi @Inject constructor(private var readerRepository: IReaderRep
     }
   }
 
-  fun getTicketingSession(): ITicketingSession? {
+  fun getTicketingSession(): TicketingSession? {
     return ticketingSession
   }
 
@@ -114,8 +114,8 @@ class CardReaderApi @Inject constructor(private var readerRepository: IReaderRep
     readersInitialized = false
 
     readerRepository.clear()
-    if (observer != null && readerRepository.cardReader != null) {
-      (readerRepository.cardReader as ObservableCardReader).removeObserver(observer)
+    if (observer != null && readerRepository.getCardReader() != null) {
+      (readerRepository.getCardReader() as ObservableCardReader).removeObserver(observer)
     }
 
     val smartCardService = SmartCardServiceProvider.getService()

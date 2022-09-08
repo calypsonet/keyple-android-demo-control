@@ -37,7 +37,7 @@ import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Contracts
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_Counter
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EnvironmentAndHolder
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo.SFI_EventsLog
-import org.calypsonet.keyple.demo.control.ticketing.ITicketingSession
+import org.calypsonet.keyple.demo.control.ticketing.TicketingSession
 import org.calypsonet.terminal.calypso.WriteAccessLevel
 import org.calypsonet.terminal.calypso.card.CalypsoCard
 import org.calypsonet.terminal.reader.CardReader
@@ -52,11 +52,11 @@ class ControlProcedure {
       now: DateTime,
       calypsoCard: CalypsoCard,
       samReader: CardReader?,
-      ticketingSession: ITicketingSession,
+      ticketingSession: TicketingSession,
       locations: List<Location>
   ): CardReaderResponse {
 
-    val cardReader = ticketingSession.cardReader
+    val cardReader = ticketingSession.getCardReader()
 
     val errorMessage: String?
     var errorTitle: String? = null

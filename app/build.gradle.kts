@@ -58,52 +58,9 @@ android {
         isAbortOnError = false
     }
 
-    /*
-    flavorDimensions("device")
-    productFlavors {
-        create("omapi") {
-            dimension = "device"
-            resValue("string", "app_name", "Keyple Control OMAPI")
-            applicationIdSuffix = ".omapi"
-        }
-        create("coppernic") {
-            dimension = "device"
-            resValue("string", "app_name", "Keyple Control Coppernic")
-            applicationIdSuffix = ".coppernic"
-        }
-        create("famoco") {
-            dimension = "device"
-            resValue("string", "app_name", "Keyple Control Famoco")
-            applicationIdSuffix = ".famoco"
-        }
-        create("mockSam") {
-            dimension = "device"
-            resValue("string", "app_name", "Keyple Control Mock Sam")
-            applicationIdSuffix = ".mockSam"
-        }
-        create("bluebird") {
-            dimension = "device"
-            resValue("string", "app_name", "Keyple Control Bluebird")
-            applicationIdSuffix = ".bluebird"
-        }
-        create("flowbird") {
-            dimension = "device"
-            resValue("string", "app_name", "Keyple Control Flowbird")
-            applicationIdSuffix = ".flowbird"
-        }
-    }
-    */
-
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
         getByName("test").java.srcDirs("src/test/kotlin")
-
-        /*getByName("omapi").java.srcDirs("src/omapi/kotlin")
-        getByName("coppernic").java.srcDirs("src/coppernic/kotlin")
-        getByName("famoco").java.srcDirs("src/famoco/kotlin")
-        getByName("mockSam").java.srcDirs("src/mockSam/kotlin")
-        getByName("bluebird").java.srcDirs("src/bluebird/kotlin")
-        getByName("flowbird").java.srcDirs("src/flowbird/kotlin")*/
     }
 }
 
@@ -111,32 +68,21 @@ dependencies {
     // Demo common
     implementation("org.calypsonet.keyple:keyple-demo-common-lib:1.0.0-SNAPSHOT") { isChanging = true }
 
-    // Keyple
+    // Keyple reader plugins proprietary libs
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+
+    // Keyple core
     implementation("org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.0.+") { isChanging = true }
     implementation("org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.2.+") { isChanging = true }
     implementation("org.eclipse.keyple:keyple-common-java-api:2.0.+") { isChanging = true }
     implementation("org.eclipse.keyple:keyple-util-java-lib:2.+") { isChanging = true }
-    implementation("org.eclipse.keyple:keyple-service-java-lib:2.1.0") { isChanging = true }
-    implementation("org.eclipse.keyple:keyple-service-resource-java-lib:2.0.2") { isChanging = true }
+    implementation("org.eclipse.keyple:keyple-service-java-lib:2.1.0")
+    implementation("org.eclipse.keyple:keyple-service-resource-java-lib:2.0.2")
     implementation("org.eclipse.keyple:keyple-card-calypso-java-lib:2.2.1")
 
-    implementation("org.calypsonet.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:2.0.0-rc1")
-
-    /*
-    "omapiImplementation"("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.1")
-    "omapiImplementation"("org.eclipse.keyple:keyple-plugin-android-omapi-java-lib:2.0.1")
-
-    "famocoImplementation"("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.0-rc3")
-    "famocoImplementation"("org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib:2.0.0-rc1")
-
-    "mockSamImplementation"("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.1")
-
-    "coppernicImplementation"("org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:2.0.0-rc1")
-
-    "bluebirdImplementation"("org.calypsonet.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:2.0.0-rc1")
-
-    "flowbirdImplementation"("org.calypsonet.keyple:keyple-plugin-cna-flowbird-android-java-lib:2.0.0-rc1")
-    */
+    // Keyple reader plugins
+    implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.1")
+    implementation("org.eclipse.keyple:keyple-plugin-android-omapi-java-lib:2.0.1")
 
     // Android components
     implementation("androidx.appcompat:appcompat:1.2.0")
