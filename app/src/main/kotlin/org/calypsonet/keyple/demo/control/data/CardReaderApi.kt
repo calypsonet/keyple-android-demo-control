@@ -124,10 +124,6 @@ class CardReaderApi @Inject constructor(private var readerRepository: ReaderRepo
     ticketingSession = null
   }
 
-  fun isMockedResponse(): Boolean {
-    return readerRepository.isMockedResponse()
-  }
-
   fun displayResultSuccess(): Boolean = readerRepository.displayResultSuccess()
 
   fun displayResultFailed(): Boolean = readerRepository.displayResultFailed()

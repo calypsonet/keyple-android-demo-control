@@ -45,7 +45,6 @@ import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.joda.time.DateTime
 import timber.log.Timber
 
-/** @author youssefamrani */
 class ControlProcedure {
 
   fun launch(
@@ -231,13 +230,13 @@ class ControlProcedure {
           contracts.toList().filter { it.first == event.eventContractUsed }.map { it.second }
 
       if (isValidEvent(event)) {
-        if (eventContract.isNotEmpty()) {
-          validation =
+        validation =
+            if (eventContract.isNotEmpty()) {
               ValidationMapper.map(
                   event = event, contract = eventContract[0], locations = locations)
-        } else {
-          validation = ValidationMapper.map(event = event, contract = null, locations = locations)
-        }
+            } else {
+              ValidationMapper.map(event = event, contract = null, locations = locations)
+            }
       }
 
       val displayedContract = arrayListOf<Contract>()
@@ -374,7 +373,7 @@ class ControlProcedure {
 
   /**
    * An event is considered valid for display if an eventTimeStamp or an eventDateStamp has been set
-   * during a provious validation
+   * during a previous validation
    */
   private fun isValidEvent(event: CardEvent): Boolean {
     return event.eventTimeStamp != 0 || event.eventDateStamp != 0

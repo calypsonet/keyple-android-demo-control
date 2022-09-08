@@ -16,6 +16,5 @@ enum class ReaderType {
   COPPERNIC,
   FAMOCO,
   FLOWBIRD,
-  MOCK_SAM,
   OMAPI
 }

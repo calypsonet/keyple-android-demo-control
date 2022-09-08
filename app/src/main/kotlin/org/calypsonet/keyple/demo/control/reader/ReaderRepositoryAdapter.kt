@@ -67,8 +67,8 @@ constructor(
   private var cardReader: CardReader? = null
   // SAM
   private lateinit var samPluginName: String
-  private var samReaderNameRegex: String? = null
-  private var samReaderName: String? = null
+  private lateinit var samReaderNameRegex: String
+  private lateinit var samReaderName: String
   private var samReaderProtocolPhysicalName: String? = null
   private var samReaderProtocolLogicalName: String? = null
   private var samPermissions: Array<String>? = null
@@ -140,20 +140,6 @@ constructor(
     samPermissions = null
   }
 
-  private fun initMockSamReader() {
-    readerType = ReaderType.MOCK_SAM
-    cardPluginName = AndroidNfcPlugin.PLUGIN_NAME
-    cardReaderName = AndroidNfcReader.READER_NAME
-    cardReaderProtocolPhysicalName = "ISO_14443_4"
-    cardReaderProtocolLogicalName = "ISO_14443_4"
-    samPluginName = AndroidNfcPlugin.PLUGIN_NAME
-    samReaderNameRegex = null
-    samReaderName = null
-    samReaderProtocolPhysicalName = null
-    samReaderProtocolLogicalName = null
-    samPermissions = null
-  }
-
   private fun initOmapiReader() {
     readerType = ReaderType.OMAPI
     cardPluginName = AndroidNfcPlugin.PLUGIN_NAME
@@ -194,7 +180,6 @@ constructor(
                     situationFiles = situationFiles,
                     translationFiles = translationFiles)
               }
-              ReaderType.MOCK_SAM -> AndroidNfcPluginFactoryProvider(activity).getFactory()
               ReaderType.OMAPI -> AndroidNfcPluginFactoryProvider(activity).getFactory()
             }
           }
@@ -238,10 +223,7 @@ constructor(
 
   @Throws(KeyplePluginException::class)
   override suspend fun initSamReaders(): List<CardReader> {
-    if (readerType == ReaderType.MOCK_SAM) {
-      samReaders = mutableListOf()
-      return samReaders
-    } else if (readerType == ReaderType.FAMOCO) {
+    if (readerType == ReaderType.FAMOCO) {
       samReaders =
           SmartCardServiceProvider.getService()
               .getPlugin(samPluginName)
@@ -303,15 +285,9 @@ constructor(
     }
   }
 
-  override fun getSamReaderNameRegex(): String? = samReaderNameRegex
+  override fun getSamReaderNameRegex(): String = samReaderNameRegex
 
-  override fun getSamReaderConfiguratorSpi(): ReaderConfiguratorSpi? {
-    return if (readerType == ReaderType.MOCK_SAM) {
-      null
-    } else {
-      ReaderConfigurator()
-    }
-  }
+  override fun getSamReaderConfiguratorSpi(): ReaderConfiguratorSpi = ReaderConfigurator()
 
   override fun getSamPermissions(): Array<String>? = samPermissions
 
@@ -328,10 +304,6 @@ constructor(
       errorMedia.stop()
       errorMedia.release()
     }
-  }
-
-  override fun isMockedResponse(): Boolean {
-    return readerType == ReaderType.MOCK_SAM
   }
 
   override fun displayWaiting(): Boolean {

@@ -19,13 +19,12 @@ import org.calypsonet.keyple.demo.control.data.CardReaderApi
 import org.calypsonet.keyple.demo.control.data.LocationFileManager
 import org.calypsonet.keyple.demo.control.utils.PermissionHelper
 
-/** @author youssefamrani */
 abstract class BaseActivity : DaggerAppCompatActivity() {
 
   @Inject lateinit var cardReaderApi: CardReaderApi
 
   @Inject lateinit var locationFileManager: LocationFileManager
-  protected var isStoragePermissionGranted: Boolean = false
+  private var isStoragePermissionGranted: Boolean = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

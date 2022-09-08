@@ -17,7 +17,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import org.calypsonet.keyple.demo.control.R
 
-/** @author youssefamrani */
 class PermissionDeniedDialog : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

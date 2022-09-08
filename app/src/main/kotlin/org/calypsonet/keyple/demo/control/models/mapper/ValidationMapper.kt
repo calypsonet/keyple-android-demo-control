@@ -16,10 +16,6 @@ import org.calypsonet.keyple.demo.common.parser.model.CardEvent
 import org.calypsonet.keyple.demo.control.models.Location
 import org.calypsonet.keyple.demo.control.models.Validation
 
-/**
- *
- * @author youssefamrani
- */
 object ValidationMapper {
   fun map(event: CardEvent, contract: CardContract?, locations: List<Location>): Validation {
 

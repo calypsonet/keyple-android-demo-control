@@ -11,10 +11,6 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.models
 
-/**
- *
- * @author youssefamrani
- */
 data class Place(
     /** Coding type of place */
     var coding: Pair<Int, Int>? = null,

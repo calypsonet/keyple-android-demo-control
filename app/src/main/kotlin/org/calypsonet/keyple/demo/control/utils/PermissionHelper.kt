@@ -16,7 +16,6 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
-/** @author youssefamrani */
 object PermissionHelper {
 
   const val MY_PERMISSIONS_REQUEST_ALL = 1000
@@ -30,11 +29,9 @@ object PermissionHelper {
     val permissionDenied = permissions.filter { !isPermissionGranted(context, it) }
 
     if (permissionDenied.isNotEmpty()) {
-      var position = 0
       val permissionsToAsk = arrayOfNulls<String>(permissionDenied.size)
-      for (permission in permissionDenied) {
+      for ((position, permission) in permissionDenied.withIndex()) {
         permissionsToAsk[position] = permission
-        position++
       }
       ActivityCompat.requestPermissions(context, permissionsToAsk, MY_PERMISSIONS_REQUEST_ALL)
       return false

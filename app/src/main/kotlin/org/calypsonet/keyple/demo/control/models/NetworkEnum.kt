@@ -37,7 +37,7 @@ enum class NetworkEnum(val key: Int, val value: String) {
 
   companion object {
     fun findEnumByNetworkId(networkId: Int): NetworkEnum? {
-      val values = NetworkEnum.values()
+      val values = values()
       return values.find { it.key == networkId }
     }
   }

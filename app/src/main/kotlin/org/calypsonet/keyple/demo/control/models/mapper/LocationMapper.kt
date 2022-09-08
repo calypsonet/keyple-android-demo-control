@@ -14,10 +14,6 @@ package org.calypsonet.keyple.demo.control.models.mapper
 import org.calypsonet.keyple.demo.common.parser.model.CardEvent
 import org.calypsonet.keyple.demo.control.models.Location
 
-/**
- *
- * @author youssefamrani
- */
 object LocationMapper {
   fun map(locations: List<Location>, event: CardEvent): Location {
     return locations.filter { event.eventLocation == it.id }[0]

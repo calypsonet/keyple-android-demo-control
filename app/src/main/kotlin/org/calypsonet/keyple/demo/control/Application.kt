@@ -31,7 +31,7 @@ class Application : DaggerApplication() {
     Timber.plant(DebugTree())
   }
 
-  override fun applicationInjector(): AppComponent? {
+  override fun applicationInjector(): AppComponent {
     return DaggerAppComponent.builder().application(this).build()
   }
 }

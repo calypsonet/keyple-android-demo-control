@@ -17,8 +17,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import java.util.Timer
-import java.util.TimerTask
 import kotlinx.android.synthetic.main.activity_card_reader.loadingAnimation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -26,7 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.di.scopes.ActivityScoped
-import org.calypsonet.keyple.demo.control.mock.MockUtils
 import org.calypsonet.keyple.demo.control.models.CardReaderResponse
 import org.calypsonet.keyple.demo.control.models.Status
 import org.calypsonet.keyple.demo.control.ticketing.CalypsoInfo
@@ -234,28 +231,6 @@ class CardReaderActivity : BaseActivity() {
     Timber.i("New state = $currentAppState")
   }
 
-  /** Used to mock card responses -> display chosen result screen */
-  private fun launchMockedEvents() {
-    Timber.i("Launch STUB Card event !!")
-    // STUB Card event
-    val timer = Timer()
-    timer.schedule(
-        object : TimerTask() {
-          override fun run() {
-            /*
-             * Change this value to see other status screens
-             */
-            val status: Status = Status.TICKETS_FOUND
-
-            val cardReaderResponse = MockUtils.getMockedResult(this@CardReaderActivity, status)
-            if (cardReaderResponse != null) {
-              displayResult(cardReaderResponse)
-            }
-          }
-        },
-        1000)
-  }
-
   private fun displayResult(cardReaderResponse: CardReaderResponse?) {
     if (cardReaderResponse != null) {
 
@@ -313,12 +288,7 @@ class CardReaderActivity : BaseActivity() {
 
     override fun onReaderEvent(readerEvent: CardReaderEvent?) {
       Timber.i("New ReaderEvent received :${readerEvent?.type?.name}")
-      if (readerEvent?.type == CardReaderEvent.Type.CARD_MATCHED &&
-          cardReaderApi.isMockedResponse()) {
-        launchMockedEvents()
-      } else {
-        handleAppEvents(currentAppState, readerEvent)
-      }
+      handleAppEvents(currentAppState, readerEvent)
     }
   }
 }

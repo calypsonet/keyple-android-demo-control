@@ -15,10 +15,6 @@ import org.calypsonet.keyple.demo.common.parser.model.CardContract
 import org.calypsonet.keyple.demo.control.models.Contract
 import org.joda.time.DateTime
 
-/**
- *
- * @author youssefamrani
- */
 object ContractMapper {
   fun map(
       contract: CardContract,

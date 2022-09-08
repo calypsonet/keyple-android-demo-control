@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.control.models
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
-/** @author youssefamrani */
 @Parcelize
 data class Location(val id: Int, val name: String) : Parcelable {
 

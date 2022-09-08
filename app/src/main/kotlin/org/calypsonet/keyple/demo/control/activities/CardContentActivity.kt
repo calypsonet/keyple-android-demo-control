@@ -49,7 +49,7 @@ class CardContentActivity : BaseActivity() {
     titleLinearLayoutManager = LinearLayoutManager(this)
     titlesList.layoutManager = titleLinearLayoutManager
 
-    if (!cardContent.titlesList.isNullOrEmpty()) {
+    if (cardContent.titlesList.isNotEmpty()) {
       titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
       titlesList.adapter = titlesAdapter
       titlesList.visibility = View.VISIBLE

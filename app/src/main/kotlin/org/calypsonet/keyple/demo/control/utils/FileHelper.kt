@@ -21,13 +21,11 @@ import java.io.OutputStreamWriter
 import java.io.Writer
 import timber.log.Timber
 
-/** @author youssefamrani */
 object FileHelper {
 
   fun createDirectory(path: String, name: String): Boolean {
     val file = File(path, name)
-    val created = file.mkdir()
-    return created
+    return file.mkdir()
   }
 
   fun createFile(dirPath: String, name: String, content: String): Boolean {

@@ -45,9 +45,7 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
                 DateUtil.formatDateDisplayedContract(contract.contractValidityStartDate.toDate()),
                 DateUtil.formatDateDisplayedContract(contract.contractValidityEndDate.toDate()))
           } else {
-            val nbTicketsLeft = contract.nbTicketsLeft ?: 0
-
-            when (nbTicketsLeft) {
+            when (val nbTicketsLeft = contract.nbTicketsLeft ?: 0) {
               0 -> context.getString(R.string.card_content_description_multi_trip_zero)
               1 ->
                   context.getString(

@@ -41,7 +41,7 @@ This demo can be used with Calypso cards with the following configurations:
             
 | Field Name           | Bits| Description                                        | Type          | Status    |
 | :------------------- | ---:| :------------------------------------------------- | :-----------: | :-------: |
-| EnvVersionNumber     |    8| Data structure version number                      | VersionNumber | Mandatory | 
+| EnvVersionNumber     |   8 | Data structure version number                      | VersionNumber | Mandatory | 
 | EnvApplicationNumber |  32 | Card application number (unique system identifier) | Int           | Mandatory |
 | EnvIssuingDate       |  16 | Card application issuing date                      | DateCompact   | Mandatory | 
 | EnvEndDate           |  16 | Card application expiration date                   | DateCompact   | Mandatory | 
@@ -68,8 +68,8 @@ This demo can be used with Calypso cards with the following configurations:
 
 | Field Name              | Bits| Description                          | Type                | Status    |
 | :---------------------- | ---:| :----------------------------------- | :-----------------: | :-------: |
-| ContractVersionNumber      |   8 | Data structure version number        | VersionNumber       | Mandatory | 
-| ContractTariff         |   8 | Contract Type                        | PriorityCode        | Mandatory | 
+| ContractVersionNumber   |   8 | Data structure version number        | VersionNumber       | Mandatory | 
+| ContractTariff          |   8 | Contract Type                        | PriorityCode        | Mandatory | 
 | ContractSaleDate        |  16 | Sale date of the contract            | DateCompact         | Mandatory | 
 | ContractValidityEndDate |  16 | Last day of validity of the contract | DateCompact         | Mandatory | 
 | ContractSaleSam         |  32 | SAM which loaded the contract        | Int                 | Optional  | 

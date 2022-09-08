@@ -33,8 +33,6 @@ interface ReaderRepository {
 
   fun clear()
 
-  fun isMockedResponse(): Boolean = false
-
   /** Method to update color and sound at runtime if needed */
   fun displayWaiting(): Boolean = false
 

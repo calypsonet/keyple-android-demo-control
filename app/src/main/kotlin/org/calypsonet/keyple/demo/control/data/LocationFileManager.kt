@@ -27,11 +27,10 @@ import org.calypsonet.keyple.demo.control.models.Location
 import org.calypsonet.keyple.demo.control.utils.FileHelper
 import timber.log.Timber
 
-/** @author youssefamrani */
 class LocationFileManager @Inject constructor(context: Context) {
 
   private var locationList: List<Location>? = null
-  var locationsFromResources: String
+  private var locationsFromResources: String
 
   init {
     val sdCardPath = FileHelper.getExternalStoragePath()
