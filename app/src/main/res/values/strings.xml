@@ -21,7 +21,7 @@
     <string name="version">version %s</string>
 
     <string name="title_activity_home">HomeActivity</string>
-    <string name="title_activity_card_reader">CardReaderActivity</string>
+    <string name="title_activity_card_reader">ReaderActivity</string>
     <string name="title_activity_network_invalid">NetworkInvalidActivity</string>
     <string name="title_activity_card_content">CardContentActivity</string>
 

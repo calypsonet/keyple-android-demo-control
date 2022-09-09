@@ -1,5 +1,5 @@
 # Keep demo app classes
--keep class org.calypsonet.keyple.demo.control.models.Location { *; }
+-keep class org.calypsonet.keyple.demo.control.service.ticketing.model.Location { *; }
 -keep class org.joda.time.** { *; }
 
 # Keep Keyple library classes
