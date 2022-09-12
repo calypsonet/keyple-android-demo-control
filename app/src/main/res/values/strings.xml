@@ -70,10 +70,7 @@
     <string name="card_invalid_structure">Selection error : Unknown structure.</string>
     <string name="card_invalid_default">Invalid card</string>
 
-    <!--    Dialog-->
-    <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
-
-    <!--    Test values-->
+    <!-- Test values-->
     <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>
     <string name="card_content_title_placeholder">Multi Trip</string>
     <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
