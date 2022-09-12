@@ -11,7 +11,10 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.service.ticketing.model
 
+import org.calypsonet.keyple.demo.control.service.reader.ReaderType
+
 object ControlAppSettings {
   var location: Location? = null
   var validationPeriod: Int? = null
+  lateinit var readerType: ReaderType
 }

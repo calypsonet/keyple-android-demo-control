@@ -77,9 +77,16 @@ constructor(
   private lateinit var successMedia: MediaPlayer
   private lateinit var errorMedia: MediaPlayer
 
-  private fun initReaderType() {
-    // TODO Init reader type
-    initBluebirdReader()
+  private fun initReaderType(readerType: ReaderType) {
+    when (readerType) {
+      ReaderType.BLUEBIRD -> initBluebirdReader()
+      ReaderType.COPPERNIC -> initCoppernicReader()
+      ReaderType.FAMOCO -> initFamocoReader()
+      ReaderType.FLOWBIRD -> initFlowbirdReader()
+      else -> {
+        throw IllegalArgumentException("Unexpected reader type: {$readerType}")
+      }
+    }
   }
 
   private fun initBluebirdReader() {
@@ -155,8 +162,8 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  fun registerPlugin(activity: Activity) {
-    initReaderType()
+  fun registerPlugin(activity: Activity, readerType: ReaderType) {
+    initReaderType(readerType)
     if (readerType != ReaderType.FLOWBIRD) {
       successMedia = MediaPlayer.create(activity, R.raw.success)
       errorMedia = MediaPlayer.create(activity, R.raw.error)

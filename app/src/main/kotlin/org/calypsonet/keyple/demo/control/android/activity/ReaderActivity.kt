@@ -27,6 +27,7 @@ import org.calypsonet.keyple.demo.control.android.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo
 import org.calypsonet.keyple.demo.control.service.ticketing.TicketingService
 import org.calypsonet.keyple.demo.control.service.ticketing.model.CardReaderResponse
+import org.calypsonet.keyple.demo.control.service.ticketing.model.ControlAppSettings
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Status
 import org.calypsonet.terminal.reader.CardReaderEvent
 import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi
@@ -80,7 +81,7 @@ class ReaderActivity : BaseActivity() {
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
-            mainService.init(cardReaderObserver, this@ReaderActivity)
+            mainService.init(cardReaderObserver, this@ReaderActivity, ControlAppSettings.readerType)
             ticketingService = mainService.getTicketingSession()!!
             mainService.readersInitialized = true
             handleAppEvents(AppState.WAIT_CARD, null)

@@ -15,6 +15,7 @@ import android.app.Activity
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.android.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.service.reader.ReaderService
+import org.calypsonet.keyple.demo.control.service.reader.ReaderType
 import org.calypsonet.keyple.demo.control.service.ticketing.TicketingService
 import org.calypsonet.terminal.reader.CardReader
 import org.calypsonet.terminal.reader.ObservableCardReader
@@ -30,10 +31,10 @@ class MainService @Inject constructor(private var readerService: ReaderService) 
   var readersInitialized = false
 
   @Throws(KeyplePluginException::class, IllegalStateException::class, Exception::class)
-  suspend fun init(observer: CardReaderObserverSpi?, activity: Activity) {
+  suspend fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
     // Register plugin
     try {
-      readerService.registerPlugin(activity)
+      readerService.registerPlugin(activity, readerType)
     } catch (e: Exception) {
       Timber.e(e)
       throw IllegalStateException(e.message)
