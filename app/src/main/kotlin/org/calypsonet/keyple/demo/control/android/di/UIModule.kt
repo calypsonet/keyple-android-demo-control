@@ -13,12 +13,7 @@ package org.calypsonet.keyple.demo.control.android.di
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import org.calypsonet.keyple.demo.control.android.activity.CardContentActivity
-import org.calypsonet.keyple.demo.control.android.activity.HomeActivity
-import org.calypsonet.keyple.demo.control.android.activity.NetworkInvalidActivity
-import org.calypsonet.keyple.demo.control.android.activity.ReaderActivity
-import org.calypsonet.keyple.demo.control.android.activity.SettingsActivity
-import org.calypsonet.keyple.demo.control.android.activity.SplashScreenActivity
+import org.calypsonet.keyple.demo.control.android.activity.*
 import org.calypsonet.keyple.demo.control.android.di.scope.ActivityScoped
 
 @Suppress("unused")
@@ -30,6 +25,10 @@ abstract class UIModule {
   abstract fun splashScreenActivity(): SplashScreenActivity
 
   @ActivityScoped @ContributesAndroidInjector abstract fun settingsActivity(): SettingsActivity
+
+  @ActivityScoped
+  @ContributesAndroidInjector
+  abstract fun deviceSelectionActivity(): DeviceSelectionActivity
 
   @ActivityScoped @ContributesAndroidInjector abstract fun homeActivity(): HomeActivity
 

@@ -33,14 +33,14 @@ class SplashScreenActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_splashscreen)
 
-    val permissions = mutableListOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-    if (!readerService.getSamPermissions().isNullOrEmpty()) {
-      permissions.addAll(readerService.getSamPermissions()!!)
-    }
-
-    val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
-
-    if (granted) {
+//    val permissions = mutableListOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+//    if (!readerService.getSamPermissions().isNullOrEmpty()) {
+//      permissions.addAll(readerService.getSamPermissions()!!)
+//    }
+//
+//    val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
+//
+//    if (granted) {
       Timer()
           .schedule(
               object : TimerTask() {
@@ -52,7 +52,7 @@ class SplashScreenActivity : BaseActivity() {
                 }
               },
               SPLASH_MAX_DELAY_MS.toLong())
-    }
+  //  }
   }
 
   @SuppressLint("MissingSuperCall")
@@ -66,7 +66,7 @@ class SplashScreenActivity : BaseActivity() {
         val storagePermissionGranted =
             grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
         if (storagePermissionGranted) {
-          startActivity(Intent(applicationContext, SettingsActivity::class.java))
+          startActivity(Intent(applicationContext, DeviceSelectionActivity::class.java))
           finish()
         } else {
           PermissionDeniedDialog().apply {

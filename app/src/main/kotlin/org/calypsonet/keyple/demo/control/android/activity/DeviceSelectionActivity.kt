@@ -15,14 +15,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import kotlinx.android.synthetic.main.activity_device_selection.*
+import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.service.reader.ReaderType
 import org.calypsonet.keyple.demo.control.service.ticketing.model.ControlAppSettings
 
 class DeviceSelectionActivity : BaseActivity() {
 
-  override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+  override fun onCreate(savedInstanceState: Bundle?) {
 
-    super.onCreate(savedInstanceState, persistentState)
+    super.onCreate(savedInstanceState)
+
+    setContentView(R.layout.activity_device_selection)
 
     bluebirdBtn.setOnClickListener {
       ControlAppSettings.readerType = ReaderType.BLUEBIRD
