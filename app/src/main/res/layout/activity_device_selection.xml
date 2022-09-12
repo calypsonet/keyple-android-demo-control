@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/coordinatorLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_bg"
@@ -11,84 +11,67 @@
     <Button
         android:id="@+id/flowbirdBtn"
         style="@style/whiteBtnText"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/settings_horizontal_padding"
-        android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        android:layout_marginBottom="4dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
         android:text="@string/device_flowbird"
         android:textSize="@dimen/medium_text_size"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintTop_toBottomOf="@id/famocoBtn" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/famocoBtn" />
 
     <Button
         android:id="@+id/coppernicBtn"
         style="@style/whiteBtnText"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/settings_horizontal_padding"
-        android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        android:layout_marginBottom="156dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
         android:text="@string/device_coppernic"
         android:textSize="@dimen/medium_text_size"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintTop_toBottomOf="@id/bluebirdBtn" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bluebirdBtn" />
 
     <Button
         android:id="@+id/famocoBtn"
         style="@style/whiteBtnText"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/settings_horizontal_padding"
-        android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        android:layout_marginBottom="84dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/btn_blue"
         android:text="@string/device_famoco"
         android:textSize="@dimen/medium_text_size"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintTop_toBottomOf="@id/coppernicBtn" />
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/coppernicBtn" />
 
     <Button
         android:id="@+id/bluebirdBtn"
         style="@style/whiteBtnText"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/settings_horizontal_padding"
-        android:layout_marginEnd="@dimen/settings_horizontal_padding"
-        android:layout_marginBottom="220dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/btn_blue"
         android:text="@string/device_bluebird"
         android:textSize="@dimen/medium_text_size"
-        app:layout_constraintBottom_toTopOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintTop_toBottomOf="@id/device_title" />
-
-    <Spinner
-        android:id="@+id/spinnerLocationList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/settings_horizontal_padding"
-        android:background="@color/blue"
-        android:spinnerMode="dialog"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/device_title" />
 
     <TextView
         android:id="@+id/device_title"
-        style="@style/mediumBoldBlue"
+        style="@style/bigBoldBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="116dp"
         android:text="@string/device_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guidelineTop"
         app:layout_constraintVertical_chainStyle="packed" />
