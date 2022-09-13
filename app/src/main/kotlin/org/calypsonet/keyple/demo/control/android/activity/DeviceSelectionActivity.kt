@@ -18,11 +18,11 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_device_selection.*
+import org.calypsonet.keyple.demo.control.ControlAppSettings
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.android.dialog.PermissionDeniedDialog
 import org.calypsonet.keyple.demo.control.android.util.PermissionHelper
 import org.calypsonet.keyple.demo.control.service.reader.ReaderType
-import org.calypsonet.keyple.demo.control.service.ticketing.model.ControlAppSettings
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
 import org.calypsonet.keyple.plugin.coppernic.Cone2Plugin
 import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPlugin

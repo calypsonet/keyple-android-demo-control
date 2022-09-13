@@ -21,12 +21,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.calypsonet.keyple.demo.control.ControlAppSettings
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.android.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo
 import org.calypsonet.keyple.demo.control.service.ticketing.TicketingService
 import org.calypsonet.keyple.demo.control.service.ticketing.model.CardReaderResponse
-import org.calypsonet.keyple.demo.control.service.ticketing.model.ControlAppSettings
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Status
 import org.calypsonet.terminal.reader.CardReaderEvent
 import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi

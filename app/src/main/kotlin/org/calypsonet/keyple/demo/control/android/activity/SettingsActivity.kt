@@ -23,8 +23,8 @@ import kotlinx.android.synthetic.main.activity_settings.startBtn
 import kotlinx.android.synthetic.main.activity_settings.timeBtn
 import kotlinx.android.synthetic.main.activity_settings.validationPeriodEdit
 import org.calypsonet.keyple.demo.control.BuildConfig
+import org.calypsonet.keyple.demo.control.ControlAppSettings
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.service.ticketing.model.ControlAppSettings
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Location
 
 class SettingsActivity : BaseActivity() {

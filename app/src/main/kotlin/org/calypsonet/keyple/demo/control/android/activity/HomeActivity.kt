@@ -15,8 +15,8 @@ import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_home.locationSelected
 import kotlinx.android.synthetic.main.activity_home.startBtn
+import org.calypsonet.keyple.demo.control.ControlAppSettings
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.service.ticketing.model.ControlAppSettings
 
 class HomeActivity : BaseActivity() {
 

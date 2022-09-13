@@ -16,6 +16,7 @@ import org.calypsonet.keyple.demo.common.parser.model.CardContract
 import org.calypsonet.keyple.demo.common.parser.model.CardEvent
 import org.calypsonet.keyple.demo.common.parser.model.constant.ContractPriority
 import org.calypsonet.keyple.demo.common.parser.model.constant.VersionNumber
+import org.calypsonet.keyple.demo.control.ControlAppSettings
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.RECORD_NUMBER_1
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.RECORD_NUMBER_4
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SAM_PROFILE_NAME
@@ -32,7 +33,6 @@ import org.calypsonet.keyple.demo.control.service.ticketing.exception.EventContr
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.NoLocationDefinedException
 import org.calypsonet.keyple.demo.control.service.ticketing.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Contract
-import org.calypsonet.keyple.demo.control.service.ticketing.model.ControlAppSettings
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Location
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Status
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Validation

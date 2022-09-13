@@ -9,9 +9,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.service.ticketing.model
+package org.calypsonet.keyple.demo.control
 
 import org.calypsonet.keyple.demo.control.service.reader.ReaderType
+import org.calypsonet.keyple.demo.control.service.ticketing.model.Location
 
 object ControlAppSettings {
   var location: Location? = null
