@@ -31,7 +31,6 @@ import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 class DeviceSelectionActivity : BaseActivity() {
 
   private val mock: String = "Mock"
-  private val permissions: MutableList<String> = mutableListOf()
 
   override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -44,10 +43,10 @@ class DeviceSelectionActivity : BaseActivity() {
     } else {
       bluebirdBtn.setOnClickListener {
         ControlAppSettings.readerType = ReaderType.BLUEBIRD
-        permissions.addAll(
-            arrayOf(
+        val permissions: MutableList<String> =
+            mutableListOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                "com.bluebird.permission.SAM_DEVICE_ACCESS"))
+                "com.bluebird.permission.SAM_DEVICE_ACCESS")
         val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
         if (granted) {
           startActivity(Intent(this, SettingsActivity::class.java))
@@ -85,14 +84,6 @@ class DeviceSelectionActivity : BaseActivity() {
         finish()
       }
     }
-  }
-
-  override fun onDestroy() {
-    val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
-    if (granted) {
-      startActivity(Intent(this, SettingsActivity::class.java))
-    }
-    super.onDestroy()
   }
 
   @SuppressLint("MissingSuperCall")

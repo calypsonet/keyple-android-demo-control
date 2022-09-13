@@ -240,14 +240,12 @@ class ReaderActivity : BaseActivity() {
           val intent = Intent(this@ReaderActivity, CardContentActivity::class.java)
           intent.putExtra(CARD_CONTENT, cardReaderResponse)
           startActivity(intent)
-          finish()
         }
         Status.LOADING, Status.ERROR, Status.SUCCESS, Status.INVALID_CARD -> {
           mainService.displayResultFailed()
           val intent = Intent(this@ReaderActivity, NetworkInvalidActivity::class.java)
           intent.putExtra(CARD_CONTENT, cardReaderResponse)
           startActivity(intent)
-          finish()
         }
         Status.WRONG_CARD -> {
           // Do nothing
