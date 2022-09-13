@@ -32,7 +32,6 @@ object PermissionHelper {
   }
 
   fun isPermissionGranted(activity: Activity, permission: String): Boolean {
-    return activity.checkSelfPermission(permission) ==
-        PackageManager.PERMISSION_GRANTED
+    return activity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
   }
 }

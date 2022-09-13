@@ -17,7 +17,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import androidx.annotation.VisibleForTesting
 import kotlinx.android.synthetic.main.activity_device_selection.*
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.android.dialog.PermissionDeniedDialog
@@ -32,7 +31,7 @@ import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 class DeviceSelectionActivity : BaseActivity() {
 
   private val mock: String = "Mock"
-  private val permissions:Array<String> = ArrayList()
+  private val permissions: MutableList<String> = mutableListOf()
 
   override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -45,12 +44,10 @@ class DeviceSelectionActivity : BaseActivity() {
     } else {
       bluebirdBtn.setOnClickListener {
         ControlAppSettings.readerType = ReaderType.BLUEBIRD
-
-        val permissions =
-            mutableListOf(
+        permissions.addAll(
+            arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                "com.bluebird.permission.SAM_DEVICE_ACCESS")
-
+                "com.bluebird.permission.SAM_DEVICE_ACCESS"))
         val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
         if (granted) {
           startActivity(Intent(this, SettingsActivity::class.java))
@@ -91,8 +88,11 @@ class DeviceSelectionActivity : BaseActivity() {
   }
 
   override fun onDestroy() {
-    super.onDestroy()
     val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
+    if (granted) {
+      startActivity(Intent(this, SettingsActivity::class.java))
+    }
+    super.onDestroy()
   }
 
   @SuppressLint("MissingSuperCall")
