@@ -93,17 +93,15 @@ class DeviceSelectionActivity : BaseActivity() {
     when (requestCode) {
       PermissionHelper.MY_PERMISSIONS_REQUEST_ALL -> {
         if (grantResults.isNotEmpty()) {
-          for (i in grantResults) {
-            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+          for (grantResult in grantResults) {
+            if (grantResult == PackageManager.PERMISSION_DENIED) {
               PermissionDeniedDialog().apply {
                 show(supportFragmentManager, PermissionDeniedDialog::class.java.simpleName)
               }
-              finish()
               return
             }
           }
           startActivity(Intent(applicationContext, HomeActivity::class.java))
-          finish()
         } else {
           PermissionDeniedDialog().apply {
             show(supportFragmentManager, PermissionDeniedDialog::class.java.simpleName)

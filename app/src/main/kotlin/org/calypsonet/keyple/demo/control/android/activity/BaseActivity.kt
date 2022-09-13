@@ -11,11 +11,9 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.android.activity
 
-import android.Manifest
 import android.os.Bundle
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
-import org.calypsonet.keyple.demo.control.android.util.PermissionHelper
 import org.calypsonet.keyple.demo.control.service.MainService
 import org.calypsonet.keyple.demo.control.service.file.LocationFileService
 
@@ -27,7 +25,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    isStoragePermissionGranted =
-        PermissionHelper.isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    //    isStoragePermissionGranted =
+    //        PermissionHelper.isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
   }
 }
