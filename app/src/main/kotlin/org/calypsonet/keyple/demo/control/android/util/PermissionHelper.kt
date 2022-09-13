@@ -13,8 +13,6 @@ package org.calypsonet.keyple.demo.control.android.util
 
 import android.app.Activity
 import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 
 object PermissionHelper {
 
@@ -27,14 +25,14 @@ object PermissionHelper {
       for ((position, permission) in permissionDenied.withIndex()) {
         permissionsToAsk[position] = permission
       }
-      ActivityCompat.requestPermissions(activity, permissionsToAsk, MY_PERMISSIONS_REQUEST_ALL)
+      activity.requestPermissions(permissionsToAsk, MY_PERMISSIONS_REQUEST_ALL)
       return false
     }
     return true
   }
 
   fun isPermissionGranted(activity: Activity, permission: String): Boolean {
-    return ContextCompat.checkSelfPermission(activity, permission) ==
+    return activity.checkSelfPermission(permission) ==
         PackageManager.PERMISSION_GRANTED
   }
 }

@@ -17,6 +17,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
 import kotlinx.android.synthetic.main.activity_device_selection.*
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.android.dialog.PermissionDeniedDialog
@@ -31,6 +32,7 @@ import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 class DeviceSelectionActivity : BaseActivity() {
 
   private val mock: String = "Mock"
+  private val permissions:Array<String> = ArrayList()
 
   override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -86,6 +88,11 @@ class DeviceSelectionActivity : BaseActivity() {
         finish()
       }
     }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
   }
 
   @SuppressLint("MissingSuperCall")
