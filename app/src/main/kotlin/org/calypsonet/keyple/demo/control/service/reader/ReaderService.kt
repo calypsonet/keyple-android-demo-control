@@ -71,7 +71,6 @@ constructor(
   private lateinit var samReaderName: String
   private var samReaderProtocolPhysicalName: String? = null
   private var samReaderProtocolLogicalName: String? = null
-  private var samPermissions: Array<String>? = null
   private var samReaders: MutableList<CardReader> = mutableListOf()
   // IHM
   private lateinit var successMedia: MediaPlayer
@@ -100,7 +99,6 @@ constructor(
     samReaderName = BluebirdContactReader.READER_NAME
     samReaderProtocolPhysicalName = "ISO_7816_3"
     samReaderProtocolLogicalName = "ISO_7816_3"
-    samPermissions = arrayOf(BluebirdPlugin.BLUEBIRD_SAM_PERMISSION)
   }
 
   private fun initCoppernicReader() {
@@ -116,7 +114,6 @@ constructor(
         ParagonSupportedContactProtocols.INNOVATRON_HIGH_SPEED_PROTOCOL.name
     samReaderProtocolLogicalName =
         ParagonSupportedContactProtocols.INNOVATRON_HIGH_SPEED_PROTOCOL.name
-    samPermissions = null
   }
 
   private fun initFamocoReader() {
@@ -130,7 +127,6 @@ constructor(
     samReaderName = AndroidFamocoReader.READER_NAME
     samReaderProtocolPhysicalName = ContactCardCommonProtocols.ISO_7816_3.name
     samReaderProtocolLogicalName = ContactCardCommonProtocols.ISO_7816_3.name
-    samPermissions = null
   }
 
   private fun initFlowbirdReader() {
@@ -144,7 +140,6 @@ constructor(
     samReaderName = "${FlowbirdContactReader.READER_NAME}_${(SamSlot.ONE.slotId)}"
     samReaderProtocolPhysicalName = null
     samReaderProtocolLogicalName = null
-    samPermissions = null
   }
 
   private fun initOmapiReader() {
@@ -158,7 +153,6 @@ constructor(
     samReaderName = AndroidOmapiReader.READER_NAME_SIM_1
     samReaderProtocolPhysicalName = null
     samReaderProtocolLogicalName = null
-    samPermissions = null
   }
 
   @Throws(KeyplePluginException::class)
@@ -294,8 +288,6 @@ constructor(
   fun getSamReaderNameRegex(): String = samReaderNameRegex
 
   fun getSamReaderConfiguratorSpi(): ReaderConfiguratorSpi = ReaderConfigurator()
-
-  fun getSamPermissions(): Array<String>? = samPermissions
 
   fun clear() {
     (cardReader as ConfigurableCardReader).deactivateProtocol(cardReaderProtocolPhysicalName)

@@ -11,13 +11,16 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.android.activity
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import java.util.Timer
 import java.util.TimerTask
-import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.R
-import org.calypsonet.keyple.demo.control.service.reader.ReaderService
+import org.calypsonet.keyple.demo.control.android.dialog.PermissionDeniedDialog
+import org.calypsonet.keyple.demo.control.android.util.PermissionHelper
 
 class SplashScreenActivity : BaseActivity() {
 
@@ -26,17 +29,54 @@ class SplashScreenActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_splashscreen)
 
-    Timer()
-        .schedule(
-            object : TimerTask() {
-              override fun run() {
-                if (!isFinishing) {
-                  startActivity(Intent(applicationContext, SettingsActivity::class.java))
-                  finish()
+    val permissions =
+        mutableListOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE, "com.bluebird.permission.SAM_DEVICE_ACCESS")
+
+    val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
+
+    if (granted) {
+      Timer()
+          .schedule(
+              object : TimerTask() {
+                override fun run() {
+                  if (!isFinishing) {
+                    startActivity(Intent(applicationContext, SettingsActivity::class.java))
+                    finish()
+                  }
                 }
-              }
-            },
-            SPLASH_MAX_DELAY_MS.toLong())
+              },
+              SPLASH_MAX_DELAY_MS.toLong())
+    }
+  }
+
+  @SuppressLint("MissingSuperCall")
+  override fun onRequestPermissionsResult(
+      requestCode: Int,
+      permissions: Array<out String>,
+      grantResults: IntArray
+  ) {
+    when (requestCode) {
+      PermissionHelper.MY_PERMISSIONS_REQUEST_ALL -> {
+        val storagePermissionGranted =
+            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        if (storagePermissionGranted) {
+          startActivity(Intent(applicationContext, SettingsActivity::class.java))
+          finish()
+        } else {
+          PermissionDeniedDialog().apply {
+            show(supportFragmentManager, PermissionDeniedDialog::class.java.simpleName)
+          }
+        }
+        return
+      }
+
+      // Add other 'when' lines to check for other
+      // permissions this app might request.
+      else -> {
+        // Ignore all other requests.
+      }
+    }
   }
 
   companion object {
