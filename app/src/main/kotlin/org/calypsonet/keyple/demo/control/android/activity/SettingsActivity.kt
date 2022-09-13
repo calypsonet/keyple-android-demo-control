@@ -52,7 +52,8 @@ class SettingsActivity : BaseActivity() {
       ControlAppSettings.validationPeriod =
           if (validationPeriod.isBlank()) 0 else validationPeriod.toInt()
       if (ControlAppSettings.location != null && ControlAppSettings.validationPeriod != 0) {
-        startActivity(Intent(this, DeviceSelectionActivity::class.java))
+        startActivity(Intent(this, HomeActivity::class.java))
+        finish()
       } else {
         Toast.makeText(this, R.string.msg_location_period_empty, Toast.LENGTH_LONG).show()
       }

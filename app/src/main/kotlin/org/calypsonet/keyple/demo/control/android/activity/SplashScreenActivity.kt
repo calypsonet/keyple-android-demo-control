@@ -29,7 +29,7 @@ class SplashScreenActivity : BaseActivity() {
             object : TimerTask() {
               override fun run() {
                 if (!isFinishing) {
-                  startActivity(Intent(applicationContext, SettingsActivity::class.java))
+                  startActivity(Intent(applicationContext, DeviceSelectionActivity::class.java))
                   finish()
                 }
               }

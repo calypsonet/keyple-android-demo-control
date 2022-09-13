@@ -20,22 +20,21 @@ object PermissionHelper {
 
   const val MY_PERMISSIONS_REQUEST_ALL = 1000
 
-  fun isPermissionGranted(activity: Activity, permission: String): Boolean {
-    return ContextCompat.checkSelfPermission(activity, permission) ==
-        PackageManager.PERMISSION_GRANTED
-  }
-
-  fun checkPermission(context: Activity, permissions: Array<String>): Boolean {
-    val permissionDenied = permissions.filter { !isPermissionGranted(context, it) }
-
+  fun checkPermission(activity: Activity, permissions: Array<String>): Boolean {
+    val permissionDenied = permissions.filter { !isPermissionGranted(activity, it) }
     if (permissionDenied.isNotEmpty()) {
       val permissionsToAsk = arrayOfNulls<String>(permissionDenied.size)
       for ((position, permission) in permissionDenied.withIndex()) {
         permissionsToAsk[position] = permission
       }
-      ActivityCompat.requestPermissions(context, permissionsToAsk, MY_PERMISSIONS_REQUEST_ALL)
+      ActivityCompat.requestPermissions(activity, permissionsToAsk, MY_PERMISSIONS_REQUEST_ALL)
       return false
     }
     return true
+  }
+
+  fun isPermissionGranted(activity: Activity, permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(activity, permission) ==
+        PackageManager.PERMISSION_GRANTED
   }
 }

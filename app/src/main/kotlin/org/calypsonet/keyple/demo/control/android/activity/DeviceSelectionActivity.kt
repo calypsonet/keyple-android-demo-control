@@ -51,7 +51,8 @@ class DeviceSelectionActivity : BaseActivity() {
 
         val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
         if (granted) {
-          startActivity(Intent(this, HomeActivity::class.java))
+          startActivity(Intent(this, SettingsActivity::class.java))
+          finish()
         }
       }
     }
@@ -61,7 +62,8 @@ class DeviceSelectionActivity : BaseActivity() {
     } else {
       coppernicBtn.setOnClickListener {
         ControlAppSettings.readerType = ReaderType.COPPERNIC
-        startActivity(Intent(this, HomeActivity::class.java))
+        startActivity(Intent(this, SettingsActivity::class.java))
+        finish()
       }
     }
 
@@ -70,7 +72,8 @@ class DeviceSelectionActivity : BaseActivity() {
     } else {
       famocoBtn.setOnClickListener {
         ControlAppSettings.readerType = ReaderType.FAMOCO
-        startActivity(Intent(this, HomeActivity::class.java))
+        startActivity(Intent(this, SettingsActivity::class.java))
+        finish()
       }
     }
 
@@ -79,7 +82,8 @@ class DeviceSelectionActivity : BaseActivity() {
     } else {
       flowbirdBtn.setOnClickListener {
         ControlAppSettings.readerType = ReaderType.FLOWBIRD
-        startActivity(Intent(this, HomeActivity::class.java))
+        startActivity(Intent(this, SettingsActivity::class.java))
+        finish()
       }
     }
   }
@@ -101,7 +105,8 @@ class DeviceSelectionActivity : BaseActivity() {
               return
             }
           }
-          startActivity(Intent(applicationContext, HomeActivity::class.java))
+          startActivity(Intent(applicationContext, SettingsActivity::class.java))
+          finish()
         } else {
           PermissionDeniedDialog().apply {
             show(supportFragmentManager, PermissionDeniedDialog::class.java.simpleName)
