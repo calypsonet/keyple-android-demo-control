@@ -13,7 +13,6 @@ package org.calypsonet.keyple.demo.control.android.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_home.locationSelected
 import kotlinx.android.synthetic.main.activity_home.startBtn
 import org.calypsonet.keyple.demo.control.R
@@ -28,13 +27,5 @@ class HomeActivity : BaseActivity() {
     locationSelected.text = ControlAppSettings.location?.toString() ?: ""
 
     startBtn.setOnClickListener { startActivity(Intent(this, ReaderActivity::class.java)) }
-  }
-
-  override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-    if (menuItem.itemId == android.R.id.home) {
-      finish()
-    }
-
-    return super.onOptionsItemSelected(menuItem)
   }
 }

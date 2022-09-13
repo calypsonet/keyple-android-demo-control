@@ -37,7 +37,7 @@
     <string name="msg_location_period_empty">Please fill in location and validation period</string>
 
     <!-- Device selector screen -->
-    <string name="device_title">Select the device</string>
+    <string name="device_title">What type of terminal is it?</string>
     <string name="device_bluebird">BLUEBIRD</string>
     <string name="device_coppernic">COPPERNIC</string>
     <string name="device_famoco">FAMOCO</string>

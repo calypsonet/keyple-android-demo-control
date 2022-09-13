@@ -66,9 +66,10 @@
 
     <TextView
         android:id="@+id/device_title"
-        style="@style/bigBoldBlue"
+        style="@style/mediumBoldBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="@string/device_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

@@ -14,7 +14,6 @@ package org.calypsonet.keyple.demo.control.android.activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_card_reader.loadingAnimation
@@ -60,14 +59,6 @@ class ReaderActivity : BaseActivity() {
     progress.setMessage(getString(R.string.please_wait))
 
     progress.setCancelable(false)
-  }
-
-  override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-    if (menuItem.itemId == android.R.id.home) {
-      finish()
-    }
-
-    return super.onOptionsItemSelected(menuItem)
   }
 
   override fun onResume() {

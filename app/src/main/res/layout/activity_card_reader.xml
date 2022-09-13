@@ -55,7 +55,7 @@
         style="@style/bigRegularBlue"
         android:layout_width="@dimen/home_text_width"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/home_text_top_margin"
+        android:layout_marginTop="48dp"
         android:gravity="center"
         android:text="@string/home_description"
         app:layout_constraintEnd_toEndOf="parent"

@@ -15,7 +15,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
-import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_settings.app_version
@@ -64,14 +63,5 @@ class SettingsActivity : BaseActivity() {
     if (BuildConfig.DEBUG) {
       validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("90")
     }
-  }
-
-  override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-    if (menuItem.itemId == android.R.id.home) {
-      startActivity(Intent(applicationContext, SplashScreenActivity::class.java))
-      finish()
-    }
-
-    return super.onOptionsItemSelected(menuItem)
   }
 }
