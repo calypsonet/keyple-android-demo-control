@@ -11,11 +11,16 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.android.activity
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_device_selection.*
 import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.android.dialog.PermissionDeniedDialog
+import org.calypsonet.keyple.demo.control.android.util.PermissionHelper
 import org.calypsonet.keyple.demo.control.service.reader.ReaderType
 import org.calypsonet.keyple.demo.control.service.ticketing.model.ControlAppSettings
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
@@ -38,7 +43,16 @@ class DeviceSelectionActivity : BaseActivity() {
     } else {
       bluebirdBtn.setOnClickListener {
         ControlAppSettings.readerType = ReaderType.BLUEBIRD
-        startActivity(Intent(this, HomeActivity::class.java))
+
+        val permissions =
+            mutableListOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                "com.bluebird.permission.SAM_DEVICE_ACCESS")
+
+        val granted = PermissionHelper.checkPermission(this, permissions.toTypedArray())
+        if (granted) {
+          startActivity(Intent(this, HomeActivity::class.java))
+        }
       }
     }
 
@@ -66,6 +80,41 @@ class DeviceSelectionActivity : BaseActivity() {
       flowbirdBtn.setOnClickListener {
         ControlAppSettings.readerType = ReaderType.FLOWBIRD
         startActivity(Intent(this, HomeActivity::class.java))
+      }
+    }
+  }
+
+  @SuppressLint("MissingSuperCall")
+  override fun onRequestPermissionsResult(
+      requestCode: Int,
+      permissions: Array<out String>,
+      grantResults: IntArray
+  ) {
+    when (requestCode) {
+      PermissionHelper.MY_PERMISSIONS_REQUEST_ALL -> {
+        if (grantResults.isNotEmpty()) {
+          for (i in grantResults) {
+            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+              PermissionDeniedDialog().apply {
+                show(supportFragmentManager, PermissionDeniedDialog::class.java.simpleName)
+              }
+              finish()
+              return
+            }
+          }
+          startActivity(Intent(applicationContext, HomeActivity::class.java))
+          finish()
+        } else {
+          PermissionDeniedDialog().apply {
+            show(supportFragmentManager, PermissionDeniedDialog::class.java.simpleName)
+          }
+        }
+        return
+      }
+      // Add other 'when' lines to check for other
+      // permissions this app might request.
+      else -> {
+        // Ignore all other requests.
       }
     }
   }
