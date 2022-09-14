@@ -29,9 +29,10 @@ allprojects {
         mavenLocal()
         maven(url = "https://repo.eclipse.org/service/local/repositories/maven_central/content")
         mavenCentral()
+        maven(url = "https://oss.sonatype.org/content/repositories/releases")
+        maven(url = "https://s01.oss.sonatype.org/content/repositories/releases")
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
         maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
-        maven(url = "https://oss.sonatype.org/content/repositories/releases")
         maven(url = "https://nexus.coppernic.fr/repository/libs-release")
         google()
     }

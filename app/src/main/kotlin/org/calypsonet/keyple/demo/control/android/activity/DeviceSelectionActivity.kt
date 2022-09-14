@@ -18,14 +18,12 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_device_selection.*
-import org.calypsonet.keyple.demo.control.ControlAppSettings
+import org.calypsonet.keyple.demo.control.ApplicationSettings
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.android.dialog.PermissionDeniedDialog
 import org.calypsonet.keyple.demo.control.android.util.PermissionHelper
 import org.calypsonet.keyple.demo.control.service.reader.ReaderType
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
-import org.calypsonet.keyple.plugin.coppernic.Cone2Plugin
-import org.calypsonet.keyple.plugin.famoco.AndroidFamocoPlugin
 import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 
 class DeviceSelectionActivity : BaseActivity() {
@@ -38,11 +36,12 @@ class DeviceSelectionActivity : BaseActivity() {
 
     setContentView(R.layout.activity_device_selection)
 
+    // Bluebird
     if (BluebirdPlugin.PLUGIN_NAME.contains(mock)) {
       bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       bluebirdBtn.setOnClickListener {
-        ControlAppSettings.readerType = ReaderType.BLUEBIRD
+        ApplicationSettings.readerType = ReaderType.BLUEBIRD
         val permissions: MutableList<String> =
             mutableListOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -55,31 +54,26 @@ class DeviceSelectionActivity : BaseActivity() {
       }
     }
 
-    if (Cone2Plugin.PLUGIN_NAME.contains(mock)) {
-      coppernicBtn.setBackgroundColor(Color.GRAY)
-    } else {
-      coppernicBtn.setOnClickListener {
-        ControlAppSettings.readerType = ReaderType.COPPERNIC
-        startActivity(Intent(this, SettingsActivity::class.java))
-        finish()
-      }
+    // Coppernic
+    coppernicBtn.setOnClickListener {
+      ApplicationSettings.readerType = ReaderType.COPPERNIC
+      startActivity(Intent(this, SettingsActivity::class.java))
+      finish()
     }
 
-    if (AndroidFamocoPlugin.PLUGIN_NAME.contains(mock)) {
-      famocoBtn.setBackgroundColor(Color.GRAY)
-    } else {
-      famocoBtn.setOnClickListener {
-        ControlAppSettings.readerType = ReaderType.FAMOCO
-        startActivity(Intent(this, SettingsActivity::class.java))
-        finish()
-      }
+    // Famoco
+    famocoBtn.setOnClickListener {
+      ApplicationSettings.readerType = ReaderType.FAMOCO
+      startActivity(Intent(this, SettingsActivity::class.java))
+      finish()
     }
 
+    // Flowbird
     if (FlowbirdPlugin.PLUGIN_NAME.contains(mock)) {
       flowbirdBtn.setBackgroundColor(Color.GRAY)
     } else {
       flowbirdBtn.setOnClickListener {
-        ControlAppSettings.readerType = ReaderType.FLOWBIRD
+        ApplicationSettings.readerType = ReaderType.FLOWBIRD
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
       }

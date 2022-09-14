@@ -15,7 +15,7 @@ import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_home.locationSelected
 import kotlinx.android.synthetic.main.activity_home.startBtn
-import org.calypsonet.keyple.demo.control.ControlAppSettings
+import org.calypsonet.keyple.demo.control.ApplicationSettings
 import org.calypsonet.keyple.demo.control.R
 
 class HomeActivity : BaseActivity() {
@@ -24,8 +24,7 @@ class HomeActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_home)
     setSupportActionBar(findViewById(R.id.toolbar))
-    locationSelected.text = ControlAppSettings.location?.toString() ?: ""
-
+    locationSelected.text = ApplicationSettings.location.toString()
     startBtn.setOnClickListener { startActivity(Intent(this, ReaderActivity::class.java)) }
   }
 }

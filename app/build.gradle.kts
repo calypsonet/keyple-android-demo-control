@@ -82,7 +82,8 @@ dependencies {
 
     // Keyple reader plugins
     implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.1")
-    implementation("org.eclipse.keyple:keyple-plugin-android-omapi-java-lib:2.0.1")
+    implementation("org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:2.0.2")
+    implementation("org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib:2.0.2")
 
     // Android components
     implementation("androidx.appcompat:appcompat:1.2.0")

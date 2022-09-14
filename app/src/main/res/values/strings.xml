@@ -34,7 +34,7 @@
     <string name="start_label">Start</string>
     <string name="start_control_label">Start Control</string>
     <string name="control_info">Control information</string>
-    <string name="msg_location_period_empty">Please fill in location and validation period</string>
+    <string name="msg_location_period_empty">Please fill in validation period</string>
 
     <!-- Device selector screen -->
     <string name="device_title">What type of terminal is it?</string>

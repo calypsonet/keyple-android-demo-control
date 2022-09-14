@@ -40,12 +40,10 @@ class LocationFileService @Inject constructor(context: Context) {
   private fun getFileFromResources(context: Context): String {
     val resId = context.resources.getIdentifier(LOCATION_FILE_NAME, "raw", context.packageName)
     val inputStream = context.resources.openRawResource(resId)
-
     return parseFile(inputStream)
   }
 
   private fun parseFile(inputStream: InputStream): String {
-
     val sb = StringBuilder()
     var strLine: String?
     try {
@@ -61,11 +59,9 @@ class LocationFileService @Inject constructor(context: Context) {
 
   private fun getGson(): Gson {
     val gsonBuilder = GsonBuilder()
-
     gsonBuilder.disableHtmlEscaping()
     gsonBuilder.setPrettyPrinting()
     gsonBuilder.setLenient()
-
     return gsonBuilder.create()
   }
 

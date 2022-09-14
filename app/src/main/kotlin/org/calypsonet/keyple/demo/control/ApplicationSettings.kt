@@ -14,8 +14,8 @@ package org.calypsonet.keyple.demo.control
 import org.calypsonet.keyple.demo.control.service.reader.ReaderType
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Location
 
-object ControlAppSettings {
-  var location: Location? = null
-  var validationPeriod: Int? = null
+object ApplicationSettings {
   lateinit var readerType: ReaderType
+  lateinit var location: Location
+  var validationPeriod: Int = 0
 }

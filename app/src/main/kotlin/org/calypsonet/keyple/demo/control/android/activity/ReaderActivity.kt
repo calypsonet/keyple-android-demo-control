@@ -21,7 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.control.ControlAppSettings
+import org.calypsonet.keyple.demo.control.ApplicationSettings
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.android.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo
@@ -72,7 +72,8 @@ class ReaderActivity : BaseActivity() {
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
-            mainService.init(cardReaderObserver, this@ReaderActivity, ControlAppSettings.readerType)
+            mainService.init(
+                cardReaderObserver, this@ReaderActivity, ApplicationSettings.readerType)
             ticketingService = mainService.getTicketingSession()!!
             mainService.readersInitialized = true
             handleAppEvents(AppState.WAIT_CARD, null)

@@ -15,7 +15,6 @@ import android.app.Activity
 import android.media.MediaPlayer
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.calypsonet.keyple.demo.control.R
@@ -47,10 +46,6 @@ import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPlugin
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPlugin
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiPluginFactoryProvider
-import org.eclipse.keyple.plugin.android.omapi.AndroidOmapiReader
-import timber.log.Timber
 
 class ReaderService
 @Inject
@@ -82,9 +77,6 @@ constructor(
       ReaderType.COPPERNIC -> initCoppernicReader()
       ReaderType.FAMOCO -> initFamocoReader()
       ReaderType.FLOWBIRD -> initFlowbirdReader()
-      else -> {
-        throw IllegalArgumentException("Unexpected reader type: {$readerType}")
-      }
     }
   }
 
@@ -142,19 +134,6 @@ constructor(
     samReaderProtocolLogicalName = null
   }
 
-  private fun initOmapiReader() {
-    readerType = ReaderType.OMAPI
-    cardPluginName = AndroidNfcPlugin.PLUGIN_NAME
-    cardReaderName = AndroidNfcReader.READER_NAME
-    cardReaderProtocolPhysicalName = "ISO_14443_4"
-    cardReaderProtocolLogicalName = "ISO_14443_4"
-    samPluginName = AndroidOmapiPlugin.PLUGIN_NAME
-    samReaderNameRegex = ""
-    samReaderName = AndroidOmapiReader.READER_NAME_SIM_1
-    samReaderProtocolPhysicalName = null
-    samReaderProtocolLogicalName = null
-  }
-
   @Throws(KeyplePluginException::class)
   fun registerPlugin(activity: Activity, readerType: ReaderType) {
     initReaderType(readerType)
@@ -181,7 +160,6 @@ constructor(
                     situationFiles = situationFiles,
                     translationFiles = translationFiles)
               }
-              ReaderType.OMAPI -> AndroidNfcPluginFactoryProvider(activity).getFactory()
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
@@ -191,18 +169,11 @@ constructor(
             withContext(Dispatchers.IO) { AndroidFamocoPluginFactoryProvider.getFactory() }
         SmartCardServiceProvider.getService().registerPlugin(samPluginFactory)
       }
-      if (readerType == ReaderType.OMAPI) {
-        withContext(Dispatchers.IO) {
-          AndroidOmapiPluginFactoryProvider(activity) {
-            SmartCardServiceProvider.getService().registerPlugin(it)
-          }
-        }
-      }
     }
   }
 
   @Throws(KeyplePluginException::class)
-  suspend fun initCardReader(): CardReader? {
+  fun initCardReader(): CardReader? {
     cardReader =
         SmartCardServiceProvider.getService().getPlugin(cardPluginName)?.getReader(cardReaderName)
     cardReader?.let {
@@ -223,7 +194,7 @@ constructor(
   }
 
   @Throws(KeyplePluginException::class)
-  suspend fun initSamReaders(): List<CardReader> {
+  fun initSamReaders(): List<CardReader> {
     if (readerType == ReaderType.FAMOCO) {
       samReaders =
           SmartCardServiceProvider.getService()
@@ -232,27 +203,6 @@ constructor(
               ?.filter { it.name == samReaderName }
               ?.toMutableList()
               ?: mutableListOf()
-    } else if (readerType == ReaderType.OMAPI) {
-      /*
-       * Wait until OMAPI sam readers are available.
-       * If we do not wait, no retries are made after calling 'SmartCardService.getInstance().getPlugin(PLUGIN_NAME).readers'
-       * -> then no reader is returned
-       */
-      @Suppress("BlockingMethodInNonBlockingContext")
-      runBlocking { delay(250) }
-      for (x in 1..MAX_TRIES) {
-        samReaders =
-            SmartCardServiceProvider.getService().getPlugin(samPluginName)?.readers?.toMutableList()
-                ?: mutableListOf()
-        if (samReaders.isEmpty()) {
-          Timber.d("No readers found in OMAPI Keyple Plugin")
-          Timber.d("Retrying in 1 second")
-          delay(1000)
-        } else {
-          Timber.d("Readers Found")
-          break
-        }
-      }
     } else {
       samReaders =
           SmartCardServiceProvider.getService()
@@ -331,9 +281,5 @@ constructor(
     override fun setupReader(reader: CardReader) {
       // NOP
     }
-  }
-
-  companion object {
-    private const val MAX_TRIES = 10
   }
 }

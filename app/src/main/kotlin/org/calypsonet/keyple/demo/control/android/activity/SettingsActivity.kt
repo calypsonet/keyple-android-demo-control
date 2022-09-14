@@ -22,14 +22,12 @@ import kotlinx.android.synthetic.main.activity_settings.spinnerLocationList
 import kotlinx.android.synthetic.main.activity_settings.startBtn
 import kotlinx.android.synthetic.main.activity_settings.timeBtn
 import kotlinx.android.synthetic.main.activity_settings.validationPeriodEdit
+import org.calypsonet.keyple.demo.control.ApplicationSettings
 import org.calypsonet.keyple.demo.control.BuildConfig
-import org.calypsonet.keyple.demo.control.ControlAppSettings
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Location
 
 class SettingsActivity : BaseActivity() {
-
-  private var mLocationAdapter: ArrayAdapter<Location>? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -39,18 +37,17 @@ class SettingsActivity : BaseActivity() {
 
     // Init location spinner
     val locations = locationFileService.getLocations()
-    mLocationAdapter =
+    val locationsAdapter =
         ArrayAdapter(this, R.layout.spinner_item_location, R.id.spinner_item_text, locations)
-    spinnerLocationList.adapter = mLocationAdapter
+    spinnerLocationList.adapter = locationsAdapter
 
     timeBtn.setOnClickListener { startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0) }
 
     startBtn.setOnClickListener {
-      ControlAppSettings.location = spinnerLocationList.selectedItem as Location
+      ApplicationSettings.location = spinnerLocationList.selectedItem as Location
       val validationPeriod = validationPeriodEdit.text.toString()
-      ControlAppSettings.validationPeriod =
-          if (validationPeriod.isBlank()) 0 else validationPeriod.toInt()
-      if (ControlAppSettings.location != null && ControlAppSettings.validationPeriod != 0) {
+      if (validationPeriod.isNotBlank()) {
+        ApplicationSettings.validationPeriod = validationPeriod.toInt()
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
       } else {

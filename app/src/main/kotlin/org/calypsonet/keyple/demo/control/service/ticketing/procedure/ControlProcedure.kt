@@ -16,7 +16,7 @@ import org.calypsonet.keyple.demo.common.parser.model.CardContract
 import org.calypsonet.keyple.demo.common.parser.model.CardEvent
 import org.calypsonet.keyple.demo.common.parser.model.constant.ContractPriority
 import org.calypsonet.keyple.demo.common.parser.model.constant.VersionNumber
-import org.calypsonet.keyple.demo.control.ControlAppSettings
+import org.calypsonet.keyple.demo.control.ApplicationSettings
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.RECORD_NUMBER_1
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.RECORD_NUMBER_4
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SAM_PROFILE_NAME
@@ -30,7 +30,6 @@ import org.calypsonet.keyple.demo.control.service.ticketing.exception.Environmen
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.EnvironmentControlExceptionKey
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.EventControlException
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.EventControlExceptionKey
-import org.calypsonet.keyple.demo.control.service.ticketing.exception.NoLocationDefinedException
 import org.calypsonet.keyple.demo.control.service.ticketing.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Contract
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Location
@@ -169,14 +168,12 @@ class ControlProcedure {
       val contractUsed = event.eventContractUsed
 
       val eventDateTime = DateTime(event.getEventDate())
-      val eventValidityEndDate = eventDateTime.plusMinutes(ControlAppSettings.validationPeriod ?: 0)
+      val eventValidityEndDate = eventDateTime.plusMinutes(ApplicationSettings.validationPeriod)
 
       /*
        * Step 7 - If EventLocation != value configured in the control terminal set the validated contract not valid flag as true and go to point CNT_READ.
        */
-      if (ControlAppSettings.location == null) {
-        throw NoLocationDefinedException()
-      } else if (ControlAppSettings.location!!.id != event.eventLocation) {
+      if (ApplicationSettings.location.id != event.eventLocation) {
         contractEventNotValid = true
       }
       /*
