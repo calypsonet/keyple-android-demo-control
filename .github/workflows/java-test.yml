@@ -19,6 +19,9 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      - name: Update permissions
+        working-directory: .
+        run: chmod +x ./gradlew ./.github/scripts/*.sh
       - name: Check version
         working-directory: .
         run: ./.github/scripts/check_version.sh
