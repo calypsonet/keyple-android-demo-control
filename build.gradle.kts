@@ -18,7 +18,6 @@ buildscript {
         classpath("org.eclipse.keyple:keyple-gradle:0.2.+") { isChanging = true }
     }
 }
-apply(plugin = "org.eclipse.keyple")
 
 ///////////////////////////////////////////////////////////////////////////////
 //  APP CONFIGURATION

@@ -13,12 +13,13 @@ plugins {
 //  APP CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 val kotlinVersion: String by project
+val archivesBaseName: String by project
 android {
     compileSdkVersion(29)
-    buildToolsVersion("30.0.2")
+    buildToolsVersion("30.0.3")
 
     defaultConfig {
-        applicationId("org.calypsonet.keyple.demo.control.di")
+        applicationId("org.calypsonet.keyple.demo.control")
         minSdkVersion(24)
         targetSdkVersion(29)
         versionCode(6)
@@ -56,6 +57,15 @@ android {
 
     lintOptions {
         isAbortOnError = false
+    }
+
+    // generate output aar with a qualified name : with version number
+    applicationVariants.all {
+        outputs.forEach { output ->
+            if (output is com.android.build.gradle.internal.api.BaseVariantOutputImpl) {
+                output.outputFileName = "${archivesBaseName}-${project.version}-${buildType.name}.${output.outputFile.extension}".replace("-SNAPSHOT", "")
+            }
+        }
     }
 
     sourceSets {
@@ -116,14 +126,14 @@ dependencies {
     implementation("joda-time:joda-time:2.8.1")
 
     // Google GSON
-    implementation("com.google.code.gson:gson:2.8.6")
+    implementation("com.google.code.gson:gson:2.8.9")
 
     // Devnied - Byte Utils
     implementation("com.github.devnied:bit-lib4j:1.4.5") {
         exclude(group = "org.slf4j")
     }
 
-    implementation("org.slf4j:slf4j-api:1.7.25")
+    implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("com.jakewharton.timber:timber:4.7.1") //Android
     implementation("com.arcao:slf4j-timber:3.1@aar") //SLF4J binding for Timber
 
@@ -143,9 +153,11 @@ dependencies {
     // Lottie
     implementation("com.airbnb.android:lottie:3.4.4")
 
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.3.1")
     androidTestImplementation("com.android.support.test:runner:1.0.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
 }
+
+apply(plugin = "org.eclipse.keyple") // To do last

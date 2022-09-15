@@ -2,19 +2,27 @@
 
 This is the repository for the Keyple Android Control Demo application. 
 
-This demo is an open source project provided by [Calypso Networks Association](https://calypsonet.org), you can adapt the demo for your cards, terminals, projects, etc. 
+This demo is an open source project provided by [Calypso Networks Association](https://calypsonet.org),
+you can adapt the demo for your cards, terminals, projects, etc. 
 
-This demo shows how to easily control a contract (Season Pass and/or Multi-trip ticket) written on a Calypso card using the [Eclipse Keyple](https://keyple.org) components.
+This demo shows how to easily control a contract (Season Pass and/or Multi-trip ticket) written on a Calypso card
+using the [Eclipse Keyple](https://keyple.org) components.
 
-It implements multiple plugins and switching from one plugin to another is made easy by using the flavours feature for handling multiple devices:
-- [Keyple Plugin Android NFC | Eclipse Keyple](https://keyple.org/components-java/plugins/nfc/)
-- [Keyple Plugin Android OMAPI | Eclipse Keyple](https://keyple.org/components-java/plugins/omapi/)
-- [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic)
-- [Famoco](https://github.com/calypsonet/keyple-famoco)
-- [Flowbird](https://github.com/calypsonet/keyple-android-plugin-flowbird)
-- [Bluebird](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib)
+The demo application runs on the following devices:
+- `Bluebird` via the proprietary plugin [Bluebird](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib).
+- `Coppernic` via the open source plugin [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic).
+- `Famoco` via the open source plugins [Famoco](https://github.com/calypsonet/keyple-famoco) (for SAM access) and [Android NFC](https://keyple.org/components-java/plugins/nfc/) (for card access).
+- `Flowbird` via the proprietary plugin [Flowbird](https://github.com/calypsonet/keyple-android-plugin-flowbird).
 
-The source code and APKs for several terminals are available at  [calypsonet/keyple-android-demo-control/releases](https://github.com/calypsonet/keyple-android-demo-control/releases)
+The source code and APK are available at  [calypsonet/keyple-android-demo-control/releases](https://github.com/calypsonet/keyple-android-demo-control/releases)
+
+By default, proprietary plugins are deactivated.
+If you want to activate them, then here is the procedure to follow:
+1. make an explicit request to CNA to obtain the desired plugin,
+2. copy the plugin into the `/app/libs/` directory,
+3. delete in the `/app/libs/` directory the plugin with the same name but suffixed with `-mock` (e.g. xxx-mock.aar),
+4. compile the project via the gradle `build` command,
+5. deploy the new apk on the device.
 
 ## Keyple Demos
 
@@ -39,63 +47,64 @@ This demo can be used with Calypso cards with the following configurations:
 
 #### Environment/Holder structure
             
-| Field Name           | Bits| Description                                        | Type          | Status    |
-| :------------------- | ---:| :------------------------------------------------- | :-----------: | :-------: |
-| EnvVersionNumber     |   8 | Data structure version number                      | VersionNumber | Mandatory | 
-| EnvApplicationNumber |  32 | Card application number (unique system identifier) | Int           | Mandatory |
-| EnvIssuingDate       |  16 | Card application issuing date                      | DateCompact   | Mandatory | 
-| EnvEndDate           |  16 | Card application expiration date                   | DateCompact   | Mandatory | 
-| HolderCompany        |   8 | Holder company                                     | Int           | Optional  | 
-| HolderIdNumber       |  32 | Holder Identifier within HolderCompany             | Int           | Optional  | 
-| EnvPadding           | 120 | Padding (bits to 0)                                | Binary        | Optional  | 
+| Field Name           | Bits | Description                                        |     Type      |  Status   |
+|:---------------------|-----:|:---------------------------------------------------|:-------------:|:---------:|
+| EnvVersionNumber     |    8 | Data structure version number                      | VersionNumber | Mandatory | 
+| EnvApplicationNumber |   32 | Card application number (unique system identifier) |      Int      | Mandatory |
+| EnvIssuingDate       |   16 | Card application issuing date                      |  DateCompact  | Mandatory | 
+| EnvEndDate           |   16 | Card application expiration date                   |  DateCompact  | Mandatory | 
+| HolderCompany        |    8 | Holder company                                     |      Int      | Optional  | 
+| HolderIdNumber       |   32 | Holder Identifier within HolderCompany             |      Int      | Optional  | 
+| EnvPadding           |  120 | Padding (bits to 0)                                |    Binary     | Optional  | 
             
 #### Event structure            
 
-| Field Name         | Bits| Description                                   | Type          | Status    |
-| :----------------- | ---:| :-------------------------------------------- | :-----------: | :-------: |
-| EventVersionNumber |   8 | Data structure version number                 | VersionNumber | Mandatory | 
-| EventDateStamp     |  16 | Date of the event                             | DateCompact   | Mandatory | 
-| EventTimeStamp     |  16 | Time of the event                             | TimeCompact   | Mandatory | 
-| EventLocation      |  32 | Location identifier                           | Int           | Mandatory | 
-| EventContractUsed  |   8 | Index of the contract used for the validation | Int           | Mandatory | 
-| ContractPriority1  |   8 | Priority for contract #1                      | PriorityCode  | Mandatory | 
-| ContractPriority2  |   8 | Priority for contract #2                      | PriorityCode  | Mandatory | 
-| ContractPriority3  |   8 | Priority for contract #3                      | PriorityCode  | Mandatory | 
-| ContractPriority4  |   8 | Priority for contract #4                      | PriorityCode  | Mandatory | 
-| EventPadding       | 120 | Padding (bits to 0)                           | Binary        | Optional  | 
+| Field Name         | Bits | Description                                   |     Type      |  Status   |
+|:-------------------|-----:|:----------------------------------------------|:-------------:|:---------:|
+| EventVersionNumber |    8 | Data structure version number                 | VersionNumber | Mandatory | 
+| EventDateStamp     |   16 | Date of the event                             |  DateCompact  | Mandatory | 
+| EventTimeStamp     |   16 | Time of the event                             |  TimeCompact  | Mandatory | 
+| EventLocation      |   32 | Location identifier                           |      Int      | Mandatory | 
+| EventContractUsed  |    8 | Index of the contract used for the validation |      Int      | Mandatory | 
+| ContractPriority1  |    8 | Priority for contract #1                      | PriorityCode  | Mandatory | 
+| ContractPriority2  |    8 | Priority for contract #2                      | PriorityCode  | Mandatory | 
+| ContractPriority3  |    8 | Priority for contract #3                      | PriorityCode  | Mandatory | 
+| ContractPriority4  |    8 | Priority for contract #4                      | PriorityCode  | Mandatory | 
+| EventPadding       |  120 | Padding (bits to 0)                           |    Binary     | Optional  | 
             
 #### Contract structure             
 
-| Field Name              | Bits| Description                          | Type                | Status    |
-| :---------------------- | ---:| :----------------------------------- | :-----------------: | :-------: |
-| ContractVersionNumber   |   8 | Data structure version number        | VersionNumber       | Mandatory | 
-| ContractTariff          |   8 | Contract Type                        | PriorityCode        | Mandatory | 
-| ContractSaleDate        |  16 | Sale date of the contract            | DateCompact         | Mandatory | 
-| ContractValidityEndDate |  16 | Last day of validity of the contract | DateCompact         | Mandatory | 
-| ContractSaleSam         |  32 | SAM which loaded the contract        | Int                 | Optional  | 
-| ContractSaleCounter     |  24 | SAM auth key counter value           | Int                 | Optional  | 
-| ContractAuthKvc         |   8 | SAM auth key KVC                     | Int                 | Optional  | 
-| ContractAuthenticator   |  24 | Security authenticator               | Authenticator (Int) | Optional  | 
-| ContractPadding         |  96 | Padding (bits to 0)                  | Binary              | Optional  | 
+| Field Name              | Bits | Description                          |        Type         |  Status   |
+|:------------------------|-----:|:-------------------------------------|:-------------------:|:---------:|
+| ContractVersionNumber   |    8 | Data structure version number        |    VersionNumber    | Mandatory | 
+| ContractTariff          |    8 | Contract Type                        |    PriorityCode     | Mandatory | 
+| ContractSaleDate        |   16 | Sale date of the contract            |     DateCompact     | Mandatory | 
+| ContractValidityEndDate |   16 | Last day of validity of the contract |     DateCompact     | Mandatory | 
+| ContractSaleSam         |   32 | SAM which loaded the contract        |         Int         | Optional  | 
+| ContractSaleCounter     |   24 | SAM auth key counter value           |         Int         | Optional  | 
+| ContractAuthKvc         |    8 | SAM auth key KVC                     |         Int         | Optional  | 
+| ContractAuthenticator   |   24 | Security authenticator               | Authenticator (Int) | Optional  | 
+| ContractPadding         |   96 | Padding (bits to 0)                  |       Binary        | Optional  | 
             
 #### Counter structure          
 
-| Field Name   | Bits| Description     | Type  | Status    |
-| :----------- | ---:| :-------------- | :---: | :-------: |
-| CounterValue |  24 | Number of trips | Int   | Mandatory | 
+| Field Name   | Bits | Description     | Type |  Status   |
+|:-------------|-----:|:----------------|:----:|:---------:|
+| CounterValue |   24 | Number of trips | Int  | Mandatory | 
 
 ### Data Types
 
-| Name         |Bits| Description             |
-| :----------- |---:|:------------------------|    
-|DateCompact   | 16 | Number of days since January 1st, 2010 (being date 0). Maximum value is 16,383, last complete year being 2053. All dates are in legal local time.|   
-|PriorityCode  |  8 | Types of contracts defined: <br>0 Forbidden (present in clean records only)<br>1 Season Pass<br>2 Multi-trip ticket<br>3 Stored Value<br>4 to 30 RFU<br>31 Expired|
-|TimeCompact   | 16 | Time in minutes, value = hour*60+minute (0 to 1,439)|    
-|VersionNumber |  8 | Data model version:<br>0 Forbidden (undefined)<br>1 Current version<br>2..254 RFU<br>255 Forbidden (reserved)|
+| Name          | Bits | Description                                                                                                                                                        |
+|:--------------|-----:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| DateCompact   |   16 | Number of days since January 1st, 2010 (being date 0). Maximum value is 16,383, last complete year being 2053. All dates are in legal local time.                  |
+| PriorityCode  |    8 | Types of contracts defined: <br>0 Forbidden (present in clean records only)<br>1 Season Pass<br>2 Multi-trip ticket<br>3 Stored Value<br>4 to 30 RFU<br>31 Expired |
+| TimeCompact   |   16 | Time in minutes, value = hour*60+minute (0 to 1,439)                                                                                                               |    
+| VersionNumber |    8 | Data model version:<br>0 Forbidden (undefined)<br>1 Current version<br>2..254 RFU<br>255 Forbidden (reserved)                                                      |
 
 ### Control Use Case
 
-The control use case will first analyze the event to obtain the information from the contract that was used in the last validation and then read and collect the information of all contracts present in the card and their validity status.
+The control use case will first analyze the event to obtain the information from the contract that was used in the last
+validation and then read and collect the information of all contracts present in the card and their validity status.
 
 The list of contract returned must clearly mark the contract that was used in the validation (if any). 
 
@@ -107,7 +116,7 @@ Steps:
 ### Process
 
 For this control demo application, a simple example control procedure has been implemented. 
-This procedure is implemented in the 'ControlProcedure' class.
+This procedure is implemented in the `ControlProcedure` class.
 
 Opening a Calypso secure session is optional for this procedure since we do not need to write anything on the card.
 So we check if the Calypso SAM is present at the beginning, but we keep on with the procedure if not.
@@ -117,156 +126,64 @@ This procedure's main steps are as follows:
   - Detection Analysis:
     - If AID not found reject the card.
   - Selection Analysis:
-    - If File Structure unknow reject the card.
+    - If File Structure unknown reject the card.
 - Environment Analysis:
   - Read the environment record:
-    - If Calypso SAM present open a Validation session (Calypso Secure Session) reading the environment record, set inTransactionFlag to true.
+    - If Calypso SAM present open a Validation session (Calypso Secure Session) reading the environment record, set `inTransactionFlag` to true.
     - Else read the environment record.
   - Unpack environment structure from the binary present in the environment record:
-    - If EnvVersionNumber of the Environment structure is not the expected one (==1 for the current version) reject the card. Abort transaction if inTransactionFlag is true.
-    - If EnvEndDate points to a date in the past reject the card. Abort transaction if inTransactionFlag is true.
+    - If `EnvVersionNumber` of the `Environment` structure is not the expected one (==1 for the current version) reject the card. Abort transaction if `inTransactionFlag` is true.
+    - If `EnvEndDate` points to a date in the past reject the card. Abort transaction if `inTransactionFlag` is true.
 - Event Analysis:
   - Read and unpack the last event record:
-    - If EventVersionNumber is not the expected one (==1 for the current version) reject the card (if ==0 return error status indicating clean card). Abort Transaction if inTransactionFlag is true.
-    - If EventLocation != value configured in the control terminal set the validated contract **not valid** flag as true and go to **Contract Analysis**.
-    - Else If EventDateStamp points to a date in the past set the validated contract **not valid** flag as true and go to **Contract Analysis**.
-    - Else If (EventTimeStamp + Validation period configure in the control terminal) < current time of the control terminal set the validated contract **not valid** flag as true.
+    - If `EventVersionNumber` is not the expected one (==1 for the current version) reject the card (if ==0 return error status indicating clean card). Abort Transaction if `inTransactionFlag` is true.
+    - If `EventLocation` != value configured in the control terminal set the validated contract **not valid** flag as true and go to **Contract Analysis**.
+    - Else If `EventDateStamp` points to a date in the past set the validated contract **not valid** flag as true and go to **Contract Analysis**.
+    - Else If (`EventTimeStamp` + Validation period configure in the control terminal) < current time of the control terminal set the validated contract **not valid** flag as true.
 - **Contract Analysis**: For each contract:
   - Read all contracts and the counter file.
   - For each contract:
   - Unpack the contract
-  - If the ContractVersionNumber == 0 then the contract is blank, move on to the next contract.
-  - If ContractVersionNumber is not the expected one (==1 for the current version) reject the card. Abort Transaction if inTransactionFlag is true.
-  - If ContractValidityEndDate points to a date in the past mark contract as Expired.
-  - If EventContractUsed points to the current contract index & **not valid** flag is false then mark it as Validated.
-  - If the ContractTariff value for the contract is 2 or 3, unpack the counter associated to the contract to extract the counter value.
+  - If the `ContractVersionNumber` == 0 then the contract is blank, move on to the next contract.
+  - If `ContractVersionNumber` is not the expected one (==1 for the current version) reject the card. Abort Transaction if `inTransactionFlag` is true.
+  - If `ContractValidityEndDate` points to a date in the past mark contract as Expired.
+  - If `EventContractUsed` points to the current contract index & **not valid** flag is false then mark it as Validated.
+  - If the `ContractTariff` value for the contract is 2 or 3, unpack the counter associated to the contract to extract the counter value.
   - Add contract data to the list of contracts read to return to the upper layer.
-  - If inTransactionFlag is true, close the Validation session.
+  - If `inTransactionFlag` is true, close the Validation session.
   - Return the status of the operation to the upper layer. <Exit process>
 
 ## Screens
 
-- Settings (SettingsActivity): Allows to set the settings of the control procedure:
+- Device selection (`DeviceSelectionActivity`): Allows you to indicate the type of device used, in order to use the associated plugin.
+  - Initially, devices using proprietary plugins are grayed out.
+- Settings (`SettingsActivity`): Allows to set the settings of the control procedure:
   - Location: Where the control is taking place. If the validation occurred in a different location, the controlled contract will not be considered as valid.
   - Validity Duration: Period (in minutes) during which the contract is considered valid.
-- Home (HomeActivity): Allows to launch the card detection phase.
-- Card Reader (CardReaderActivity): Launches the flavour associated Keyple plugin. At this point the user must present the card that he wishes to control.
+- Home (`HomeActivity`): Allows to launch the card detection phase.
+- Reader (`ReaderActivity`): Initializes the Keyple plugin. At this point the user must present the card that he wishes to control.
   - Initialize the Keyple plugin: start detection on NFC and SAM (if available) readers.
   - Prepare and defines the default selection requests to be processed when a card is inserted.
   - Listens to detected cards.
   - Launches the Control Procedure when a card is detected.
-- Control result screen (CardReaderActivity): displays the controlled card content.
+- Control result screen (`CardContentActivity`): displays the controlled card content.
   - Contracts list.
   - Last validation event.
-- Invalid control screen (NetworkInvalidActivity): displayed when the control procedure failed.
-
-## Dependencies
-
-The demo needs multiple dependencies to work.
-
-First we need to import the Keyple related dependencies in the `build.gradle` file:
-
-```groovy
-    implementation "org.eclipse.keyple:keyple-service-java-lib:2.0.0-SNAPSHOT"
-    implementation "org.eclipse.keyple:keyple-card-calypso-java-lib:2.0.0-SNAPSHOT"
-    implementation "org.eclipse.keyple:keyple-service-resource-java-lib:2.0.0-SNAPSHOT"
-    implementation "org.eclipse.keyple:keyple-util-java-lib:2.0.0-SNAPSHOT"
-    implementation "org.eclipse.keyple:keyple-common-java-api:2.0.0-SNAPSHOT"
-
-    implementation "org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.0.0-SNAPSHOT"
-    implementation "org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.0.0-SNAPSHOT"
-    implementation "org.calypsonet.terminal:calypsonet-terminal-card-java-api:1.0.0-SNAPSHOT"
-```
-
-Then each device needs its own dependencies imported. In our case, we use the flavour feature to import only the currently flavour specific device needed dependency.
-
-Here are some examples:
-
-- NFC Reader / OMAPI device:
-```groovy
-    omapiImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.0"
-    omapiImplementation "org.eclipse.keyple:keyple-plugin-android-omapi-java-lib:2.0.0"
-```
-
-- Coppernic device:
-```groovy
-    coppernicImplementation "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:2.0.0"
-```
-
-- Famoco device:
-```groovy
-    famocoImplementation "org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.0"
-    famocoImplementation "org.calypsonet.keyple:keyple-plugin-cna-famoco-se-communication-java-lib:2.0.0"
-```
-
-- Flowbird device:
-```groovy
-    flowbirdImplementation "org.calypsonet.keyple:keyple-plugin-cna-flowbird-android-java-lib:2.0.0"
-```
-
-- Bluebird device:
-```groovy
-    bluebirdImplementation "org.calypsonet.keyple:keyple-plugin-cna-bluebird-specific-nfc-java-lib:2.0.0"
-```
-
-## Device specific flavours
-
-In Android, a flavour is used to specify custom features. In our case, the specific feature is the device used to run the demo and therefore the specific Keyple plugin associated.
-This demo implements multiple device plugins at once using this flavour feature.
-
-This feature allows to add a new plugin easily by implementing the following classes:
-- ReaderModule: Dagger module class that provides needed components:
-  - IReaderRepository: Interface used by the demo to communicate with a specific Keyple Android plugin. It implements a set of methods used in the card reader screen to initialize, detect, and communicate with a contactless card and a SAM.
-  - ReaderObservationExceptionHandler: Provides a channel for notifying runtime exceptions that may occur during operations carried out by the monitoring thread(s).
-- XXXReaderModule: Class implementing the IReaderModule specific to each device plugin, for example 'CoppernicReaderModule'
-
-In order the make a new flavour work, for example for the Coppernic device, you must declare it in the app's `build.gradle` file.
-
-Add a product flavour to the `device` flavour dimension
-```groovy
-    flavourDimensions 'device'
-    
-    productFlavours {
-            coppernic {
-                dimension 'device'
-                resValue "string", "app_name", "Keyple Coppernic Validation"
-                applicationIdSuffix ".coppernic"
-            }
-    }
-```
-
-Create the flavours sourceSet folder `coppernic` in the `app/src` folder.  
-Then create in `coppernic` the package folders that will contain the code classes: `org/calypsonet/keyple/demo/control/`
-
-Declare the sourceSet folder associated to the flavour in the `build.gradle` file :
-```groovy
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-        
-        coppernic.java.srcDirs += 'src/coppernic/kotlin'
-    }
-```
-
-Import the associated plugin dependencies using the specific implementation syntax.  
-This way it will only be imported if the specific flavours is active.
-```groovy
-    coppernicImplementation "org.calypsonet.keyple:keyple-plugin-cna-coppernic-cone2-java-lib:2.0.0"
-```
+- Invalid control screen (`NetworkInvalidActivity`): displayed when the control procedure failed.
 
 ## Ticketing implementation
 
-As we have seen previously, the first step in implementing the ticketing layer is the implementation of the IReaderRepository interface specific the currently used device.
-Below are the other classes useful for implementing the ticketing layer:
-- CardReaderApi
-- TicketingSession
-- CardReaderObserver
+Below are the classes useful for implementing the ticketing layer:
+- `MainService`
+- `ReaderService`
+- `ReaderActivity.CardReaderObserver`
+- `TicketingService`
 
-### CardReaderApi
+### MainService
 
 Mainly used to manage the lifecycle of the Keyple plugin. 
-This class is used to initialize the plugin and manage the card detection phase.
-It is called on the different steps of the card reader activity lifecycle:
+This service is used to initialize the plugin and manage the card detection phase.
+It is called on the different steps of the reader activity lifecycle:
 - onResume:
   - Initialize the plugin (Card and SAM readers...)
   - Get the ticketing session
@@ -276,23 +193,26 @@ It is called on the different steps of the card reader activity lifecycle:
 - onDestroy:
   - Clear the Keyple plugin (remove observers and unregister plugin)
 
-### TicketingSession
+### ReaderService
 
-The purpose of this class is to communicate with the card.
+This service is the interface between the business layer and the reader.
 
-First it prepares the default selection that will be sent to the card when a card is detected by setting the AID(s) and the reader protocol(s) of the cards we want to detect and read.
+### ReaderActivity.CardReaderObserver
 
-Once a card is detected, the TicketingSession processes the default selection by retrieving the current CalypsoCard object.
-This CalypsoCard contains information about the card (SerialNumber, PORevision...)
+This class is the reader observer and inherits from Keyple class `CardReaderObserverSpi`
+
+It is invoked each time a new `CardReaderEvent` (`CARD_INSERTED`, `CARD_MATCHED`...) is launched by the Keyple plugin.
+This reader is registered when the reader is registered and removed when the reader is unregistered.
+
+### TicketingService
+
+This service is the orchestrator of the ticketing process.
+
+First it prepares and scheduled the selection scenario that will be sent to the card when a card is detected by setting
+the AID(s) and the reader protocol(s) of the cards we want to detect and read.
+
+Once a card is detected, the service processes the selection scenario by retrieving the current `CalypsoCard` object.
+This object contains information about the card (serial number, card revision...)
 
 Finally, this class is responsible for launching the control procedure and returning its result.
-
-### CardReaderObserver
-
-This class is the reader observer and inherits from Keyple's class:
-```groovy
-    CardReaderObserverSpi
-```
-It is called each time a new CardReaderEvent (CARD_INSERTED, CARD_MATCHED...) is launched by the Keyple plugin.
-This reader is registered when the reader is registered and removed when the reader is unregistered.
 

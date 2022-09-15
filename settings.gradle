@@ -1,4 +1,4 @@
-rootProject.name = "Keyple Control"
+rootProject.name = "keyple-android-demo-control"
 
 include ':app'
 

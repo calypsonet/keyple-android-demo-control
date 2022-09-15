@@ -31,7 +31,7 @@ class MainService @Inject constructor(private var readerService: ReaderService) 
   var readersInitialized = false
 
   @Throws(KeyplePluginException::class, IllegalStateException::class, Exception::class)
-  suspend fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
+  fun init(observer: CardReaderObserverSpi?, activity: Activity, readerType: ReaderType) {
     // Register plugin
     try {
       readerService.registerPlugin(activity, readerType)
