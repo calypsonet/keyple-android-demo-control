@@ -22,28 +22,18 @@ of the Eclipse Public License v. 2.0 which is available at
 http://www.eclipse.org/legal/epl-2.0.
 
 SPDX-License-Identifier: EPL-2.0
- 
-## Contributors
-   *   Youssef Amrani
-   *   Meddy Menzikoff
-   *   Cedric Tang
-   *   Ludovic Teixeira Costa
    
 ## Third-party Content
 
-Google Gson (2.2.4)
+Google Gson (2.8.9)
 
  * License: Apache License, 2.0
 
-SLF4J API (1.7.25)
+SLF4J API (1.7.32)
 
  * License: MIT License
 
-Mokito API (2.13.0)
-
- * License: MIT License
-
-Junit (4.12)
+Junit (4.13.2)
 
  * License: Eclipse Public License, 2.0
 
@@ -52,10 +42,6 @@ RxJava: Reactive Extensions for Java (2.1.13):
  * Licence: Apache Software License, 2.0
 
 ####Specific for Android plugins
-
-SEEK for Android (plugin OMAPI) (3.2):
-
- * License: Apache Software License, 2.0
 
 Android Open Source Project
 
@@ -69,11 +55,7 @@ slf4j Timber (3.1):
 
  * Licence: Apache Software License, 2.0
 
-Mockk (1.9):
-
- * Licence: Apache Software License, 2.0
-
-Kotlin Standard Library (1.3.72):
+Kotlin Standard Library (1.7.0):
 
   * Licence: Apache Software License, 2.0
 

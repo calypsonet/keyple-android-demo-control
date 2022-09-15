@@ -16,7 +16,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_bg"
-    tools:context="org.calypsonet.keyple.demo.control.activities.CardReaderActivity">
+    tools:context="org.calypsonet.keyple.demo.control.android.activity.ReaderActivity">
 
     <include
         android:id="@+id/appBarLayout"
@@ -55,7 +55,7 @@
         style="@style/bigRegularBlue"
         android:layout_width="@dimen/home_text_width"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/home_text_top_margin"
+        android:layout_marginTop="48dp"
         android:gravity="center"
         android:text="@string/home_description"
         app:layout_constraintEnd_toEndOf="parent"

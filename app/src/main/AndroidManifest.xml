@@ -16,7 +16,7 @@
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
         <activity
-            android:name="org.calypsonet.keyple.demo.control.activities.SplashScreenActivity"
+            android:name="org.calypsonet.keyple.demo.control.android.activity.SplashScreenActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -28,31 +28,37 @@
         </activity>
 
         <activity
-            android:name="org.calypsonet.keyple.demo.control.activities.NetworkInvalidActivity"
+            android:name="org.calypsonet.keyple.demo.control.android.activity.NetworkInvalidActivity"
             android:label="@string/title_activity_network_invalid"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name="org.calypsonet.keyple.demo.control.activities.CardContentActivity"
+            android:name="org.calypsonet.keyple.demo.control.android.activity.CardContentActivity"
             android:label="@string/title_activity_card_content"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name="org.calypsonet.keyple.demo.control.activities.CardReaderActivity"
+            android:name="org.calypsonet.keyple.demo.control.android.activity.ReaderActivity"
             android:label="@string/title_activity_card_reader"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name="org.calypsonet.keyple.demo.control.activities.HomeActivity"
+            android:name="org.calypsonet.keyple.demo.control.android.activity.HomeActivity"
             android:label="@string/title_activity_home"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name="org.calypsonet.keyple.demo.control.activities.SettingsActivity"
+            android:name="org.calypsonet.keyple.demo.control.android.activity.SettingsActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name="org.calypsonet.keyple.demo.control.android.activity.DeviceSelectionActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

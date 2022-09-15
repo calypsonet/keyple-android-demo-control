@@ -17,7 +17,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.calypsonet.keyple.demo.control.activities.HomeActivity"
+    tools:context="org.calypsonet.keyple.demo.control.android.activity.HomeActivity"
     android:background="@drawable/ic_bg">
 
     <include
@@ -26,15 +26,15 @@
 
     <TextView
         android:id="@+id/homeDescription"
+        style="@style/bigRegularBlue"
         android:layout_width="@dimen/home_text_width"
         android:layout_height="wrap_content"
-        android:text="@string/home_description"
-        style="@style/bigRegularBlue"
+        android:layout_marginTop="48dp"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        android:text="@string/home_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="@dimen/home_element_margin"/>
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
     <TextView
         android:id="@+id/start_label"
