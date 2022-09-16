@@ -11,7 +11,7 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.service.ticketing
 
-import java.util.EnumMap
+import java.util.*
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.android.di.scope.AppScoped
 import org.calypsonet.keyple.demo.control.service.reader.ReaderService
@@ -22,7 +22,6 @@ import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.AID_OTHE
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.DEFAULT_KIF_DEBIT
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.DEFAULT_KIF_LOAD
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.DEFAULT_KIF_PERSONALIZATION
-import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.ControlException
 import org.calypsonet.keyple.demo.control.service.ticketing.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.service.ticketing.model.FileStructureEnum
@@ -37,14 +36,8 @@ import org.calypsonet.terminal.reader.ObservableCardReader
 import org.calypsonet.terminal.reader.selection.CardSelectionManager
 import org.calypsonet.terminal.reader.selection.CardSelectionResult
 import org.calypsonet.terminal.reader.selection.ScheduledCardSelectionsResponse
-import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
-import org.eclipse.keyple.core.service.resource.CardResourceProfileConfigurator
-import org.eclipse.keyple.core.service.resource.CardResourceService
-import org.eclipse.keyple.core.service.resource.CardResourceServiceProvider
-import org.eclipse.keyple.core.service.resource.PluginsConfigurator
-import org.eclipse.keyple.core.service.spi.PluginObservationExceptionHandlerSpi
 import org.joda.time.DateTime
 import timber.log.Timber
 
@@ -54,7 +47,8 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
   private val calypsoExtensionService: CalypsoExtensionService =
       CalypsoExtensionService.getInstance()
 
-  private val cardResourceService: CardResourceService = CardResourceServiceProvider.getService()
+  private var isSecureSessionMode: Boolean
+  private lateinit var calypsoSam: CalypsoSam
 
   private lateinit var calypsoCard: CalypsoCard
   private lateinit var cardSelectionManager: CardSelectionManager
@@ -76,7 +70,9 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
         listOf(AID_1TIC_ICA_1, AID_NORMALIZED_IDF)
     allowedFileStructures[FileStructureEnum.FILE_STRUCTURE_32H] = listOf(AID_1TIC_ICA_3)
 
-    prepareAndScheduleCardSelectionScenario()
+    // attempts to select a SAM if any, sets the isSecureSessionMode flag accordingly
+    val samReader = readerService.getSamReader()
+    this.isSecureSessionMode = samReader != null && selectSam(samReader)
   }
 
   fun getCardReader(): CardReader? {
@@ -85,6 +81,10 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
 
   fun getCardAid(): String? {
     return cardAid
+  }
+
+  fun isSecureSessionMode(): Boolean {
+    return isSecureSessionMode
   }
 
   fun prepareAndScheduleCardSelectionScenario() {
@@ -176,96 +176,46 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
     return ControlProcedure()
         .launch(
             calypsoCard = calypsoCard,
-            samReader = readerService.getSamReader(),
+            isSecureSessionMode = this.isSecureSessionMode,
             ticketingService = this@TicketingService,
             locations = locations,
             now = DateTime.now())
   }
 
-  /**
-   * Set up the card resource service to provide a Calypso SAM C1 resource when requested.
-   *
-   * @param samProfileName A string defining the SAM profile.
-   * @throws IllegalStateException If the expected card resource is not found.
-   */
-  fun setupCardResourceService(samProfileName: String?) {
-
-    // Create a card resource extension expecting a SAM "C1".
-    val samResourceProfileExtension =
-        calypsoExtensionService.createSamResourceProfileExtension(
-            calypsoExtensionService
-                .createSamSelection()
-                .filterByProductType(CalypsoSam.ProductType.SAM_C1))
-
-    val pluginAndReaderExceptionHandler = PluginAndReaderExceptionHandler()
-
-    // Configure the card resource service:
-    // - allocation mode is blocking with a 100 milliseconds cycle and a 10 seconds timeout.
-    // - the readers are searched in the PC/SC plugin, the observation of the plugin (for the
-    // connection/disconnection of readers) and of the readers (for the insertion/removal of cards)
-    // is activated.
-    // - two card resource profiles A and B are defined, each expecting a specific card
-    // characterized by its power-on data and placed in a specific reader.
-    // - the timeout for using the card's resources is set at 5 seconds.
-    cardResourceService
-        .configurator
-        .withBlockingAllocationMode(100, 10000)
-        .withPlugins(
-            PluginsConfigurator.builder()
-                .addPluginWithMonitoring(
-                    readerService.getSamPlugin(),
-                    readerService.getSamReaderConfiguratorSpi(),
-                    pluginAndReaderExceptionHandler,
-                    pluginAndReaderExceptionHandler)
-                .withUsageTimeout(5000)
-                .build())
-        .withCardResourceProfiles(
-            CardResourceProfileConfigurator.builder(samProfileName, samResourceProfileExtension)
-                .withReaderNameRegex(readerService.getSamReaderNameRegex())
-                .build())
-        .configure()
-
-    cardResourceService.start()
-
-    // verify the resource availability
-    val cardResource =
-        cardResourceService.getCardResource(samProfileName)
-            ?: throw IllegalStateException(
-                java.lang.String.format(
-                    "Unable to retrieve a SAM card resource for profile '%s' from reader '%s' in plugin '%s'",
-                    samProfileName,
-                    readerService.getSamReaderNameRegex(),
-                    readerService.getSamPlugin().name))
-
-    // release the resource
-    cardResourceService.releaseCardResource(cardResource)
-  }
-
   fun getSecuritySettings(): CardSecuritySetting? {
-
-    // Create security settings that reference the same SAM profile requested from the card resource
-    // service and enable the multiple session mode.
-    val samResource = cardResourceService.getCardResource(SAM_PROFILE_NAME)
 
     return calypsoExtensionService
         .createCardSecuritySetting()
-        .setControlSamResource(samResource.reader, samResource.smartCard as CalypsoSam)
+        .setControlSamResource(readerService.getSamReader(), calypsoSam)
         .assignDefaultKif(WriteAccessLevel.PERSONALIZATION, DEFAULT_KIF_PERSONALIZATION)
         .assignDefaultKif(WriteAccessLevel.LOAD, DEFAULT_KIF_LOAD) //
         .assignDefaultKif(WriteAccessLevel.DEBIT, DEFAULT_KIF_DEBIT) //
         .enableMultipleSession()
   }
 
-  /** Class implementing the exception handler SPIs for plugin and reader monitoring. */
-  private class PluginAndReaderExceptionHandler :
-      PluginObservationExceptionHandlerSpi, CardReaderObservationExceptionHandlerSpi {
+  private fun selectSam(samReader: CardReader): Boolean {
+    // Get the Keyple main service
+    val smartCardService = SmartCardServiceProvider.getService()
 
-    override fun onPluginObservationError(pluginName: String, e: Throwable) {
-      Timber.e("An exception occurred while monitoring the plugin '${e.message}'.")
-    }
+    // Create a SAM selection manager.
+    val samSelectionManager: CardSelectionManager = smartCardService.createCardSelectionManager()
 
-    override fun onReaderObservationError(pluginName: String, readerName: String, e: Throwable) {
-      Timber.e("An exception occurred while monitoring the plugin '${e.message}'.")
+    // Create a SAM selection using the Calypso card extension.
+    samSelectionManager.prepareSelection(
+        calypsoExtensionService
+            .createSamSelection()
+            .filterByProductType(CalypsoSam.ProductType.SAM_C1))
+    try {
+      // SAM communication: run the selection scenario.
+      val samSelectionResult = samSelectionManager.processCardSelectionScenario(samReader)
+
+      // Get the Calypso SAM SmartCard resulting of the selection.
+      calypsoSam = samSelectionResult.activeSmartCard!! as CalypsoSam
+      return true
+    } catch (e: Exception) {
+      Timber.e(e)
+      Timber.e("An exception occurred while selecting the SAM.  ${e.message}")
     }
+    return false
   }
 }

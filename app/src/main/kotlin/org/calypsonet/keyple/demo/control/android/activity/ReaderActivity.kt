@@ -40,7 +40,7 @@ class ReaderActivity : BaseActivity() {
   private lateinit var ticketingService: TicketingService
   var currentAppState = AppState.WAIT_SYSTEM_READY
 
-  /* application states */
+  // application states
   enum class AppState {
     UNSPECIFIED,
     WAIT_SYSTEM_READY,
@@ -75,6 +75,14 @@ class ReaderActivity : BaseActivity() {
             mainService.init(
                 cardReaderObserver, this@ReaderActivity, ApplicationSettings.readerType)
             ticketingService = mainService.getTicketingSession()!!
+            Toast.makeText(
+                    this@ReaderActivity,
+                    getString(
+                        if (ticketingService.isSecureSessionMode())
+                            R.string.secure_session_mode_enabled
+                        else R.string.secure_session_mode_disabled),
+                    Toast.LENGTH_SHORT)
+                .show()
             mainService.readersInitialized = true
             handleAppEvents(AppState.WAIT_CARD, null)
             mainService.startNfcDetection()
@@ -184,9 +192,7 @@ class ReaderActivity : BaseActivity() {
               try {
 
                 if (ticketingService.checkStartupInfo()) {
-                  /*
-                   * LAUNCH CONTROL PROCEDURE
-                   */
+                  // Launch the control procedure
                   withContext(Dispatchers.Main) { progress.show() }
                   val cardReaderResponse =
                       withContext(Dispatchers.IO) {
@@ -205,7 +211,7 @@ class ReaderActivity : BaseActivity() {
                 }
               } catch (e: IllegalStateException) {
                 Timber.e(e)
-                Timber.e("Load ERROR page after exception = ${e.message}")
+                Timber.e("Load ERROR page after exception = ${e.message} ${e.message}")
                 displayResult(CardReaderResponse(status = Status.ERROR, titlesList = arrayListOf()))
               }
             }

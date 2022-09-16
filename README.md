@@ -119,7 +119,7 @@ For this control demo application, a simple example control procedure has been i
 This procedure is implemented in the `ControlProcedure` class.
 
 Opening a Calypso secure session is optional for this procedure since we do not need to write anything on the card.
-So we check if the Calypso SAM is present at the beginning, but we keep on with the procedure if not.
+So if the Calypso SAM is present at the beginning we set the `isSecureSessionMode` to true, but we keep on with the procedure if not.
 
 This procedure's main steps are as follows:
 - Detection and Selection
@@ -129,14 +129,14 @@ This procedure's main steps are as follows:
     - If File Structure unknown reject the card.
 - Environment Analysis:
   - Read the environment record:
-    - If Calypso SAM present open a Validation session (Calypso Secure Session) reading the environment record, set `inTransactionFlag` to true.
-    - Else read the environment record.
+    - Open a secure session if `isSecureSessionMode` is true.
+    - Read the environment record.
   - Unpack environment structure from the binary present in the environment record:
-    - If `EnvVersionNumber` of the `Environment` structure is not the expected one (==1 for the current version) reject the card. Abort transaction if `inTransactionFlag` is true.
-    - If `EnvEndDate` points to a date in the past reject the card. Abort transaction if `inTransactionFlag` is true.
+    - If `EnvVersionNumber` of the `Environment` structure is not the expected one (==1 for the current version) reject the card. Abort transaction if `isSecureSessionMode` is true.
+    - If `EnvEndDate` points to a date in the past reject the card. Abort transaction if `isSecureSessionMode` is true.
 - Event Analysis:
   - Read and unpack the last event record:
-    - If `EventVersionNumber` is not the expected one (==1 for the current version) reject the card (if ==0 return error status indicating clean card). Abort Transaction if `inTransactionFlag` is true.
+    - If `EventVersionNumber` is not the expected one (==1 for the current version) reject the card (if ==0 return error status indicating clean card). Abort Transaction if `isSecureSessionMode` is true.
     - If `EventLocation` != value configured in the control terminal set the validated contract **not valid** flag as true and go to **Contract Analysis**.
     - Else If `EventDateStamp` points to a date in the past set the validated contract **not valid** flag as true and go to **Contract Analysis**.
     - Else If (`EventTimeStamp` + Validation period configure in the control terminal) < current time of the control terminal set the validated contract **not valid** flag as true.
@@ -145,12 +145,12 @@ This procedure's main steps are as follows:
   - For each contract:
   - Unpack the contract
   - If the `ContractVersionNumber` == 0 then the contract is blank, move on to the next contract.
-  - If `ContractVersionNumber` is not the expected one (==1 for the current version) reject the card. Abort Transaction if `inTransactionFlag` is true.
+  - If `ContractVersionNumber` is not the expected one (==1 for the current version) reject the card. Abort Transaction if `isSecureSessionMode` is true.
   - If `ContractValidityEndDate` points to a date in the past mark contract as Expired.
   - If `EventContractUsed` points to the current contract index & **not valid** flag is false then mark it as Validated.
   - If the `ContractTariff` value for the contract is 2 or 3, unpack the counter associated to the contract to extract the counter value.
   - Add contract data to the list of contracts read to return to the upper layer.
-  - If `inTransactionFlag` is true, close the Validation session.
+  - If `isSecureSessionMode` is true, close the Validation session.
   - Return the status of the operation to the upper layer. <Exit process>
 
 ## Screens

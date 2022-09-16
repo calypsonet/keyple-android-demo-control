@@ -42,7 +42,6 @@ import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerS
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
-import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPlugin
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
@@ -235,10 +234,6 @@ constructor(
     }
   }
 
-  fun getSamReaderNameRegex(): String = samReaderNameRegex
-
-  fun getSamReaderConfiguratorSpi(): ReaderConfiguratorSpi = ReaderConfigurator()
-
   fun clear() {
     (cardReader as ConfigurableCardReader).deactivateProtocol(cardReaderProtocolPhysicalName)
     samReaders.forEach {
@@ -270,16 +265,5 @@ constructor(
       errorMedia.start()
     }
     return true
-  }
-
-  /**
-   * CardReader configurator used by the card resource service to setup the SAM reader with the
-   * required settings.
-   */
-  internal class ReaderConfigurator : ReaderConfiguratorSpi {
-    /** {@inheritDoc} */
-    override fun setupReader(reader: CardReader) {
-      // NOP
-    }
   }
 }

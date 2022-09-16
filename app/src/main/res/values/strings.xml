@@ -54,6 +54,8 @@
     <string name="invalid">Invalid</string>
 
     <!-- CardContent screen -->
+    <string name="secure_session_mode_enabled">Calypso Secure Session enabled</string>
+    <string name="secure_session_mode_disabled">Calypso Secure Session disabled</string>
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
     <string name="present_again">Present again</string>
