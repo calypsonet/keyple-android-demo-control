@@ -74,11 +74,11 @@ class ReaderActivity : BaseActivity() {
             cardReaderObserver = CardReaderObserver()
             mainService.init(
                 cardReaderObserver, this@ReaderActivity, ApplicationSettings.readerType)
-            ticketingService = mainService.getTicketingSession()!!
+            ticketingService = mainService.ticketingService!!
             Toast.makeText(
                     this@ReaderActivity,
                     getString(
-                        if (ticketingService.isSecureSessionMode())
+                        if (ticketingService.isSecureSessionMode)
                             R.string.secure_session_mode_enabled
                         else R.string.secure_session_mode_disabled),
                     Toast.LENGTH_SHORT)
@@ -190,24 +190,21 @@ class ReaderActivity : BaseActivity() {
           CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
             GlobalScope.launch {
               try {
-
-                if (ticketingService.checkStartupInfo()) {
-                  // Launch the control procedure
-                  withContext(Dispatchers.Main) { progress.show() }
-                  val cardReaderResponse =
-                      withContext(Dispatchers.IO) {
-                        ticketingService.launchControlProcedure(locationFileService.getLocations())
-                      }
-                  withContext(Dispatchers.Main) {
-                    if (cardReaderResponse.status == Status.EMPTY_CARD ||
-                        cardReaderResponse.status == Status.ERROR) {
-                      mainService.displayResultFailed()
-                    } else {
-                      mainService.displayResultSuccess()
+                // Launch the control procedure
+                withContext(Dispatchers.Main) { progress.show() }
+                val cardReaderResponse =
+                    withContext(Dispatchers.IO) {
+                      ticketingService.launchControlProcedure(locationFileService.getLocations())
                     }
-                    progress.dismiss()
-                    displayResult(cardReaderResponse)
+                withContext(Dispatchers.Main) {
+                  if (cardReaderResponse.status == Status.EMPTY_CARD ||
+                      cardReaderResponse.status == Status.ERROR) {
+                    mainService.displayResultFailed()
+                  } else {
+                    mainService.displayResultSuccess()
                   }
+                  progress.dismiss()
+                  displayResult(cardReaderResponse)
                 }
               } catch (e: IllegalStateException) {
                 Timber.e(e)

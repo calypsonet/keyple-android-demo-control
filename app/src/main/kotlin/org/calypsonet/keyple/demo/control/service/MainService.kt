@@ -27,7 +27,8 @@ import timber.log.Timber
 @AppScoped
 class MainService @Inject constructor(private var readerService: ReaderService) {
 
-  private var ticketingService: TicketingService? = null
+  var ticketingService: TicketingService? = null
+    private set
   var readersInitialized = false
 
   @Throws(KeyplePluginException::class, IllegalStateException::class, Exception::class)
@@ -80,10 +81,6 @@ class MainService @Inject constructor(private var readerService: ReaderService) 
     } catch (e: Exception) {
       Timber.e(e)
     }
-  }
-
-  fun getTicketingSession(): TicketingService? {
-    return ticketingService
   }
 
   fun onDestroy(observer: CardReaderObserverSpi?) {

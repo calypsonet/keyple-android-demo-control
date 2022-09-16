@@ -23,7 +23,6 @@ import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SFI_CONT
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SFI_COUNTER
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SFI_ENVIRONMENT_AND_HOLDER
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SFI_EVENTS_LOG
-import org.calypsonet.keyple.demo.control.service.ticketing.TicketingService
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.ControlException
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.EnvironmentControlException
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.EnvironmentControlExceptionKey
@@ -38,6 +37,8 @@ import org.calypsonet.keyple.demo.control.service.ticketing.model.mapper.Contrac
 import org.calypsonet.keyple.demo.control.service.ticketing.model.mapper.ValidationMapper
 import org.calypsonet.terminal.calypso.WriteAccessLevel
 import org.calypsonet.terminal.calypso.card.CalypsoCard
+import org.calypsonet.terminal.calypso.transaction.CardSecuritySetting
+import org.calypsonet.terminal.reader.CardReader
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.joda.time.DateTime
 import timber.log.Timber
@@ -46,18 +47,17 @@ class ControlProcedure {
 
   fun launch(
       now: DateTime,
+      cardReader: CardReader,
       calypsoCard: CalypsoCard,
-      isSecureSessionMode: Boolean,
-      ticketingService: TicketingService,
+      cardSecuritySettings: CardSecuritySetting?,
       locations: List<Location>
   ): CardReaderResponse {
-
-    val cardReader = ticketingService.getCardReader()
 
     val errorMessage: String?
     var errorTitle: String? = null
     var validation: Validation? = null
     var status: Status = Status.ERROR
+    val isSecureSessionMode = cardSecuritySettings != null
 
     val calypsoExtensionService = CalypsoExtensionService.getInstance()
 
@@ -67,7 +67,7 @@ class ControlProcedure {
             if (isSecureSessionMode) {
               // The transaction will be certified by the SAM in a secure session.
               calypsoExtensionService.createCardTransaction(
-                  cardReader, calypsoCard, ticketingService.getSecuritySettings())
+                  cardReader, calypsoCard, cardSecuritySettings)
             } else {
               // The transaction will take place without being certified by a SAM
               calypsoExtensionService.createCardTransactionWithoutSecurity(cardReader, calypsoCard)

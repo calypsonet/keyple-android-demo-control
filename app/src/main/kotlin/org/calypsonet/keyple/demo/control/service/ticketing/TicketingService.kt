@@ -47,9 +47,9 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
   private val calypsoExtensionService: CalypsoExtensionService =
       CalypsoExtensionService.getInstance()
 
-  private var isSecureSessionMode: Boolean
-  private lateinit var calypsoSam: CalypsoSam
+  val isSecureSessionMode: Boolean
 
+  private lateinit var calypsoSam: CalypsoSam
   private lateinit var calypsoCard: CalypsoCard
   private lateinit var cardSelectionManager: CardSelectionManager
 
@@ -72,19 +72,11 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
 
     // attempts to select a SAM if any, sets the isSecureSessionMode flag accordingly
     val samReader = readerService.getSamReader()
-    this.isSecureSessionMode = samReader != null && selectSam(samReader)
-  }
-
-  fun getCardReader(): CardReader? {
-    return readerService.getCardReader()
+    isSecureSessionMode = samReader != null && selectSam(samReader)
   }
 
   fun getCardAid(): String? {
     return cardAid
-  }
-
-  fun isSecureSessionMode(): Boolean {
-    return isSecureSessionMode
   }
 
   fun prepareAndScheduleCardSelectionScenario() {
@@ -169,27 +161,24 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
     return true
   }
 
-  fun checkStartupInfo(): Boolean = calypsoCard.startupInfoRawData != null
-
   @Throws(ControlException::class)
   fun launchControlProcedure(locations: List<Location>): CardReaderResponse {
     return ControlProcedure()
         .launch(
+            cardReader = readerService.getCardReader()!!,
             calypsoCard = calypsoCard,
-            isSecureSessionMode = this.isSecureSessionMode,
-            ticketingService = this@TicketingService,
+            cardSecuritySettings = if (isSecureSessionMode) getSecuritySettings() else null,
             locations = locations,
             now = DateTime.now())
   }
 
-  fun getSecuritySettings(): CardSecuritySetting? {
-
+  private fun getSecuritySettings(): CardSecuritySetting? {
     return calypsoExtensionService
         .createCardSecuritySetting()
         .setControlSamResource(readerService.getSamReader(), calypsoSam)
         .assignDefaultKif(WriteAccessLevel.PERSONALIZATION, DEFAULT_KIF_PERSONALIZATION)
-        .assignDefaultKif(WriteAccessLevel.LOAD, DEFAULT_KIF_LOAD) //
-        .assignDefaultKif(WriteAccessLevel.DEBIT, DEFAULT_KIF_DEBIT) //
+        .assignDefaultKif(WriteAccessLevel.LOAD, DEFAULT_KIF_LOAD)
+        .assignDefaultKif(WriteAccessLevel.DEBIT, DEFAULT_KIF_DEBIT)
         .enableMultipleSession()
   }
 
