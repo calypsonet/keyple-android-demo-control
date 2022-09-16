@@ -211,7 +211,7 @@ class ReaderActivity : BaseActivity() {
                 }
               } catch (e: IllegalStateException) {
                 Timber.e(e)
-                Timber.e("Load ERROR page after exception = ${e.message} ${e.message}")
+                Timber.e("Load ERROR page after exception = ${e.message}")
                 displayResult(CardReaderResponse(status = Status.ERROR, titlesList = arrayListOf()))
               }
             }

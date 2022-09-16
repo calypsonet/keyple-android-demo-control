@@ -13,7 +13,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Upgraded
 - `calypsonet-terminal-calypso-java-api:1.2.+`
 - `keyple-service-java-lib:2.1.0`
-- `keyple-service-resource-java-lib:2.0.2`
 - `keyple-card-calypso-java-lib:2.2.1`
 - `keyple-plugin-android-nfc-java-lib:2.0.1`
 - `keyple-plugin-cna-coppernic-cone2-java-lib:2.0.2`

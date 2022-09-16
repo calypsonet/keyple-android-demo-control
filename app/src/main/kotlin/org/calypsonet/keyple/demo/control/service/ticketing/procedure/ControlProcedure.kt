@@ -134,7 +134,7 @@ class ControlProcedure {
         }
       }
 
-      var contractEventNotValid = false
+      var contractEventValid = true
       val contractUsed = event.eventContractUsed
 
       val eventDateTime = DateTime(event.getEventDate())
@@ -143,15 +143,15 @@ class ControlProcedure {
       // Checks contract event validity
       // Event location should match the location configured for this terminal
       if (ApplicationSettings.location.id != event.eventLocation) {
-        contractEventNotValid = true
+        contractEventValid = false
       }
       // Event date should be today
       else if (eventDateTime.withTimeAtStartOfDay().isBefore(now.withTimeAtStartOfDay())) {
-        contractEventNotValid = true
+        contractEventValid = false
       }
       // Event end of validity should be in the future
       else if (eventValidityEndDate.isBefore(now)) {
-        contractEventNotValid = true
+        contractEventValid = false
       }
 
       // Read all contracts and the counter file
@@ -208,9 +208,9 @@ class ControlProcedure {
             contractExpired = true
           }
 
-          // If EventContractUsed points to the current contract index & not valid flag is false
+          // If EventContractUsed points to the current contract index & valid flag is true
           // then mark it as validated.
-          if (contractUsed == record && !contractEventNotValid) {
+          if (contractUsed == record && contractEventValid) {
             contractValidated = true
           }
 
