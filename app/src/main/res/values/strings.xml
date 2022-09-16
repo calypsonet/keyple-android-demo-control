@@ -38,7 +38,7 @@
 
     <!-- Device selector screen -->
     <string name="device_title">What type of terminal is it?</string>
-    <string name="device_smartphone">SMARTPHONE</string>
+    <string name="device_nfc_terminal">NFC TERMINAL</string>
     <string name="device_bluebird">BLUEBIRD</string>
     <string name="device_coppernic">COPPERNIC</string>
     <string name="device_famoco">FAMOCO</string>

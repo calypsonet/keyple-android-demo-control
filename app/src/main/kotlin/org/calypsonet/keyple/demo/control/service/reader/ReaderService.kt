@@ -76,6 +76,7 @@ constructor(
       ReaderType.COPPERNIC -> initCoppernicReader()
       ReaderType.FAMOCO -> initFamocoReader()
       ReaderType.FLOWBIRD -> initFlowbirdReader()
+      ReaderType.NFC_TERMINAL -> initNfcTerminalReader()
     }
   }
 
@@ -133,6 +134,19 @@ constructor(
     samReaderProtocolLogicalName = null
   }
 
+  private fun initNfcTerminalReader() {
+    readerType = ReaderType.NFC_TERMINAL
+    cardPluginName = AndroidNfcPlugin.PLUGIN_NAME
+    cardReaderName = AndroidNfcReader.READER_NAME
+    cardReaderProtocolPhysicalName = "ISO_14443_4"
+    cardReaderProtocolLogicalName = "ISO_14443_4"
+    samPluginName = ""
+    samReaderNameRegex = ""
+    samReaderName = ""
+    samReaderProtocolPhysicalName = ""
+    samReaderProtocolLogicalName = ""
+  }
+
   @Throws(KeyplePluginException::class)
   fun registerPlugin(activity: Activity, readerType: ReaderType) {
     initReaderType(readerType)
@@ -159,6 +173,7 @@ constructor(
                     situationFiles = situationFiles,
                     translationFiles = translationFiles)
               }
+              ReaderType.NFC_TERMINAL -> AndroidNfcPluginFactoryProvider(activity).getFactory()
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)

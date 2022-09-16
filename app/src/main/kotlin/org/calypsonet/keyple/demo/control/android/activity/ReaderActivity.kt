@@ -16,7 +16,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_card_reader.loadingAnimation
+import kotlinx.android.synthetic.main.activity_card_reader.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -75,15 +75,11 @@ class ReaderActivity : BaseActivity() {
             mainService.init(
                 cardReaderObserver, this@ReaderActivity, ApplicationSettings.readerType)
             ticketingService = mainService.ticketingService!!
-            Toast.makeText(
-                    this@ReaderActivity,
-                    getString(
-                        if (ticketingService.isSecureSessionMode)
-                            R.string.secure_session_mode_enabled
-                        else R.string.secure_session_mode_disabled),
-                    Toast.LENGTH_SHORT)
-                .show()
             mainService.readersInitialized = true
+            showToast(
+                getString(
+                    if (ticketingService.isSecureSessionMode) R.string.secure_session_mode_enabled
+                    else R.string.secure_session_mode_disabled))
             handleAppEvents(AppState.WAIT_CARD, null)
             mainService.startNfcDetection()
           } catch (e: Exception) {
