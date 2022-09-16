@@ -23,17 +23,13 @@ import org.calypsonet.keyple.demo.control.service.ticketing.model.Location
 
 class LocationFileService @Inject constructor(context: Context) {
 
-  private val locationList: List<Location>
+  val locations: List<Location>
 
   init {
-    locationList =
+    locations =
         getGson()
             .fromJson(getFileFromResources(context = context), Array<Location>::class.java)
             .toList()
-  }
-
-  fun getLocations(): List<Location> {
-    return locationList
   }
 
   /** Get file from raw embedded directory */

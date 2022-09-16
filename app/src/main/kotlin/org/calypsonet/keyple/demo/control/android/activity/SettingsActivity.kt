@@ -36,7 +36,7 @@ class SettingsActivity : BaseActivity() {
     setSupportActionBar(findViewById(R.id.toolbar))
 
     // Init location spinner
-    val locations = locationFileService.getLocations()
+    val locations = locationFileService.locations
     val locationsAdapter =
         ArrayAdapter(this, R.layout.spinner_item_location, R.id.spinner_item_text, locations)
     spinnerLocationList.adapter = locationsAdapter

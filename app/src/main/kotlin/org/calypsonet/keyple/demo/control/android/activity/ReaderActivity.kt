@@ -150,10 +150,10 @@ class ReaderActivity : BaseActivity() {
           return
         }
 
-        Timber.i("Card AID = ${ticketingService.getCardAid()}")
-        if (CalypsoInfo.AID_1TIC_ICA_1 != ticketingService.getCardAid() &&
-            CalypsoInfo.AID_1TIC_ICA_3 != ticketingService.getCardAid() &&
-            CalypsoInfo.AID_NORMALIZED_IDF != ticketingService.getCardAid()) {
+        Timber.i("Card AID = ${ticketingService.cardAid}")
+        if (CalypsoInfo.AID_1TIC_ICA_1 != ticketingService.cardAid &&
+            CalypsoInfo.AID_1TIC_ICA_3 != ticketingService.cardAid &&
+            CalypsoInfo.AID_NORMALIZED_IDF != ticketingService.cardAid) {
           val error = getString(R.string.card_invalid_aid)
           displayResult(
               CardReaderResponse(
@@ -194,7 +194,7 @@ class ReaderActivity : BaseActivity() {
                 withContext(Dispatchers.Main) { progress.show() }
                 val cardReaderResponse =
                     withContext(Dispatchers.IO) {
-                      ticketingService.launchControlProcedure(locationFileService.getLocations())
+                      ticketingService.launchControlProcedure(locationFileService.locations)
                     }
                 withContext(Dispatchers.Main) {
                   if (cardReaderResponse.status == Status.EMPTY_CARD ||

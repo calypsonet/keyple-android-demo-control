@@ -53,7 +53,8 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
   private lateinit var calypsoCard: CalypsoCard
   private lateinit var cardSelectionManager: CardSelectionManager
 
-  private var cardAid: String? = null
+  var cardAid: String? = null
+    private set
 
   private var indexOfCardSelectionAid1TicIca1 = 0
   private var indexOfCardSelectionAid1TicIca3 = 0
@@ -73,10 +74,6 @@ class TicketingService @Inject constructor(private val readerService: ReaderServ
     // attempts to select a SAM if any, sets the isSecureSessionMode flag accordingly
     val samReader = readerService.getSamReader()
     isSecureSessionMode = samReader != null && selectSam(samReader)
-  }
-
-  fun getCardAid(): String? {
-    return cardAid
   }
 
   fun prepareAndScheduleCardSelectionScenario() {
