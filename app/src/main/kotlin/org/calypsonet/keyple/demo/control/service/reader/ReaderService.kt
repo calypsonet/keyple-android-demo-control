@@ -42,7 +42,6 @@ import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerS
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
-import org.eclipse.keyple.core.service.resource.spi.ReaderConfiguratorSpi
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPlugin
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
@@ -77,6 +76,7 @@ constructor(
       ReaderType.COPPERNIC -> initCoppernicReader()
       ReaderType.FAMOCO -> initFamocoReader()
       ReaderType.FLOWBIRD -> initFlowbirdReader()
+      ReaderType.NFC_TERMINAL -> initNfcTerminalReader()
     }
   }
 
@@ -134,6 +134,19 @@ constructor(
     samReaderProtocolLogicalName = null
   }
 
+  private fun initNfcTerminalReader() {
+    readerType = ReaderType.NFC_TERMINAL
+    cardPluginName = AndroidNfcPlugin.PLUGIN_NAME
+    cardReaderName = AndroidNfcReader.READER_NAME
+    cardReaderProtocolPhysicalName = "ISO_14443_4"
+    cardReaderProtocolLogicalName = "ISO_14443_4"
+    samPluginName = ""
+    samReaderNameRegex = ""
+    samReaderName = ""
+    samReaderProtocolPhysicalName = ""
+    samReaderProtocolLogicalName = ""
+  }
+
   @Throws(KeyplePluginException::class)
   fun registerPlugin(activity: Activity, readerType: ReaderType) {
     initReaderType(readerType)
@@ -160,6 +173,7 @@ constructor(
                     situationFiles = situationFiles,
                     translationFiles = translationFiles)
               }
+              ReaderType.NFC_TERMINAL -> AndroidNfcPluginFactoryProvider(activity).getFactory()
             }
           }
       SmartCardServiceProvider.getService().registerPlugin(pluginFactory)
@@ -235,10 +249,6 @@ constructor(
     }
   }
 
-  fun getSamReaderNameRegex(): String = samReaderNameRegex
-
-  fun getSamReaderConfiguratorSpi(): ReaderConfiguratorSpi = ReaderConfigurator()
-
   fun clear() {
     (cardReader as ConfigurableCardReader).deactivateProtocol(cardReaderProtocolPhysicalName)
     samReaders.forEach {
@@ -270,16 +280,5 @@ constructor(
       errorMedia.start()
     }
     return true
-  }
-
-  /**
-   * CardReader configurator used by the card resource service to setup the SAM reader with the
-   * required settings.
-   */
-  internal class ReaderConfigurator : ReaderConfiguratorSpi {
-    /** {@inheritDoc} */
-    override fun setupReader(reader: CardReader) {
-      // NOP
-    }
   }
 }

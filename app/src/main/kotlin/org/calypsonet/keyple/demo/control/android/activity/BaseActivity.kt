@@ -11,7 +11,7 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.android.activity
 
-import android.os.Bundle
+import android.widget.Toast
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.control.service.MainService
@@ -21,11 +21,8 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
   @Inject lateinit var mainService: MainService
   @Inject lateinit var locationFileService: LocationFileService
-  private var isStoragePermissionGranted: Boolean = false
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    //    isStoragePermissionGranted =
-    //        PermissionHelper.isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+  fun showToast(message: String) {
+    runOnUiThread { Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show() }
   }
 }

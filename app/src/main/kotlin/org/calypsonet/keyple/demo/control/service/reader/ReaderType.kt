@@ -15,5 +15,6 @@ enum class ReaderType {
   BLUEBIRD,
   COPPERNIC,
   FAMOCO,
-  FLOWBIRD
+  FLOWBIRD,
+  NFC_TERMINAL
 }

@@ -78,6 +78,13 @@ class DeviceSelectionActivity : BaseActivity() {
         finish()
       }
     }
+
+    // Standard NFC terminal
+    nfcTerminalBtn.setOnClickListener {
+      ApplicationSettings.readerType = ReaderType.NFC_TERMINAL
+      startActivity(Intent(this, SettingsActivity::class.java))
+      finish()
+    }
   }
 
   @SuppressLint("MissingSuperCall")

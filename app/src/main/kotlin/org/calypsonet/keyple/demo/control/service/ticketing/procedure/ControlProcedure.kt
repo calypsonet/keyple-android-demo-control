@@ -19,12 +19,10 @@ import org.calypsonet.keyple.demo.common.parser.model.constant.VersionNumber
 import org.calypsonet.keyple.demo.control.ApplicationSettings
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.RECORD_NUMBER_1
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.RECORD_NUMBER_4
-import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SAM_PROFILE_NAME
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SFI_CONTRACTS
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SFI_COUNTER
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SFI_ENVIRONMENT_AND_HOLDER
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.SFI_EVENTS_LOG
-import org.calypsonet.keyple.demo.control.service.ticketing.TicketingService
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.ControlException
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.EnvironmentControlException
 import org.calypsonet.keyple.demo.control.service.ticketing.exception.EnvironmentControlExceptionKey
@@ -39,6 +37,7 @@ import org.calypsonet.keyple.demo.control.service.ticketing.model.mapper.Contrac
 import org.calypsonet.keyple.demo.control.service.ticketing.model.mapper.ValidationMapper
 import org.calypsonet.terminal.calypso.WriteAccessLevel
 import org.calypsonet.terminal.calypso.card.CalypsoCard
+import org.calypsonet.terminal.calypso.transaction.CardSecuritySetting
 import org.calypsonet.terminal.reader.CardReader
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.joda.time.DateTime
@@ -48,113 +47,84 @@ class ControlProcedure {
 
   fun launch(
       now: DateTime,
+      cardReader: CardReader,
       calypsoCard: CalypsoCard,
-      samReader: CardReader?,
-      ticketingService: TicketingService,
+      cardSecuritySettings: CardSecuritySetting?,
       locations: List<Location>
   ): CardReaderResponse {
-
-    val cardReader = ticketingService.getCardReader()
 
     val errorMessage: String?
     var errorTitle: String? = null
     var validation: Validation? = null
     var status: Status = Status.ERROR
+    val isSecureSessionMode = cardSecuritySettings != null
 
     val calypsoExtensionService = CalypsoExtensionService.getInstance()
 
     try {
-      var inTransactionFlag:
-          Boolean // true if a SAM is available and a secure session have been opened
       val cardTransaction =
           try {
-            if (samReader != null) {
-              /*
-               * Step 1.1 - If SAM available, Open a Validation session reading the environment record, set inTransactionFlag to true and go to point 2.
-               */
-              inTransactionFlag = true
-
-              ticketingService.setupCardResourceService(SAM_PROFILE_NAME)
-
+            if (isSecureSessionMode) {
+              // The transaction will be certified by the SAM in a secure session.
               calypsoExtensionService.createCardTransaction(
-                  cardReader, calypsoCard, ticketingService.getSecuritySettings())
+                  cardReader, calypsoCard, cardSecuritySettings)
             } else {
-              /*
-               * Step 1.2 - Else, read the environment record.
-               */
-              inTransactionFlag = false
+              // The transaction will take place without being certified by a SAM
               calypsoExtensionService.createCardTransactionWithoutSecurity(cardReader, calypsoCard)
             }
-          } catch (e: IllegalStateException) {
-            Timber.w(e)
-            inTransactionFlag = false
-            calypsoExtensionService.createCardTransactionWithoutSecurity(cardReader, calypsoCard)
           } catch (e: Exception) {
+            // TODO check which condition could lead here
             Timber.w(e)
-            inTransactionFlag = false
             calypsoExtensionService.createCardTransactionWithoutSecurity(cardReader, calypsoCard)
           }
 
-      /*
-       * Step 2 - Unpack environment structure from the binary present in the environment record.
-       */
-      cardTransaction.prepareReadRecord(SFI_ENVIRONMENT_AND_HOLDER, RECORD_NUMBER_1.toInt())
+      // Read and unpack environment structure from the binary present in the environment record.
+      cardTransaction.prepareReadRecord(SFI_ENVIRONMENT_AND_HOLDER, RECORD_NUMBER_1)
 
-      if (inTransactionFlag) {
-        /*
-         * Open a transaction to read/write the Calypso Card and read the Environment file
-         */
+      if (isSecureSessionMode) {
+        // Open a secure session and read the Environment file
         cardTransaction.processOpening(WriteAccessLevel.DEBIT)
       } else {
-        /*
-         * Read the Environment file
-         */
+        // Read the Environment file
         cardTransaction.processCommands()
       }
 
       val efEnvironmentHolder = calypsoCard.getFileBySfi(SFI_ENVIRONMENT_AND_HOLDER)
       val env = CardEnvironmentHolderParser().parse(efEnvironmentHolder.data.content)
 
-      /*
-       * Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for the current version) reject the card.
-       * <Abort Transaction if inTransactionFlag is true and exit process>
-       */
+      // Checks if the EnvVersionNumber of the Environment structure is not the expected one (==1
+      // for the current version), throws a dedicated exception if it is not the case (cancels the
+      // secured session before if any).
       if (env.envVersionNumber != VersionNumber.CURRENT_VERSION.key) {
-        if (inTransactionFlag) {
+        if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
         throw EnvironmentControlException(EnvironmentControlExceptionKey.WRONG_VERSION_NUMBER)
       }
 
-      /*
-       * Step 4 - If EnvEndDate points to a date in the past reject the card.
-       * <Abort Transaction if inTransactionFlag is true and exit process>
-       */
+      // Checks if the EnvEndDate points to a date in the past, throws a dedicated exception if it
+      // is the case (cancels the secured session before if any).
       val envEndDate = DateTime(env.getEnvEndDateAsDate())
       if (envEndDate.isBefore(now)) {
-        if (inTransactionFlag) {
+        if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
         throw EnvironmentControlException(EnvironmentControlExceptionKey.EXPIRED)
       }
 
-      /*
-       * Step 5 - Read and unpack the last event record.
-       */
-      cardTransaction.prepareReadRecord(SFI_EVENTS_LOG, RECORD_NUMBER_1.toInt())
+      // Read and unpack the last event record.
+      cardTransaction.prepareReadRecord(SFI_EVENTS_LOG, RECORD_NUMBER_1)
       cardTransaction.processCommands()
 
       val efEventLog = calypsoCard.getFileBySfi(SFI_EVENTS_LOG)
       val event = CardEventParser().parse(efEventLog.data.content)
 
-      /*
-       * Step 6 - If EventVersionNumber is not the expected one (==1 for the current version) reject the card
-       * (if ==0 return error status indicating clean card).
-       * <Abort Transaction if inTransactionFlag is true and exit process>
-       */
+      // Checks if EventVersionNumber is the expected one (==1 for the current version), throws a
+      // dedicated exception if it is not the case (differentiates if it is a non-personalized card)
+      // (cancels the secured session before if any).
       val eventVersionNumber = event.eventVersionNumber
       if (eventVersionNumber != VersionNumber.CURRENT_VERSION.key) {
-        if (inTransactionFlag) {
+        if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
         if (eventVersionNumber == VersionNumber.UNDEFINED.key) {
@@ -164,62 +134,42 @@ class ControlProcedure {
         }
       }
 
-      var contractEventNotValid = false
+      var contractEventValid = true
       val contractUsed = event.eventContractUsed
 
       val eventDateTime = DateTime(event.getEventDate())
       val eventValidityEndDate = eventDateTime.plusMinutes(ApplicationSettings.validationPeriod)
 
-      /*
-       * Step 7 - If EventLocation != value configured in the control terminal set the validated contract not valid flag as true and go to point CNT_READ.
-       */
+      // Checks contract event validity
+      // Event location should match the location configured for this terminal
       if (ApplicationSettings.location.id != event.eventLocation) {
-        contractEventNotValid = true
+        contractEventValid = false
       }
-      /*
-       * Step 8 - Else If EventDateStamp points to a date in the past
-       * -> set the validated contract not valid flag as true and go to point CNT_READ.
-       */
+      // Event date should be today
       else if (eventDateTime.withTimeAtStartOfDay().isBefore(now.withTimeAtStartOfDay())) {
-        contractEventNotValid = true
+        contractEventValid = false
       }
-
-      /*
-       * Step 9 - Else If (EventTimeStamp + Validation period configure in the control terminal) < current time of the control terminal
-       *  -> set the validated contract not valid flag as true.
-       */
+      // Event end of validity should be in the future
       else if (eventValidityEndDate.isBefore(now)) {
-        contractEventNotValid = true
+        contractEventValid = false
       }
 
-      /*
-       * Step 10 - CNT_READ: Read all contracts and the counter file
-       */
+      // Read all contracts and the counter file
       cardTransaction.prepareReadRecords(
-          SFI_CONTRACTS, RECORD_NUMBER_1.toInt(), RECORD_NUMBER_4.toInt(), CONTRACT_RECORD_SIZE)
-
-      // Read counters content
+          SFI_CONTRACTS, RECORD_NUMBER_1, RECORD_NUMBER_4, CONTRACT_RECORD_SIZE)
       cardTransaction.prepareReadCounter(SFI_COUNTER, COUNTER_RECORDS_NB)
       cardTransaction.processCommands()
 
       val efCounter = calypsoCard.getFileBySfi(SFI_COUNTER)
-
       val efContractParser = calypsoCard.getFileBySfi(SFI_CONTRACTS)
       val contracts = mutableMapOf<Int, CardContract>()
 
-      /*
-       * Step 11 - For each contract:
-       */
+      // Unpack all contracts
       efContractParser.data.allRecordsContent.forEach {
-        /*
-         * Step 12 - Unpack the contract
-         */
         contracts[it.key] = CardContractParser().parse(it.value)
       }
 
-      /*
-       * Retrieve contract used for last event
-       */
+      // Retrieve contract used for last event
       val eventContract =
           contracts.toList().filter { it.first == event.eventContractUsed }.map { it.second }
 
@@ -241,44 +191,26 @@ class ControlProcedure {
         var contractValidated = false
 
         if (contract.contractVersionNumber == VersionNumber.UNDEFINED) {
-          /*
-           * Step 13 - If the ContractVersionNumber == 0 then the contract is blank, move on to the next contract.
-           */
+          // If the ContractVersionNumber == 0 then the contract is blank, move on to the next
+          // contract.
         } else if (contract.contractVersionNumber != VersionNumber.CURRENT_VERSION) {
-          /*
-           * Step 14 - If ContractVersionNumber is not the expected one (==1 for the current version) reject the card.
-           * <Abort Transaction if inTransactionFlag is true and exit process>
-           */
+          // TODO Check what to do here
         } else {
-          /*
-           * Step 15 - If SAM available and ContractAuthenticator is not 0 perform the verification of the value
-           * by using the PSO Verify Signature command of the SAM.
-           */
+          // Check th contractAuthenticator
           @Suppress("ControlFlowWithEmptyBody")
-          if (inTransactionFlag && contract.contractAuthenticator != 0) {
-            /*
-             * Step 15.1 - If the value is wrong reject the card.
-             * <Abort Transaction if inTransactionFlag is true and exit process>
-             */
-            /*
-             * Step 15.2 - If the value of ContractSaleSam is present in the SAM Black List reject the card.
-             * <Abort Transaction if inTransactionFlag is true and exit process>
-             */
-            // TODO: steps 15.1 & 15.2
+          if (isSecureSessionMode && contract.contractAuthenticator != 0) {
+            // Place here the PSO Verify Signature command of the SAM to check the
+            // contractAuthenticator
           }
-          /*
-           * Step 16 - If ContractValidityEndDate points to a date in the past mark contract as expired.
-           */
+          // Check ContractValidityEndDate points to a date in the past mark contract as expired.
           val contractValidityEndDate = DateTime(contract.getContractValidityEndDateAsDate())
           if (contractValidityEndDate.isBefore(now)) {
             contractExpired = true
           }
 
-          /*
-           * Step 17 - If EventContractUsed points to the current contract index
-           * & not valid flag is false then mark it as Validated.
-           */
-          if (contractUsed == record && !contractEventNotValid) {
+          // If EventContractUsed points to the current contract index & valid flag is true
+          // then mark it as validated.
+          if (contractUsed == record && contractEventValid) {
             contractValidated = true
           }
 
@@ -287,9 +219,8 @@ class ControlProcedure {
             validationDate = eventDateTime
           }
 
-          /*
-           * Step 18 -   If the ContractTariff value for the contract is 2 or 3, unpack the counter associated to the contract to extract the counter value.
-           */
+          // If the ContractTariff value for the contract is 2 or 3, unpack the counter associated
+          // to the contract to extract the counter value.
           val nbTicketsLeft =
               if (contract.contractTariff == ContractPriority.MULTI_TRIP) {
                 efCounter.data.getContentAsCounterValue(record)
@@ -297,9 +228,7 @@ class ControlProcedure {
                 null
               }
 
-          /*
-           * Step 19 - Add contract data to the list of contracts read to return to the upper layer.
-           */
+          // Add contract data to the list of contracts read to return to the upper layer.
           displayedContract.add(
               ContractMapper.map(
                   contract = contract,
@@ -314,10 +243,8 @@ class ControlProcedure {
       Timber.i("Control procedure result : STATUS_OK")
       status = Status.TICKETS_FOUND
 
-      /*
-       * Step 20 - If inTransactionFlag is true, Close the session
-       */
-      if (inTransactionFlag) {
+      // Close the secure session if any
+      if (isSecureSessionMode) {
         if (status == Status.TICKETS_FOUND) {
           cardTransaction.processClosing()
         } else {
@@ -330,32 +257,30 @@ class ControlProcedure {
         validationList = arrayListOf(validation)
       }
 
-      /*
-       * Step 21 - Return the status of the operation to the upper layer. <Exit process>
-       */
+      // Return the status of the operation to the upper layer. <Exit process>
       return CardReaderResponse(
           status = status, lastValidationsList = validationList, titlesList = displayedContract)
-    } catch (e: EnvironmentControlException) {
-      Timber.e(e)
-      errorMessage = e.message
-    } catch (e: EventControlException) {
-      Timber.e(e)
-      errorMessage = e.message
-      status =
-          if (e.key == EventControlExceptionKey.CLEAN_CARD) {
-            Status.EMPTY_CARD
-          } else {
-            Status.ERROR
-          }
-    } catch (e: ControlException) {
-      Timber.e(e)
-      errorTitle = e.title
-      errorMessage = e.message
-      status = Status.ERROR
     } catch (e: Exception) {
-      Timber.e(e)
       errorMessage = e.message
-      status = Status.ERROR
+      Timber.e(e)
+      when (e) {
+        is EnvironmentControlException -> {}
+        is EventControlException -> {
+          status =
+              if (e.key == EventControlExceptionKey.CLEAN_CARD) {
+                Status.EMPTY_CARD
+              } else {
+                Status.ERROR
+              }
+        }
+        is ControlException -> {
+          errorTitle = e.title
+          status = Status.ERROR
+        }
+        else -> {
+          status = Status.ERROR
+        }
+      }
     }
 
     return CardReaderResponse(
@@ -375,6 +300,6 @@ class ControlProcedure {
 
   companion object {
     const val COUNTER_RECORDS_NB = 4
-    const val CONTRACT_RECORD_SIZE = 0x1D
+    const val CONTRACT_RECORD_SIZE = 29
   }
 }

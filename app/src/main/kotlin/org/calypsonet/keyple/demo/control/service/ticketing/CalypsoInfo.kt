@@ -25,15 +25,13 @@ object CalypsoInfo {
   const val AID_NORMALIZED_IDF = "A0000004040125090101"
   const val AID_OTHER = "Other"
 
-  const val RECORD_NUMBER_1: Byte = 1
-  const val RECORD_NUMBER_4: Byte = 4
+  const val RECORD_NUMBER_1: Int = 1
+  const val RECORD_NUMBER_4: Int = 4
 
   const val SFI_ENVIRONMENT_AND_HOLDER = 0x07.toByte()
   const val SFI_EVENTS_LOG = 0x08.toByte()
   const val SFI_CONTRACTS = 0x09.toByte()
   const val SFI_COUNTER = 0x19.toByte()
-
-  const val SAM_PROFILE_NAME = "SAM C1"
 
   const val DEFAULT_KIF_PERSONALIZATION = 0x21.toByte()
   const val DEFAULT_KIF_LOAD = 0x27.toByte()
