@@ -31,11 +31,8 @@ class DeviceSelectionActivity : BaseActivity() {
   private val mock: String = "Mock"
 
   override fun onCreate(savedInstanceState: Bundle?) {
-
     super.onCreate(savedInstanceState)
-
     setContentView(R.layout.activity_device_selection)
-
     // Bluebird
     if (BluebirdPlugin.PLUGIN_NAME.contains(mock)) {
       bluebirdBtn.setBackgroundColor(Color.GRAY)
@@ -53,21 +50,18 @@ class DeviceSelectionActivity : BaseActivity() {
         }
       }
     }
-
     // Coppernic
     coppernicBtn.setOnClickListener {
       ApplicationSettings.readerType = ReaderType.COPPERNIC
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
-
     // Famoco
     famocoBtn.setOnClickListener {
       ApplicationSettings.readerType = ReaderType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
-
     // Flowbird
     if (FlowbirdPlugin.PLUGIN_NAME.contains(mock)) {
       flowbirdBtn.setBackgroundColor(Color.GRAY)
@@ -78,7 +72,6 @@ class DeviceSelectionActivity : BaseActivity() {
         finish()
       }
     }
-
     // Standard NFC terminal
     nfcTerminalBtn.setOnClickListener {
       ApplicationSettings.readerType = ReaderType.NFC_TERMINAL

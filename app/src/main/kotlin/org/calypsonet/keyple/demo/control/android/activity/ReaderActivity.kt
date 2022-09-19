@@ -52,23 +52,19 @@ class ReaderActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_card_reader)
     setSupportActionBar(findViewById(R.id.toolbar))
-
     @Suppress("DEPRECATION")
     progress = ProgressDialog(this)
     @Suppress("DEPRECATION")
     progress.setMessage(getString(R.string.please_wait))
-
     progress.setCancelable(false)
   }
 
   override fun onResume() {
     super.onResume()
     loadingAnimation.playAnimation()
-
     if (!mainService.readersInitialized) {
       GlobalScope.launch {
         withContext(Dispatchers.Main) { showProgress() }
-
         withContext(Dispatchers.IO) {
           try {
             cardReaderObserver = CardReaderObserver()
@@ -121,9 +117,7 @@ class ReaderActivity : BaseActivity() {
    * @param readerEvent
    */
   private fun handleAppEvents(appState: AppState, readerEvent: CardReaderEvent?) {
-
     var newAppState = appState
-
     Timber.i(
         "Current state = $currentAppState, wanted new state = $newAppState, event = ${readerEvent?.type}")
     when (readerEvent?.type) {
@@ -132,12 +126,10 @@ class ReaderActivity : BaseActivity() {
           return
         }
         Timber.i("Process default selection...")
-
-        val seSelectionResult =
+        val cardSelectionResult =
             ticketingService.parseScheduledCardSelectionsResponse(
                 readerEvent.scheduledCardSelectionsResponse)
-
-        if (seSelectionResult.activeSelectionIndex == -1) {
+        if (cardSelectionResult.activeSelectionIndex == -1) {
           Timber.e("Card Not selected")
           val error = getString(R.string.card_invalid_aid)
           displayResult(
@@ -145,7 +137,6 @@ class ReaderActivity : BaseActivity() {
                   status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
           return
         }
-
         Timber.i("Card AID = ${ticketingService.cardAid}")
         if (CalypsoInfo.AID_1TIC_ICA_1 != ticketingService.cardAid &&
             CalypsoInfo.AID_1TIC_ICA_3 != ticketingService.cardAid &&
@@ -156,7 +147,6 @@ class ReaderActivity : BaseActivity() {
                   status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
           return
         }
-
         if (!ticketingService.checkStructure()) {
           val error = getString(R.string.card_invalid_structure)
           displayResult(
@@ -164,7 +154,6 @@ class ReaderActivity : BaseActivity() {
                   status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
           return
         }
-
         Timber.i("A Calypso Card selection succeeded.")
         newAppState = AppState.CARD_STATUS
       }
@@ -175,7 +164,6 @@ class ReaderActivity : BaseActivity() {
         Timber.w("Event type not handled.")
       }
     }
-
     when (newAppState) {
       AppState.WAIT_SYSTEM_READY, AppState.WAIT_CARD -> {
         currentAppState = newAppState
@@ -223,9 +211,7 @@ class ReaderActivity : BaseActivity() {
 
   private fun displayResult(cardReaderResponse: CardReaderResponse?) {
     if (cardReaderResponse != null) {
-
       runOnUiThread { loadingAnimation.cancelAnimation() }
-
       when (cardReaderResponse.status) {
         Status.TICKETS_FOUND, Status.EMPTY_CARD -> {
           val intent = Intent(this@ReaderActivity, CardContentActivity::class.java)

@@ -24,7 +24,6 @@ object ContractMapper {
       validationDate: DateTime?,
       nbTicketsLeft: Int?
   ): Contract {
-
     return Contract(
         name = contract.contractTariff.value,
         valid = contractValidated,

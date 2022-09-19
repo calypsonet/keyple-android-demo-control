@@ -31,6 +31,7 @@ class ValidationsRecyclerAdapter(private val validations: ArrayList<Validation>)
   }
 
   class LastValidationHolder(v: View) : RecyclerView.ViewHolder(v) {
+
     private var view: View = v
     private var validation: Validation? = null
 

@@ -23,7 +23,6 @@ class SplashScreenActivity : BaseActivity() {
     // Make sure this is before calling super.onCreate
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_splashscreen)
-
     Timer()
         .schedule(
             object : TimerTask() {

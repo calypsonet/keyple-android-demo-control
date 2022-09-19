@@ -58,7 +58,6 @@ class ControlProcedure {
     var validation: Validation? = null
     var status: Status = Status.ERROR
     val isSecureSessionMode = cardSecuritySettings != null
-
     val calypsoExtensionService = CalypsoExtensionService.getInstance()
 
     try {

@@ -29,41 +29,26 @@ import timber.log.Timber
 
 class CardContentActivity : BaseActivity() {
 
-  private lateinit var validationLinearLayoutManager: LinearLayoutManager
-  private lateinit var titleLinearLayoutManager: LinearLayoutManager
-  private lateinit var validationsAdapter: ValidationsRecyclerAdapter
-  private lateinit var titlesAdapter: TitlesRecyclerAdapter
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_card_content)
     setSupportActionBar(findViewById(R.id.toolbar))
-
     presentBtn.setOnClickListener { onBackPressed() }
-
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     val cardContent: CardReaderResponse = intent.getParcelableExtra(CARD_CONTENT)
-
-    validationLinearLayoutManager = LinearLayoutManager(this)
-    lastValidationList.layoutManager = validationLinearLayoutManager
-
-    titleLinearLayoutManager = LinearLayoutManager(this)
-    titlesList.layoutManager = titleLinearLayoutManager
-
+    lastValidationList.layoutManager = LinearLayoutManager(this)
+    titlesList.layoutManager = LinearLayoutManager(this)
     if (cardContent.titlesList.isNotEmpty()) {
-      titlesAdapter = TitlesRecyclerAdapter(cardContent.titlesList)
-      titlesList.adapter = titlesAdapter
+      titlesList.adapter = TitlesRecyclerAdapter(cardContent.titlesList)
       titlesList.visibility = View.VISIBLE
       emptyContract.visibility = View.GONE
     } else {
       titlesList.visibility = View.GONE
       emptyContract.visibility = View.VISIBLE
     }
-
     if (cardContent.lastValidationsList != null) {
       lastValidationListContainer.visibility = View.VISIBLE
-      validationsAdapter = ValidationsRecyclerAdapter(cardContent.lastValidationsList)
-      lastValidationList.adapter = validationsAdapter
+      lastValidationList.adapter = ValidationsRecyclerAdapter(cardContent.lastValidationsList)
       lastValidationList.setDivider(R.drawable.recycler_view_divider)
     } else {
       lastValidationListContainer.visibility = View.GONE
@@ -72,7 +57,6 @@ class CardContentActivity : BaseActivity() {
 
   override fun onResume() {
     super.onResume()
-
     if (mainService.readersInitialized) {
       mainService.stopNfcDetection()
       Timber.d("stopNfcDetection")

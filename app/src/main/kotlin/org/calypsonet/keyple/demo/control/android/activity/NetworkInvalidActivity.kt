@@ -28,7 +28,6 @@ class NetworkInvalidActivity : BaseActivity() {
     setContentView(R.layout.activity_network_invalid)
     setSupportActionBar(findViewById(R.id.toolbar))
     toolbarLogo.setImageResource(R.drawable.ic_logo_white)
-
     val cardContent: CardReaderResponse? = intent.getParcelableExtra(CARD_CONTENT)
     cardContent?.errorTitle?.let { invalid_title.text = it }
     invalidDescription.text = cardContent?.errorMessage
@@ -37,7 +36,6 @@ class NetworkInvalidActivity : BaseActivity() {
 
   override fun onResume() {
     super.onResume()
-
     if (mainService.readersInitialized) {
       mainService.stopNfcDetection()
       Timber.d("stopNfcDetection")

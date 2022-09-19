@@ -18,9 +18,7 @@ import org.calypsonet.keyple.demo.control.service.ticketing.model.Validation
 
 object ValidationMapper {
   fun map(event: CardEvent, contract: CardContract?, locations: List<Location>): Validation {
-
     val name = contract?.contractTariff?.value ?: "Event"
-
     return Validation(
         name = name,
         date = event.getEventDate(),

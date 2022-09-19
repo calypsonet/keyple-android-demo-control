@@ -32,12 +32,12 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
   }
 
   class TitleHolder(v: View) : RecyclerView.ViewHolder(v) {
+
     private var view: View = v
     private var title: Contract? = null
 
     fun bindItem(contract: Contract) {
       val context = view.context
-
       val titleDescription =
           if (contract.name == ContractPriority.SEASON_PASS.value) {
             context.getString(
@@ -55,7 +55,6 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
                       R.string.card_content_description_multi_trip_multiple, nbTicketsLeft)
             }
           }
-
       this.title = contract
       view.titleName.text = contract.name
       view.titleDescription.text = titleDescription

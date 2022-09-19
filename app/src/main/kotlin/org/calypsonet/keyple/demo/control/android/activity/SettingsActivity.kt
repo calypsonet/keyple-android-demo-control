@@ -31,18 +31,19 @@ class SettingsActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
     setContentView(R.layout.activity_settings)
     setSupportActionBar(findViewById(R.id.toolbar))
-
-    // Init location spinner
-    val locations = locationFileService.locations
-    val locationsAdapter =
-        ArrayAdapter(this, R.layout.spinner_item_location, R.id.spinner_item_text, locations)
-    spinnerLocationList.adapter = locationsAdapter
-
+    spinnerLocationList.adapter =
+        ArrayAdapter(
+            this,
+            R.layout.spinner_item_location,
+            R.id.spinner_item_text,
+            locationFileService.locations)
+    app_version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+    if (BuildConfig.DEBUG) {
+      validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("90")
+    }
     timeBtn.setOnClickListener { startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0) }
-
     startBtn.setOnClickListener {
       ApplicationSettings.location = spinnerLocationList.selectedItem as Location
       val validationPeriod = validationPeriodEdit.text.toString()
@@ -53,12 +54,6 @@ class SettingsActivity : BaseActivity() {
       } else {
         Toast.makeText(this, R.string.msg_location_period_empty, Toast.LENGTH_LONG).show()
       }
-    }
-
-    app_version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
-
-    if (BuildConfig.DEBUG) {
-      validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("90")
     }
   }
 }
