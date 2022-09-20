@@ -1,3 +1,4 @@
+import java.util.Properties
 ///////////////////////////////////////////////////////////////////////////////
 //  GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,15 +19,24 @@ android {
     compileSdkVersion(29)
     buildToolsVersion("30.0.3")
 
+    signingConfigs {
+        create("default") {
+            val properties = Properties().apply {
+                load(File("signing.properties").reader())
+            }
+            storeFile = File(properties.getProperty("storeFilePath"))
+            storePassword = properties.getProperty("storePassword")
+            keyPassword = properties.getProperty("keyPassword")
+            keyAlias = properties.getProperty("keyAlias")
+        }
+    }
+
     defaultConfig {
         applicationId("org.calypsonet.keyple.demo.control")
         minSdkVersion(24)
         targetSdkVersion(29)
         versionCode(6)
         versionName(project.version.toString())
-
-        testInstrumentationRunner("android.support.test.runner.AndroidJUnitRunner")
-        multiDexEnabled = true
     }
 
     buildTypes {
@@ -36,6 +46,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("default")
         }
     }
 

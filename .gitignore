@@ -89,3 +89,4 @@ lint/tmp/
 *.hprof
 
 /LICENSE_HEADER
+/signing.properties

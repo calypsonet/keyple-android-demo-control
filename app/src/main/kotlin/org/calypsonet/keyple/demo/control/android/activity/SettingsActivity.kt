@@ -16,7 +16,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_settings.app_version
 import kotlinx.android.synthetic.main.activity_settings.spinnerLocationList
 import kotlinx.android.synthetic.main.activity_settings.startBtn
@@ -39,10 +38,8 @@ class SettingsActivity : BaseActivity() {
             R.layout.spinner_item_location,
             R.id.spinner_item_text,
             locationFileService.locations)
+    validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("90")
     app_version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
-    if (BuildConfig.DEBUG) {
-      validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("90")
-    }
     timeBtn.setOnClickListener { startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0) }
     startBtn.setOnClickListener {
       ApplicationSettings.location = spinnerLocationList.selectedItem as Location
@@ -52,7 +49,7 @@ class SettingsActivity : BaseActivity() {
         startActivity(Intent(this, HomeActivity::class.java))
         finish()
       } else {
-        Toast.makeText(this, R.string.msg_location_period_empty, Toast.LENGTH_LONG).show()
+        showToast(getString(R.string.msg_location_period_empty))
       }
     }
   }
