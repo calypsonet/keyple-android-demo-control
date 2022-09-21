@@ -14,11 +14,13 @@ package org.calypsonet.keyple.demo.control.android.adapter
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlinx.android.synthetic.main.title_recycler_row.view.titleDescription
 import kotlinx.android.synthetic.main.title_recycler_row.view.titleName
 import kotlinx.android.synthetic.main.title_recycler_row.view.validImg
 import org.calypsonet.keyple.demo.common.parser.model.constant.ContractPriority
-import org.calypsonet.keyple.demo.common.parser.util.DateUtil
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.inflate
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Contract
@@ -42,8 +44,10 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
           if (contract.name == ContractPriority.SEASON_PASS.value) {
             context.getString(
                 R.string.card_content_description_season_pass,
-                DateUtil.formatDateDisplayedContract(contract.contractValidityStartDate.toDate()),
-                DateUtil.formatDateDisplayedContract(contract.contractValidityEndDate.toDate()))
+                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+                    .format(contract.contractValidityStartDate.toDate()),
+                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+                    .format(contract.contractValidityEndDate.toDate()))
           } else {
             when (val nbTicketsLeft = contract.nbTicketsLeft ?: 0) {
               0 -> context.getString(R.string.card_content_description_multi_trip_zero)
