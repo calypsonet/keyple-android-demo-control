@@ -20,7 +20,7 @@ import kotlin.collections.ArrayList
 import kotlinx.android.synthetic.main.title_recycler_row.view.titleDescription
 import kotlinx.android.synthetic.main.title_recycler_row.view.titleName
 import kotlinx.android.synthetic.main.title_recycler_row.view.validImg
-import org.calypsonet.keyple.demo.common.parser.model.constant.ContractPriority
+import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.inflate
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Contract
@@ -41,7 +41,7 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
     fun bindItem(contract: Contract) {
       val context = view.context
       val titleDescription =
-          if (contract.name == ContractPriority.SEASON_PASS.value) {
+          if (contract.name == PriorityCode.SEASON_PASS.value) {
             context.getString(
                 R.string.card_content_description_season_pass,
                 SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())

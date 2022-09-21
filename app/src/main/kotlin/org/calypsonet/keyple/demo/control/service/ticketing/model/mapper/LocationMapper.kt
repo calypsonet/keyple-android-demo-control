@@ -11,11 +11,11 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.service.ticketing.model.mapper
 
-import org.calypsonet.keyple.demo.common.parser.model.CardEvent
+import org.calypsonet.keyple.demo.common.model.EventStructure
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Location
 
 object LocationMapper {
-  fun map(locations: List<Location>, event: CardEvent): Location {
+  fun map(locations: List<Location>, event: EventStructure): Location {
     return locations.filter { event.eventLocation == it.id }[0]
   }
 }

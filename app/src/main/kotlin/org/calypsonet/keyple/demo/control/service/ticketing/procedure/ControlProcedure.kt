@@ -11,11 +11,11 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.service.ticketing.procedure
 
+import org.calypsonet.keyple.demo.common.model.ContractStructure
+import org.calypsonet.keyple.demo.common.model.EventStructure
+import org.calypsonet.keyple.demo.common.model.type.PriorityCode
+import org.calypsonet.keyple.demo.common.model.type.VersionNumber
 import org.calypsonet.keyple.demo.common.parser.*
-import org.calypsonet.keyple.demo.common.parser.model.CardContract
-import org.calypsonet.keyple.demo.common.parser.model.CardEvent
-import org.calypsonet.keyple.demo.common.parser.model.constant.ContractPriority
-import org.calypsonet.keyple.demo.common.parser.model.constant.VersionNumber
 import org.calypsonet.keyple.demo.control.ApplicationSettings
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.RECORD_NUMBER_1
 import org.calypsonet.keyple.demo.control.service.ticketing.CalypsoInfo.RECORD_NUMBER_4
@@ -92,12 +92,12 @@ class ControlProcedure {
       }
 
       val efEnvironmentHolder = calypsoCard.getFileBySfi(SFI_ENVIRONMENT_AND_HOLDER)
-      val env = CardEnvironmentHolderParser().parse(efEnvironmentHolder.data.content)
+      val env = EnvironmentHolderStructureParser().parse(efEnvironmentHolder.data.content)
 
       // Step 3 - If EnvVersionNumber of the Environment structure is not the expected one (==1 for
       // the current version) reject the card.
       // <Abort Secure Session if any>
-      if (env.envVersionNumber != VersionNumber.CURRENT_VERSION.key) {
+      if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
         if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
@@ -106,7 +106,7 @@ class ControlProcedure {
 
       // Step 4 - If EnvEndDate points to a date in the past reject the card.
       // <Abort Secure Session if any>
-      val envEndDate = DateTime(env.getEnvEndDateAsDate())
+      val envEndDate = DateTime(env.envEndDate)
       if (envEndDate.isBefore(now)) {
         if (isSecureSessionMode) {
           cardTransaction.processCancel()
@@ -119,17 +119,17 @@ class ControlProcedure {
       cardTransaction.processCommands()
 
       val efEventLog = calypsoCard.getFileBySfi(SFI_EVENTS_LOG)
-      val event = CardEventParser().parse(efEventLog.data.content)
+      val event = EventStructureParser().parse(efEventLog.data.content)
 
       // Step 6 - If EventVersionNumber is not the expected one (==1 for the current version) reject
       // the card (if ==0 return error status indicating clean card).
       // <Abort Secure Session if any>
       val eventVersionNumber = event.eventVersionNumber
-      if (eventVersionNumber != VersionNumber.CURRENT_VERSION.key) {
+      if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
         if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
-        if (eventVersionNumber == VersionNumber.UNDEFINED.key) {
+        if (eventVersionNumber == VersionNumber.UNDEFINED) {
           throw EventControlException(EventControlExceptionKey.CLEAN_CARD)
         } else {
           throw EventControlException(EventControlExceptionKey.WRONG_VERSION_NUMBER)
@@ -139,7 +139,7 @@ class ControlProcedure {
       var contractEventValid = true
       val contractUsed = event.eventContractUsed
 
-      val eventDateTime = DateTime(event.getEventDate())
+      val eventDateTime = DateTime(event.eventDatetime)
       val eventValidityEndDate = eventDateTime.plusMinutes(ApplicationSettings.validationPeriod)
 
       // Step 7 - If EventLocation != value configured in the control terminal set the validated
@@ -169,12 +169,12 @@ class ControlProcedure {
       val efCounters = calypsoCard.getFileBySfi(SFI_COUNTER)
 
       val efContracts = calypsoCard.getFileBySfi(SFI_CONTRACTS)
-      val contracts = mutableMapOf<Int, CardContract>()
+      val contracts = mutableMapOf<Int, ContractStructure>()
 
       // Step 11 - For each contract:
       efContracts.data.allRecordsContent.forEach {
         // Step 12 - Unpack the contract
-        contracts[it.key] = CardContractParser().parse(it.value)
+        contracts[it.key] = ContractStructureParser().parse(it.value)
       }
 
       // Retrieve contract used for last event
@@ -220,7 +220,7 @@ class ControlProcedure {
           }
           // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
           // expired.
-          val contractValidityEndDate = DateTime(contract.getContractValidityEndDateAsDate())
+          val contractValidityEndDate = DateTime(contract.contractValidityEndDate)
           if (contractValidityEndDate.isBefore(now)) {
             contractExpired = true
           }
@@ -239,7 +239,7 @@ class ControlProcedure {
           // Step 18 -   If the ContractTariff value for the contract is 2 or 3, unpack the counter
           // associated to the contract to extract the counter value.
           val nbTicketsLeft =
-              if (contract.contractTariff == ContractPriority.MULTI_TRIP) {
+              if (contract.contractTariff == PriorityCode.MULTI_TRIP) {
                 efCounters.data.getContentAsCounterValue(record)
               } else {
                 null
@@ -311,8 +311,8 @@ class ControlProcedure {
    * An event is considered valid for display if an eventTimeStamp or an eventDateStamp has been set
    * during a previous validation
    */
-  private fun isValidEvent(event: CardEvent): Boolean {
-    return event.eventTimeStamp != 0 || event.eventDateStamp != 0
+  private fun isValidEvent(event: EventStructure): Boolean {
+    return event.eventTimeStamp.value != 0 || event.eventDateStamp.value != 0
   }
 
   companion object {

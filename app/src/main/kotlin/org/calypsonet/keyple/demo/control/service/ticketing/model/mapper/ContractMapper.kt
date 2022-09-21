@@ -11,13 +11,13 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.service.ticketing.model.mapper
 
-import org.calypsonet.keyple.demo.common.parser.model.CardContract
+import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.control.service.ticketing.model.Contract
 import org.joda.time.DateTime
 
 object ContractMapper {
   fun map(
-      contract: CardContract,
+      contract: ContractStructure,
       record: Int,
       contractValidated: Boolean,
       contractExpired: Boolean,
@@ -30,8 +30,8 @@ object ContractMapper {
         record = record,
         validationDate = validationDate,
         expired = contractExpired,
-        contractValidityStartDate = DateTime(contract.getContractSaleDateAsDate()),
-        contractValidityEndDate = DateTime(contract.getContractValidityEndDateAsDate()),
+        contractValidityStartDate = DateTime(contract.contractSaleDate),
+        contractValidityEndDate = DateTime(contract.contractValidityEndDate),
         nbTicketsLeft = nbTicketsLeft)
   }
 }
