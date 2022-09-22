@@ -30,8 +30,8 @@ object ContractMapper {
         record = record,
         validationDate = validationDate,
         expired = contractExpired,
-        contractValidityStartDate = DateTime(contract.contractSaleDate),
-        contractValidityEndDate = DateTime(contract.contractValidityEndDate),
+        contractValidityStartDate = DateTime(contract.contractSaleDate.date),
+        contractValidityEndDate = DateTime(contract.contractValidityEndDate.date),
         nbTicketsLeft = nbTicketsLeft)
   }
 }
