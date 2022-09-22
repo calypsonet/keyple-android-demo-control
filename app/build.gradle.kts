@@ -15,19 +15,24 @@ plugins {
 ///////////////////////////////////////////////////////////////////////////////
 val kotlinVersion: String by project
 val archivesBaseName: String by project
+val signingPropertiesFile = File("signing.properties")
 android {
     compileSdkVersion(29)
     buildToolsVersion("30.0.3")
 
     signingConfigs {
         create("default") {
-            val properties = Properties().apply {
-                load(File("signing.properties").reader())
+            // If the application has to be signed, the elements necessary for this operation
+            // must be defined in a 'signing.properties' file placed at the root of the project.
+            if (signingPropertiesFile.exists()) {
+                val properties = Properties().apply {
+                    load(signingPropertiesFile.reader())
+                }
+                storeFile = File(properties.getProperty("storeFilePath"))
+                storePassword = properties.getProperty("storePassword")
+                keyPassword = properties.getProperty("keyPassword")
+                keyAlias = properties.getProperty("keyAlias")
             }
-            storeFile = File(properties.getProperty("storeFilePath"))
-            storePassword = properties.getProperty("storePassword")
-            keyPassword = properties.getProperty("keyPassword")
-            keyAlias = properties.getProperty("keyAlias")
         }
     }
 
@@ -46,7 +51,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("default")
+            if (signingPropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("default")
+            }
         }
     }
 
