@@ -14,8 +14,8 @@ package org.calypsonet.keyple.demo.control
 import android.content.Context
 import androidx.multidex.MultiDex
 import dagger.android.DaggerApplication
-import org.calypsonet.keyple.demo.control.android.di.AppComponent
-import org.calypsonet.keyple.demo.control.android.di.DaggerAppComponent
+import org.calypsonet.keyple.demo.control.ui.di.AppComponent
+import org.calypsonet.keyple.demo.control.ui.di.DaggerAppComponent
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 
