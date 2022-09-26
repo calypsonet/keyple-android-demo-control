@@ -38,7 +38,7 @@ class SettingsActivity : BaseActivity() {
             R.layout.spinner_item_location,
             R.id.spinner_item_text,
             locationRepository.locations)
-    validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("90")
+    validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("10")
     app_version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
     timeBtn.setOnClickListener { startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0) }
     startBtn.setOnClickListener {
