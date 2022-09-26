@@ -22,7 +22,7 @@ import org.calypsonet.keyple.demo.control.ui.deviceselection.DeviceSelectionActi
 @Module
 abstract class UIModule {
 
-  @ActivityScoped @ContributesAndroidInjector abstract fun splashScreenActivity(): MainActivity
+  @ActivityScoped @ContributesAndroidInjector abstract fun mainActivity(): MainActivity
 
   @ActivityScoped @ContributesAndroidInjector abstract fun settingsActivity(): SettingsActivity
 

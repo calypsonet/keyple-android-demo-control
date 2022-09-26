@@ -23,7 +23,7 @@ class MainActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     // Make sure this is before calling super.onCreate
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_splashscreen)
+    setContentView(R.layout.activity_main)
     Timer()
         .schedule(
             object : TimerTask() {
