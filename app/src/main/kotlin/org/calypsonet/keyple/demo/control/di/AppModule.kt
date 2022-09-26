@@ -9,18 +9,16 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.di.scope
+package org.calypsonet.keyple.demo.control.di
 
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import javax.inject.Scope
+import android.content.Context
+import dagger.Binds
+import dagger.Module
+import org.calypsonet.keyple.demo.control.Application
 
-@Scope
-@Retention(RetentionPolicy.RUNTIME)
-@Target(
-    AnnotationTarget.ANNOTATION_CLASS,
-    AnnotationTarget.CLASS,
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER)
-annotation class FragmentScoped
+@Suppress("unused")
+@Module
+abstract class AppModule {
+  // expose Application as an injectable context
+  @Binds abstract fun bindContext(application: Application): Context
+}

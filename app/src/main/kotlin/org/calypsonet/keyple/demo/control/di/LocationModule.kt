@@ -9,11 +9,19 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.di.scope
+package org.calypsonet.keyple.demo.control.di
 
-import java.lang.annotation.Documented
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import javax.inject.Scope
+import android.content.Context
+import dagger.Module
+import dagger.Provides
+import org.calypsonet.keyple.demo.control.data.LocationRepository
+import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 
-@Documented @Scope @Retention(RetentionPolicy.RUNTIME) annotation class AppScoped
+@Suppress("unused")
+@Module
+class LocationModule {
+
+  @Provides
+  @AppScoped
+  fun providesLocationRepository(context: Context): LocationRepository = LocationRepository(context)
+}

@@ -9,7 +9,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.activity
+package org.calypsonet.keyple.demo.control.ui
 
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_network_invalid.invalidDescription
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_network_invalid.presentBtn
 import kotlinx.android.synthetic.main.logo_toolbar.toolbarLogo
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
-import org.calypsonet.keyple.demo.control.ui.activity.ReaderActivity.Companion.CARD_CONTENT
+import org.calypsonet.keyple.demo.control.ui.ReaderActivity.Companion.CARD_CONTENT
 import timber.log.Timber
 
 class NetworkInvalidActivity : BaseActivity() {

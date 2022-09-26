@@ -16,7 +16,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_bg"
-    tools:context="org.calypsonet.keyple.demo.control.ui.activity.ReaderActivity">
+    tools:context="org.calypsonet.keyple.demo.control.ui.ReaderActivity">
 
     <include
         android:id="@+id/appBarLayout"

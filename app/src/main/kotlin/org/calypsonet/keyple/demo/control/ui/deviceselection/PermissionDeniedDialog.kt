@@ -9,7 +9,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.dialog
+package org.calypsonet.keyple.demo.control.ui.deviceselection
 
 import android.app.Dialog
 import android.os.Bundle

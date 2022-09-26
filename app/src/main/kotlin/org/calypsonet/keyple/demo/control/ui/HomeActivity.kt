@@ -9,34 +9,22 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.activity
+package org.calypsonet.keyple.demo.control.ui
 
 import android.content.Intent
 import android.os.Bundle
-import java.util.Timer
-import java.util.TimerTask
+import kotlinx.android.synthetic.main.activity_home.locationSelected
+import kotlinx.android.synthetic.main.activity_home.startBtn
 import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.data.model.AppSettings
 
-class MainActivity : BaseActivity() {
+class HomeActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    // Make sure this is before calling super.onCreate
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_splashscreen)
-    Timer()
-        .schedule(
-            object : TimerTask() {
-              override fun run() {
-                if (!isFinishing) {
-                  startActivity(Intent(applicationContext, DeviceSelectionActivity::class.java))
-                  finish()
-                }
-              }
-            },
-            SPLASH_MAX_DELAY_MS.toLong())
-  }
-
-  companion object {
-    private const val SPLASH_MAX_DELAY_MS = 2000
+    setContentView(R.layout.activity_home)
+    setSupportActionBar(findViewById(R.id.toolbar))
+    locationSelected.text = AppSettings.location.toString()
+    startBtn.setOnClickListener { startActivity(Intent(this, ReaderActivity::class.java)) }
   }
 }

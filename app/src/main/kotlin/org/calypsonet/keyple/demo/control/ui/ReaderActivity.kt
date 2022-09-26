@@ -9,7 +9,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.activity
+package org.calypsonet.keyple.demo.control.ui
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -26,7 +26,8 @@ import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Status
-import org.calypsonet.keyple.demo.control.ui.di.scope.ActivityScoped
+import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
+import org.calypsonet.keyple.demo.control.ui.cardcontent.CardContentActivity
 import org.calypsonet.terminal.reader.CardReaderEvent
 import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi
 import timber.log.Timber

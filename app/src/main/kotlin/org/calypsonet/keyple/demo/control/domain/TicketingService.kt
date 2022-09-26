@@ -20,7 +20,7 @@ import org.calypsonet.keyple.demo.control.data.ReaderRepository
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Location
 import org.calypsonet.keyple.demo.control.data.model.ReaderType
-import org.calypsonet.keyple.demo.control.ui.di.scope.AppScoped
+import org.calypsonet.keyple.demo.control.di.scope.AppScoped
 import org.calypsonet.terminal.calypso.WriteAccessLevel
 import org.calypsonet.terminal.calypso.card.CalypsoCard
 import org.calypsonet.terminal.calypso.sam.CalypsoSam

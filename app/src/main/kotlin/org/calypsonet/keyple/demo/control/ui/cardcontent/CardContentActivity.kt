@@ -9,7 +9,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.activity
+package org.calypsonet.keyple.demo.control.ui.cardcontent
 
 import android.os.Bundle
 import android.view.View
@@ -22,9 +22,8 @@ import kotlinx.android.synthetic.main.activity_card_content.titlesList
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.setDivider
-import org.calypsonet.keyple.demo.control.ui.activity.ReaderActivity.Companion.CARD_CONTENT
-import org.calypsonet.keyple.demo.control.ui.adapter.TitlesRecyclerAdapter
-import org.calypsonet.keyple.demo.control.ui.adapter.ValidationsRecyclerAdapter
+import org.calypsonet.keyple.demo.control.ui.BaseActivity
+import org.calypsonet.keyple.demo.control.ui.ReaderActivity.Companion.CARD_CONTENT
 import timber.log.Timber
 
 class CardContentActivity : BaseActivity() {

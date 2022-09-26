@@ -9,7 +9,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.adapter
+package org.calypsonet.keyple.demo.control.ui.cardcontent
 
 import android.view.View
 import android.view.ViewGroup

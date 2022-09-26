@@ -9,7 +9,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ************************************************************************************** */
-package org.calypsonet.keyple.demo.control.ui.activity
+package org.calypsonet.keyple.demo.control.ui.deviceselection
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -21,8 +21,8 @@ import kotlinx.android.synthetic.main.activity_device_selection.*
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.ReaderType
-import org.calypsonet.keyple.demo.control.ui.dialog.PermissionDeniedDialog
-import org.calypsonet.keyple.demo.control.ui.util.PermissionHelper
+import org.calypsonet.keyple.demo.control.ui.BaseActivity
+import org.calypsonet.keyple.demo.control.ui.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
 import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 

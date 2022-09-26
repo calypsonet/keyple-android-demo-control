@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_bg"
-    tools:context="org.calypsonet.keyple.demo.control.ui.activity.SettingsActivity">
+    tools:context="org.calypsonet.keyple.demo.control.ui.SettingsActivity">
 
     <Button
         android:id="@+id/timeBtn"
