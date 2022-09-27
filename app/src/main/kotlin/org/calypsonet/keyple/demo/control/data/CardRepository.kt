@@ -160,10 +160,10 @@ class CardRepository {
       // Step 10 - CNT_READ: Read all contracts and the counter file
       cardTransaction.prepareReadRecords(
           CardConstant.SFI_CONTRACTS, 1, nbContractRecords, CardConstant.CONTRACT_RECORD_SIZE_BYTES)
-      cardTransaction.prepareReadCounter(CardConstant.SFI_COUNTER, nbContractRecords)
+      cardTransaction.prepareReadCounter(CardConstant.SFI_COUNTERS, nbContractRecords)
       cardTransaction.processCommands()
 
-      val efCounters = calypsoCard.getFileBySfi(CardConstant.SFI_COUNTER)
+      val efCounters = calypsoCard.getFileBySfi(CardConstant.SFI_COUNTERS)
 
       val efContracts = calypsoCard.getFileBySfi(CardConstant.SFI_CONTRACTS)
       val contracts = mutableMapOf<Int, ContractStructure>()
