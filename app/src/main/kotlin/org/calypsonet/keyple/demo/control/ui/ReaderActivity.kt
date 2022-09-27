@@ -21,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
@@ -121,30 +120,11 @@ class ReaderActivity : BaseActivity() {
         if (newAppState == AppState.WAIT_SYSTEM_READY) {
           return
         }
-        Timber.i("Process default selection...")
-        val cardSelectionResult =
-            ticketingService.parseScheduledCardSelectionsResponse(
-                readerEvent.scheduledCardSelectionsResponse)
-        if (cardSelectionResult.activeSelectionIndex == -1) {
+        Timber.i("Process the selection result...")
+        val error =
+            ticketingService.analyseSelectionResult(readerEvent.scheduledCardSelectionsResponse)
+        if (error != null) {
           Timber.e("Card Not selected")
-          val error = getString(R.string.card_invalid_aid)
-          displayResult(
-              CardReaderResponse(
-                  status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
-          return
-        }
-        Timber.i("Card AID = ${ticketingService.cardAid}")
-        if (CardConstant.AID_1TIC_ICA_1 != ticketingService.cardAid &&
-            CardConstant.AID_1TIC_ICA_3 != ticketingService.cardAid &&
-            CardConstant.AID_NORMALIZED_IDF != ticketingService.cardAid) {
-          val error = getString(R.string.card_invalid_aid)
-          displayResult(
-              CardReaderResponse(
-                  status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
-          return
-        }
-        if (!ticketingService.checkStructure()) {
-          val error = getString(R.string.card_invalid_structure)
           displayResult(
               CardReaderResponse(
                   status = Status.INVALID_CARD, titlesList = arrayListOf(), errorMessage = error))
