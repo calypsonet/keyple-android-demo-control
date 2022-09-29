@@ -2,27 +2,31 @@
 
 This is the repository for the Keyple Android Control Demo application. 
 
-This demo is an open source project provided by [Calypso Networks Association](https://calypsonet.org),
-you can adapt the demo for your cards, terminals, projects, etc. 
-
-This demo shows how to easily control a contract (Season Pass and/or Multi-trip ticket) written on a Calypso card
-using the [Eclipse Keyple](https://keyple.org) components.
-
-The demo application runs on the following devices:
-- `Bluebird` via the proprietary plugin [Bluebird](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib).
-- `Coppernic` via the open source plugin [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic).
-- `Famoco` via the open source plugins [Famoco](https://github.com/calypsonet/keyple-famoco) (for SAM access) and [Android NFC](https://keyple.org/components-java/plugins/nfc/) (for card access).
-- `Flowbird` via the proprietary plugin [Flowbird](https://github.com/calypsonet/keyple-android-plugin-flowbird).
+This demo is an open source project provided by the [Calypso Networks Association](https://calypsonet.org) implementing 
+the [Eclipse Keyple SDK](https://keyple.org) in a typical use case that can serve as a basis for building a ticketing 
+ecosystem based on contactless cards and/or NFC smartphones.
 
 The source code and APK are available at  [calypsonet/keyple-android-demo-control/releases](https://github.com/calypsonet/keyple-android-demo-control/releases)
 
-By default, proprietary plugins are deactivated.
-If you want to activate them, then here is the procedure to follow:
-1. make an explicit request to CNA to obtain the desired plugin,
-2. copy the plugin into the `/app/libs/` directory,
-3. delete in the `/app/libs/` directory the plugin with the same name but suffixed with `-mock` (e.g. xxx-mock.aar),
-4. compile the project via the gradle `build` command,
-5. deploy the new apk on the device.
+The code can be easily adapted to other cards, terminals and business logic.
+
+It shows how to easily control a card following a validation performed with the [Keyple Demo Validation](https://github.com/calypsonet/keyple-android-demo-validation) 
+application (entry into the transportation network with a Season Pass and/or Multi-trip ticket). 
+The contracts being updated in the Calypso card with the Android application of the [Keyple Remote Demo package](https://github.com/calypsonet/keyple-java-demo-remote).
+
+The demo application was tested on the following terminals:
+- `Famoco FX205` via the open source plugins [Famoco](https://github.com/calypsonet/keyple-famoco) (for SAM access) and [Android NFC](https://keyple.org/components-java/plugins/nfc/) (for card access).
+- `Coppernic C-One 2` via the open source plugin [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic).
+- `Standard NFC smartphone` via the open source plugin [Android NFC](https://keyple.org/components-java/plugins/nfc/).
+
+The following terminals have also been tested but as they require non-open source libraries, they are not active by default (see [Using proprietary plugins](#using-proprietary-plugins))  
+- `Bluebird EF501` via the proprietary plugin [Bluebird](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib).
+- `Flowbird Axio 2` via the proprietary plugin [Flowbird](https://github.com/calypsonet/keyple-android-plugin-flowbird).
+
+All exchanges made with the controlled card are potentially cryptographically certified by a security module (SAM) when 
+it is installed and available.
+However, if this is not the case, the validity of the card is made from a simple reading of the data (this is always 
+the case when the application is launched on a standard smartphone).
 
 ## Keyple Demos
 
@@ -31,19 +35,11 @@ This demo is part of a set of three demos:
 * [Keyple Validation Demo](https://github.com/calypsonet/keyple-android-demo-validation)
 * [Keyple Control Demo](https://github.com/calypsonet/keyple-android-demo-control)
 
-## Calypso Card Applications
+These demos are all based on a common library that defines elements such as constants and data structures implemented 
+for the logic of the ticketing application.: [Keyple Demo Common Library](https://github.com/calypsonet/keyple-demo-common-lib).
 
-The demo works with the cards provided in the [Test kit](https://calypsonet.org/technical-support-documentation/)
-
-This demo can be used with Calypso cards with the following configurations:
-* AID 315449432E49434131h - File Structure 05h (CD Light/GTML Compatibility)
-* AID 315449432E49434131h - File Structure 02h (Revision 2 Minimum with MF files)
-* AID 315449432E49434133h - File Structure 32h (Calypso Light Classic)
-* AID A0000004040125090101h - File Structure 05h (CD Light/GTML Compatibility)
-
-## Data Structures
-
-The data structures are defined in the library common to all the demo applications [Keyple Demo Common Library](https://github.com/calypsonet/keyple-demo-common-lib).
+Please refer to the [README](https://github.com/calypsonet/keyple-demo-common-lib/blob/main/README.md) 
+file of this library to discover these data structures.
 
 ## Control Procedure
 
@@ -119,7 +115,7 @@ This procedure's main steps are as follows:
 
 ## Ticketing implementation
 
-Below are the classes useful for implementing the ticketing layer:
+Below are the description of the classes useful for implementing the ticketing layer:
 - `TicketingService`
 - `ReaderRepository`
 - `ReaderActivity.CardReaderObserver`
@@ -163,3 +159,13 @@ This reader is registered when the reader is registered and removed when the rea
 ### CardRepository
 
 This class contains the implementation of the "Control" procedure.
+
+## Using proprietary plugins
+
+By default, proprietary plugins are deactivated.
+If you want to activate them, then here is the procedure to follow:
+1. make an explicit request to CNA to obtain the desired plugin,
+2. copy the plugin into the `/app/libs/` directory,
+3. delete in the `/app/libs/` directory the plugin with the same name but suffixed with `-mock` (e.g. xxx-mock.aar),
+4. compile the project via the gradle `build` command,
+5. deploy the new apk on the device.
