@@ -164,7 +164,7 @@ This class contains the implementation of the "Control" procedure.
 
 By default, proprietary plugins are deactivated.
 If you want to activate them, then here is the procedure to follow:
-1. make an explicit request to CNA to obtain the desired plugin,
+1. make an explicit request to [CNA](https://calypsonet.org/contact-us/) to obtain the desired plugin,
 2. copy the plugin into the `/app/libs/` directory,
 3. delete in the `/app/libs/` directory the plugin with the same name but suffixed with `-mock` (e.g. xxx-mock.aar),
 4. compile the project via the gradle `build` command,
