@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Build process using flavours mechanism replaced by standard single build process.
 - Major refactoring of the source code.
 ### Upgraded
+- `keyple-demo-common-lib:1.0.0-SNAPSHOT`
 - `calypsonet-terminal-calypso-java-api:1.2.+`
 - `keyple-service-java-lib:2.1.0`
 - `keyple-card-calypso-java-lib:2.2.1`
