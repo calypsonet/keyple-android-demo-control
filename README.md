@@ -2,104 +2,46 @@
 
 This is the repository for the Keyple Android Control Demo application. 
 
-This demo is an open source project provided by [Calypso Networks Association](https://calypsonet.org),
-you can adapt the demo for your cards, terminals, projects, etc. 
-
-This demo shows how to easily control a contract (Season Pass and/or Multi-trip ticket) written on a Calypso card
-using the [Eclipse Keyple](https://keyple.org) components.
-
-The demo application runs on the following devices:
-- `Bluebird` via the proprietary plugin [Bluebird](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib).
-- `Coppernic` via the open source plugin [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic).
-- `Famoco` via the open source plugins [Famoco](https://github.com/calypsonet/keyple-famoco) (for SAM access) and [Android NFC](https://keyple.org/components-java/plugins/nfc/) (for card access).
-- `Flowbird` via the proprietary plugin [Flowbird](https://github.com/calypsonet/keyple-android-plugin-flowbird).
+This demo is an open source project provided by the [Calypso Networks Association](https://calypsonet.org) implementing 
+the [Eclipse Keyple SDK](https://keyple.org) in a typical use case that can serve as a basis for building a ticketing 
+ecosystem based on contactless cards and/or NFC smartphones.
 
 The source code and APK are available at  [calypsonet/keyple-android-demo-control/releases](https://github.com/calypsonet/keyple-android-demo-control/releases)
 
-By default, proprietary plugins are deactivated.
-If you want to activate them, then here is the procedure to follow:
-1. make an explicit request to CNA to obtain the desired plugin,
-2. copy the plugin into the `/app/libs/` directory,
-3. delete in the `/app/libs/` directory the plugin with the same name but suffixed with `-mock` (e.g. xxx-mock.aar),
-4. compile the project via the gradle `build` command,
-5. deploy the new apk on the device.
+The code can be easily adapted to other cards, terminals and business logic.
+
+It shows how to easily control a card following a validation performed with the [Keyple Demo Validation](https://github.com/calypsonet/keyple-android-demo-validation) 
+application (entry into the transportation network with a Season Pass and/or Multi-trip ticket). 
+The contracts being updated in the Calypso card with the Android application of the [Keyple Reload Demo package](https://github.com/calypsonet/keyple-java-demo-remote).
+
+The demo application was tested on the following terminals:
+- `Famoco FX205` via the open source plugins [Famoco](https://github.com/calypsonet/keyple-famoco) (for SAM access) and [Android NFC](https://keyple.org/components-java/plugins/nfc/) (for card access).
+- `Coppernic C-One 2` via the open source plugin [Coppernic](https://github.com/calypsonet/keyple-android-plugin-coppernic).
+- `Standard NFC smartphone` via the open source plugin [Android NFC](https://keyple.org/components-java/plugins/nfc/).
+
+The following terminals have also been tested but as they require non-open source libraries, they are not active by default (see [Using proprietary plugins](#using-proprietary-plugins))  
+- `Bluebird EF501` via the proprietary plugin [Bluebird](https://github.com/calypsonet/keyple-plugin-cna-bluebird-specific-nfc-java-lib).
+- `Flowbird Axio 2` via the proprietary plugin [Flowbird](https://github.com/calypsonet/keyple-android-plugin-flowbird).
+
+All exchanges made with the controlled card are potentially cryptographically certified by a security module (SAM) when 
+it is installed and available.
+However, if this is not the case, the validity of the card is made from a simple reading of the data (this is always 
+the case when the application is launched on a standard smartphone).
 
 ## Keyple Demos
 
 This demo is part of a set of three demos:
-* [Keyple Remote Demo](https://github.com/calypsonet/keyple-java-demo-remote)
+* [Keyple Reload Demo](https://github.com/calypsonet/keyple-java-demo-remote)
 * [Keyple Validation Demo](https://github.com/calypsonet/keyple-android-demo-validation)
 * [Keyple Control Demo](https://github.com/calypsonet/keyple-android-demo-control)
 
-## Calypso Card Applications
+These demos are all based on a common library that defines elements such as constants and data structures implemented 
+for the logic of the ticketing application: [Keyple Demo Common Library](https://github.com/calypsonet/keyple-demo-common-lib).
 
-The demo works with the cards provided in the [Test kit](https://calypsonet.org/technical-support-documentation/)
-
-This demo can be used with Calypso cards with the following configurations:
-* AID 315449432E49434131h - File Structure 05h (CD Light/GTML Compatibility)
-* AID 315449432E49434131h - File Structure 02h (Revision 2 Minimum with MF files)
-* AID 315449432E49434133h - File Structure 32h (Calypso Light Classic)
-* AID A0000004040125090101h - File Structure 05h (CD Light/GTML Compatibility)
+Please refer to the [README](https://github.com/calypsonet/keyple-demo-common-lib/blob/main/README.md) 
+file of this library to discover these data structures.
 
 ## Control Procedure
-
-### Data Structures
-
-#### Environment/Holder structure
-            
-| Field Name           | Bits | Description                                        |     Type      |  Status   |
-|:---------------------|-----:|:---------------------------------------------------|:-------------:|:---------:|
-| EnvVersionNumber     |    8 | Data structure version number                      | VersionNumber | Mandatory | 
-| EnvApplicationNumber |   32 | Card application number (unique system identifier) |      Int      | Mandatory |
-| EnvIssuingDate       |   16 | Card application issuing date                      |  DateCompact  | Mandatory | 
-| EnvEndDate           |   16 | Card application expiration date                   |  DateCompact  | Mandatory | 
-| HolderCompany        |    8 | Holder company                                     |      Int      | Optional  | 
-| HolderIdNumber       |   32 | Holder Identifier within HolderCompany             |      Int      | Optional  | 
-| EnvPadding           |  120 | Padding (bits to 0)                                |    Binary     | Optional  | 
-            
-#### Event structure            
-
-| Field Name         | Bits | Description                                   |     Type      |  Status   |
-|:-------------------|-----:|:----------------------------------------------|:-------------:|:---------:|
-| EventVersionNumber |    8 | Data structure version number                 | VersionNumber | Mandatory | 
-| EventDateStamp     |   16 | Date of the event                             |  DateCompact  | Mandatory | 
-| EventTimeStamp     |   16 | Time of the event                             |  TimeCompact  | Mandatory | 
-| EventLocation      |   32 | Location identifier                           |      Int      | Mandatory | 
-| EventContractUsed  |    8 | Index of the contract used for the validation |      Int      | Mandatory | 
-| ContractPriority1  |    8 | Priority for contract #1                      | PriorityCode  | Mandatory | 
-| ContractPriority2  |    8 | Priority for contract #2                      | PriorityCode  | Mandatory | 
-| ContractPriority3  |    8 | Priority for contract #3                      | PriorityCode  | Mandatory | 
-| ContractPriority4  |    8 | Priority for contract #4                      | PriorityCode  | Mandatory | 
-| EventPadding       |  120 | Padding (bits to 0)                           |    Binary     | Optional  | 
-            
-#### Contract structure             
-
-| Field Name              | Bits | Description                          |        Type         |  Status   |
-|:------------------------|-----:|:-------------------------------------|:-------------------:|:---------:|
-| ContractVersionNumber   |    8 | Data structure version number        |    VersionNumber    | Mandatory | 
-| ContractTariff          |    8 | Contract Type                        |    PriorityCode     | Mandatory | 
-| ContractSaleDate        |   16 | Sale date of the contract            |     DateCompact     | Mandatory | 
-| ContractValidityEndDate |   16 | Last day of validity of the contract |     DateCompact     | Mandatory | 
-| ContractSaleSam         |   32 | SAM which loaded the contract        |         Int         | Optional  | 
-| ContractSaleCounter     |   24 | SAM auth key counter value           |         Int         | Optional  | 
-| ContractAuthKvc         |    8 | SAM auth key KVC                     |         Int         | Optional  | 
-| ContractAuthenticator   |   24 | Security authenticator               | Authenticator (Int) | Optional  | 
-| ContractPadding         |   96 | Padding (bits to 0)                  |       Binary        | Optional  | 
-            
-#### Counter structure          
-
-| Field Name   | Bits | Description     | Type |  Status   |
-|:-------------|-----:|:----------------|:----:|:---------:|
-| CounterValue |   24 | Number of trips | Int  | Mandatory | 
-
-### Data Types
-
-| Name          | Bits | Description                                                                                                                                                        |
-|:--------------|-----:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| DateCompact   |   16 | Number of days since January 1st, 2010 (being date 0). Maximum value is 16,383, last complete year being 2053. All dates are in legal local time.                  |
-| PriorityCode  |    8 | Types of contracts defined: <br>0 Forbidden (present in clean records only)<br>1 Season Pass<br>2 Multi-trip ticket<br>3 Stored Value<br>4 to 30 RFU<br>31 Expired |
-| TimeCompact   |   16 | Time in minutes, value = hour*60+minute (0 to 1,439)                                                                                                               |    
-| VersionNumber |    8 | Data model version:<br>0 Forbidden (undefined)<br>1 Current version<br>2..254 RFU<br>255 Forbidden (reserved)                                                      |
 
 ### Control Use Case
 
@@ -116,7 +58,7 @@ Steps:
 ### Process
 
 For this control demo application, a simple example control procedure has been implemented. 
-This procedure is implemented in the `ControlProcedure` class.
+This procedure is implemented in the `CardRepository` class.
 
 Opening a Calypso secure session is optional for this procedure since we do not need to write anything on the card.
 So if the Calypso SAM is present at the beginning we set the `isSecureSessionMode` to true, but we keep on with the procedure if not.
@@ -173,15 +115,17 @@ This procedure's main steps are as follows:
 
 ## Ticketing implementation
 
-Below are the classes useful for implementing the ticketing layer:
-- `MainService`
-- `ReaderService`
-- `ReaderActivity.CardReaderObserver`
+Below are the description of the classes useful for implementing the ticketing layer:
 - `TicketingService`
+- `ReaderRepository`
+- `ReaderActivity.CardReaderObserver`
+- `CardRepository`
 
-### MainService
+### TicketingService
 
-Mainly used to manage the lifecycle of the Keyple plugin. 
+This service is the orchestrator of the ticketing process.
+
+Mainly used to manage the lifecycle of the Keyple plugin.
 This service is used to initialize the plugin and manage the card detection phase.
 It is called on the different steps of the reader activity lifecycle:
 - onResume:
@@ -192,8 +136,16 @@ It is called on the different steps of the reader activity lifecycle:
   - Stop NFC detection
 - onDestroy:
   - Clear the Keyple plugin (remove observers and unregister plugin)
+  
+It prepares and scheduled the selection scenario that will be sent to the card when a card is detected by setting
+the AID(s) and the reader protocol(s) of the cards we want to detect and read.
 
-### ReaderService
+Once a card is detected, the service processes the selection scenario by retrieving the current `CalypsoCard` object.
+This object contains information about the card (serial number, card revision...)
+
+Finally, this class is responsible for launching the control procedure and returning its result.
+
+### ReaderRepository
 
 This service is the interface between the business layer and the reader.
 
@@ -204,15 +156,16 @@ This class is the reader observer and inherits from Keyple class `CardReaderObse
 It is invoked each time a new `CardReaderEvent` (`CARD_INSERTED`, `CARD_MATCHED`...) is launched by the Keyple plugin.
 This reader is registered when the reader is registered and removed when the reader is unregistered.
 
-### TicketingService
+### CardRepository
 
-This service is the orchestrator of the ticketing process.
+This class contains the implementation of the "Control" procedure.
 
-First it prepares and scheduled the selection scenario that will be sent to the card when a card is detected by setting
-the AID(s) and the reader protocol(s) of the cards we want to detect and read.
+## Using proprietary plugins
 
-Once a card is detected, the service processes the selection scenario by retrieving the current `CalypsoCard` object.
-This object contains information about the card (serial number, card revision...)
-
-Finally, this class is responsible for launching the control procedure and returning its result.
-
+By default, proprietary plugins are deactivated.
+If you want to activate them, then here is the procedure to follow:
+1. make an explicit request to [CNA](https://calypsonet.org/contact-us/) to obtain the desired plugin,
+2. copy the plugin into the `/app/libs/` directory,
+3. delete in the `/app/libs/` directory the plugin with the same name but suffixed with `-mock` (e.g. xxx-mock.aar),
+4. compile the project via the gradle `build` command,
+5. deploy the new apk on the device.

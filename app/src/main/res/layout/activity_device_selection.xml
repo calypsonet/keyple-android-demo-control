@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_bg"
-    tools:context="org.calypsonet.keyple.demo.control.android.activity.DeviceSelectionActivity">
+    tools:context="org.calypsonet.keyple.demo.control.ui.deviceselection.DeviceSelectionActivity">
 
     <Button
         android:id="@+id/flowbirdBtn"
