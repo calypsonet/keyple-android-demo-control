@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         applicationId("org.calypsonet.keyple.demo.control")
-        minSdkVersion(24)
+        minSdk = 26
         targetSdkVersion(29)
         versionCode(6)
         versionName(project.version.toString())
@@ -139,7 +139,7 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxandroid:2.0.2")
 
     // Joda Time
-    implementation("joda-time:joda-time:2.8.1")
+    //implementation("joda-time:joda-time:2.8.1")
 
     // Google GSON
     implementation("com.google.code.gson:gson:2.8.9")

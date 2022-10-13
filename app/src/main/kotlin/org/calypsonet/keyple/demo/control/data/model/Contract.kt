@@ -13,16 +13,17 @@ package org.calypsonet.keyple.demo.control.data.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import org.joda.time.DateTime
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Parcelize
 data class Contract(
     val name: String?,
     val valid: Boolean,
-    val validationDate: DateTime?,
+    val validationDate: LocalDateTime?,
     val record: Int,
     val expired: Boolean,
-    val contractValidityStartDate: DateTime,
-    val contractValidityEndDate: DateTime,
+    val contractValidityStartDate: LocalDate,
+    val contractValidityEndDate: LocalDate,
     val nbTicketsLeft: Int? = null
 ) : Parcelable

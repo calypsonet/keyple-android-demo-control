@@ -35,8 +35,8 @@ import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.util.HexUtil
-import org.joda.time.DateTime
 import timber.log.Timber
+import java.time.LocalDateTime
 
 @AppScoped
 class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
@@ -212,7 +212,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
             calypsoCard = calypsoCard,
             cardSecuritySettings = if (isSecureSessionMode) getSecuritySettings() else null,
             locations = locations,
-            now = DateTime.now())
+            now = LocalDateTime.now())
   }
 
   private fun getSecuritySettings(): CardSecuritySetting? {

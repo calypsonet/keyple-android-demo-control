@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.validation_recycler_row.view.titleLocation
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.Validation
 import org.calypsonet.keyple.demo.control.inflate
+import java.time.format.DateTimeFormatter
 
 class ValidationsRecyclerAdapter(private val validations: ArrayList<Validation>) :
     RecyclerView.Adapter<ValidationsRecyclerAdapter.LastValidationHolder>() {
@@ -37,9 +38,9 @@ class ValidationsRecyclerAdapter(private val validations: ArrayList<Validation>)
 
     fun bindItem(validation: Validation) {
       this.validation = validation
-      val formatter = SimpleDateFormat("dd MMMM yyyy, HH:mm:ss", Locale.ENGLISH)
+      val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm:ss", Locale.getDefault())
       view.titleLocation.text = String.format("%s - %s", validation.name, validation.location.name)
-      view.date.text = formatter.format(validation.date)
+      view.date.text = validation.date.format(formatter)
     }
   }
 

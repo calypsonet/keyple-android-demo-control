@@ -24,6 +24,7 @@ import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.Contract
 import org.calypsonet.keyple.demo.control.inflate
+import java.time.format.DateTimeFormatter
 
 class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
     RecyclerView.Adapter<TitlesRecyclerAdapter.TitleHolder>() {
@@ -42,12 +43,10 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
       val context = view.context
       val titleDescription =
           if (contract.name == PriorityCode.SEASON_PASS.value) {
+              val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault())
             context.getString(
-                R.string.card_content_description_season_pass,
-                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    .format(contract.contractValidityStartDate.toDate()),
-                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    .format(contract.contractValidityEndDate.toDate()))
+                R.string.card_content_description_season_pass,contract.contractValidityStartDate.format(formatter),
+                contract.contractValidityEndDate.format(formatter))
           } else {
             when (val nbTicketsLeft = contract.nbTicketsLeft ?: 0) {
               0 -> context.getString(R.string.card_content_description_multi_trip_zero)
