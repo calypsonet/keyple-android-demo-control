@@ -14,14 +14,13 @@ package org.calypsonet.keyple.demo.control.ui.cardcontent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlinx.android.synthetic.main.validation_recycler_row.view.date
 import kotlinx.android.synthetic.main.validation_recycler_row.view.titleLocation
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.Validation
 import org.calypsonet.keyple.demo.control.inflate
-import java.time.format.DateTimeFormatter
 
 class ValidationsRecyclerAdapter(private val validations: ArrayList<Validation>) :
     RecyclerView.Adapter<ValidationsRecyclerAdapter.LastValidationHolder>() {

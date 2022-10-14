@@ -11,7 +11,7 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.data
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
@@ -32,7 +32,6 @@ import org.calypsonet.terminal.calypso.transaction.CardSecuritySetting
 import org.calypsonet.terminal.reader.CardReader
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
 import timber.log.Timber
-import java.time.LocalDateTime
 
 class CardRepository {
 
@@ -129,7 +128,8 @@ class CardRepository {
       var contractEventValid = true
       val contractUsed = event.eventContractUsed
 
-      val eventValidityEndDate = event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
+      val eventValidityEndDate =
+          event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
 
       // Step 7 - If EventLocation != value configured in the control terminal set the validated
       // contract valid flag as false and go to point CNT_READ.

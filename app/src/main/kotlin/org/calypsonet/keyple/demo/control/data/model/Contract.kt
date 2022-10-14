@@ -12,9 +12,9 @@
 package org.calypsonet.keyple.demo.control.data.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Contract(

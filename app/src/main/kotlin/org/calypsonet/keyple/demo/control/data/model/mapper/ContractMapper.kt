@@ -11,9 +11,9 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.data.model.mapper
 
+import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.control.data.model.Contract
-import java.time.LocalDateTime
 
 object ContractMapper {
   fun map(

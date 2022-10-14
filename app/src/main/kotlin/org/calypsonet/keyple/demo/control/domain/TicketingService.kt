@@ -12,6 +12,7 @@
 package org.calypsonet.keyple.demo.control.domain
 
 import android.app.Activity
+import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.common.constant.CardConstant
@@ -36,7 +37,6 @@ import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.util.HexUtil
 import timber.log.Timber
-import java.time.LocalDateTime
 
 @AppScoped
 class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
