@@ -138,14 +138,14 @@ class CardRepository {
       }
       // Step 8 - Else If EventDateStamp points to a date in the past
       // -> set the validated contract valid flag as false and go to point CNT_READ.
-      else if (event.eventDatetime < now.toLocalDate().atStartOfDay()) {
+      else if (event.eventDatetime.isBefore(now.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
 
       // Step 9 - Else If (EventTimeStamp + Validation period configure in the control terminal) <
       // current time of the control terminal
       //  -> set the validated contract valid flag as false.
-      else if (eventValidityEndDate < now.toLocalDate().atStartOfDay()) {
+      else if (eventValidityEndDate.isBefore(now.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
 
