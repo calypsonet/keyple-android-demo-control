@@ -36,7 +36,7 @@ import timber.log.Timber
 class CardRepository {
 
   fun executeControlProcedure(
-      now: LocalDateTime,
+      controlDateTime: LocalDateTime,
       cardReader: CardReader,
       calypsoCard: CalypsoCard,
       cardSecuritySettings: CardSecuritySetting?,
@@ -96,7 +96,7 @@ class CardRepository {
 
       // Step 4 - If EnvEndDate points to a date in the past reject the card.
       // <Abort Secure Session if any>
-      if (env.envEndDate.getDate().isBefore(now.toLocalDate())) {
+      if (env.envEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
         if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
@@ -138,14 +138,14 @@ class CardRepository {
       }
       // Step 8 - Else If EventDateStamp points to a date in the past
       // -> set the validated contract valid flag as false and go to point CNT_READ.
-      else if (event.eventDatetime.isBefore(now.toLocalDate().atStartOfDay())) {
+      else if (event.eventDatetime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
 
       // Step 9 - Else If (EventTimeStamp + Validation period configure in the control terminal) <
       // current time of the control terminal
       //  -> set the validated contract valid flag as false.
-      else if (eventValidityEndDate.isBefore(now.toLocalDate().atStartOfDay())) {
+      else if (eventValidityEndDate.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
 
@@ -216,7 +216,7 @@ class CardRepository {
           }
           // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
           // expired.
-          if (contract.contractValidityEndDate.getDate().isBefore(now.toLocalDate())) {
+          if (contract.contractValidityEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
             contractExpired = true
           }
 

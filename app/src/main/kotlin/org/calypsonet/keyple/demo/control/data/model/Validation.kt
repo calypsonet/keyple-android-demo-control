@@ -20,6 +20,6 @@ data class Validation(
     val name: String,
     val location: Location,
     val destination: String?,
-    val date: LocalDateTime,
+    val dateTime: LocalDateTime,
     val provider: Int? = null
 ) : Parcelable

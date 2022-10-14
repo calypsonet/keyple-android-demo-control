@@ -39,7 +39,7 @@ class ValidationsRecyclerAdapter(private val validations: ArrayList<Validation>)
       this.validation = validation
       val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm:ss", Locale.ENGLISH)
       view.titleLocation.text = String.format("%s - %s", validation.name, validation.location.name)
-      view.date.text = validation.date.format(formatter)
+      view.date.text = validation.dateTime.format(formatter)
     }
   }
 

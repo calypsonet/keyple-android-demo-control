@@ -25,7 +25,7 @@ object ValidationMapper {
     val name = contract?.contractTariff?.value ?: "Event"
     return Validation(
         name = name,
-        date = event.eventDatetime,
+        dateTime = event.eventDatetime,
         location = LocationMapper.map(locations, event),
         destination = null,
         provider = null)

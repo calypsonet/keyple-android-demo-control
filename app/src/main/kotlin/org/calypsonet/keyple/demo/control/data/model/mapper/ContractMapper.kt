@@ -28,7 +28,7 @@ object ContractMapper {
         name = contract.contractTariff.value,
         valid = contractValidated,
         record = record,
-        validationDate = validationDate,
+        validationDateTime = validationDate,
         expired = contractExpired,
         contractValidityStartDate = contract.contractSaleDate.getDate(),
         contractValidityEndDate = contract.contractValidityEndDate.getDate(),

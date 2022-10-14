@@ -13,7 +13,6 @@ package org.calypsonet.keyple.demo.control.domain
 
 import android.app.Activity
 import java.time.LocalDateTime
-import java.util.*
 import javax.inject.Inject
 import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.control.data.CardRepository
@@ -212,7 +211,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
             calypsoCard = calypsoCard,
             cardSecuritySettings = if (isSecureSessionMode) getSecuritySettings() else null,
             locations = locations,
-            now = LocalDateTime.now())
+            controlDateTime = LocalDateTime.now())
   }
 
   private fun getSecuritySettings(): CardSecuritySetting? {

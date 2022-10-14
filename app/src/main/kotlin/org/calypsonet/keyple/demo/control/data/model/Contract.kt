@@ -20,7 +20,7 @@ import kotlinx.android.parcel.Parcelize
 data class Contract(
     val name: String?,
     val valid: Boolean,
-    val validationDate: LocalDateTime?,
+    val validationDateTime: LocalDateTime?,
     val record: Int,
     val expired: Boolean,
     val contractValidityStartDate: LocalDate,
