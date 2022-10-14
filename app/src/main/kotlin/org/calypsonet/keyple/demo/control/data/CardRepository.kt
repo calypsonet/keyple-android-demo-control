@@ -96,7 +96,7 @@ class CardRepository {
 
       // Step 4 - If EnvEndDate points to a date in the past reject the card.
       // <Abort Secure Session if any>
-      if (env.envEndDate.getDate() < now.toLocalDate()) {
+      if (env.envEndDate.getDate().isBefore(now.toLocalDate())) {
         if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
@@ -216,7 +216,7 @@ class CardRepository {
           }
           // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
           // expired.
-          if (contract.contractValidityEndDate.getDate() < now.toLocalDate()) {
+          if (contract.contractValidityEndDate.getDate().isBefore(now.toLocalDate())) {
             contractExpired = true
           }
 
