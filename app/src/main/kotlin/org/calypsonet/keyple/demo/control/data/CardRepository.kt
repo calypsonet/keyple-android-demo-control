@@ -96,7 +96,7 @@ class CardRepository {
 
       // Step 4 - If EnvEndDate points to a date in the past reject the card.
       // <Abort Secure Session if any>
-      if (env.envEndDate.date < now.toLocalDate()) {
+      if (env.envEndDate.getDate() < now.toLocalDate()) {
         if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
@@ -216,7 +216,7 @@ class CardRepository {
           }
           // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
           // expired.
-          if (contract.contractValidityEndDate.date < now.toLocalDate()) {
+          if (contract.contractValidityEndDate.getDate() < now.toLocalDate()) {
             contractExpired = true
           }
 
@@ -301,7 +301,7 @@ class CardRepository {
    * during a previous validation
    */
   private fun isValidEvent(event: EventStructure): Boolean {
-    return event.eventTimeStamp.value != 0L || event.eventDateStamp.value != 0L
+    return event.eventTimeStamp.value != 0 || event.eventDateStamp.value != 0
   }
 
   private class EnvironmentException(message: String) : RuntimeException(message)
