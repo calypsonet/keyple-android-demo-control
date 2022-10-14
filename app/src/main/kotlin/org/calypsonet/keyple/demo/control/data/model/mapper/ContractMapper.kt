@@ -21,14 +21,14 @@ object ContractMapper {
       record: Int,
       contractValidated: Boolean,
       contractExpired: Boolean,
-      validationDate: LocalDateTime?,
+      validationDateTime: LocalDateTime?,
       nbTicketsLeft: Int?
   ): Contract {
     return Contract(
         name = contract.contractTariff.value,
         valid = contractValidated,
         record = record,
-        validationDateTime = validationDate,
+        validationDateTime = validationDateTime,
         expired = contractExpired,
         contractValidityStartDate = contract.contractSaleDate.getDate(),
         contractValidityEndDate = contract.contractValidityEndDate.getDate(),

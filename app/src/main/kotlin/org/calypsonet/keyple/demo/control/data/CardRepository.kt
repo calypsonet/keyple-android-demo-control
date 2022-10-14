@@ -226,9 +226,9 @@ class CardRepository {
             contractValidated = true
           }
 
-          var validationDate: LocalDateTime? = null
+          var validationDateTime: LocalDateTime? = null
           if (contractValidated && contractUsed == record) {
-            validationDate = event.eventDatetime
+            validationDateTime = event.eventDatetime
           }
 
           // Step 18 -   If the ContractTariff value for the contract is 2 or 3, unpack the counter
@@ -247,7 +247,7 @@ class CardRepository {
                   record = record,
                   contractExpired = contractExpired,
                   contractValidated = contractValidated,
-                  validationDate = validationDate,
+                  validationDateTime = validationDateTime,
                   nbTicketsLeft = nbTicketsLeft))
         }
       }
