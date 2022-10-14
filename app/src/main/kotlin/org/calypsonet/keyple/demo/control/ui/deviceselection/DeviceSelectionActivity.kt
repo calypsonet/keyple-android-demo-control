@@ -16,6 +16,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.nfc.NfcManager
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_device_selection.*
 import org.calypsonet.keyple.demo.control.R
@@ -74,9 +75,16 @@ class DeviceSelectionActivity : BaseActivity() {
     }
     // Standard NFC terminal
     nfcTerminalBtn.setOnClickListener {
-      AppSettings.readerType = ReaderType.NFC_TERMINAL
-      startActivity(Intent(this, SettingsActivity::class.java))
-      finish()
+      val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
+      if (nfcManager.defaultAdapter?.isEnabled == true) {
+        AppSettings.readerType = ReaderType.NFC_TERMINAL
+        startActivity(Intent(this, SettingsActivity::class.java))
+        finish()
+      } else {
+        EnableNfcDialog().apply {
+          show(supportFragmentManager, EnableNfcDialog::class.java.simpleName)
+        }
+      }
     }
   }
 

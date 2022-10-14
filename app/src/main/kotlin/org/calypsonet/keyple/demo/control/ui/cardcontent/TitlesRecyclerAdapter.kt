@@ -14,7 +14,7 @@ package org.calypsonet.keyple.demo.control.ui.cardcontent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlinx.android.synthetic.main.title_recycler_row.view.titleDescription
@@ -42,12 +42,11 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
       val context = view.context
       val titleDescription =
           if (contract.name == PriorityCode.SEASON_PASS.value) {
+            val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
             context.getString(
                 R.string.card_content_description_season_pass,
-                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    .format(contract.contractValidityStartDate.toDate()),
-                SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    .format(contract.contractValidityEndDate.toDate()))
+                contract.contractValidityStartDate.format(formatter),
+                contract.contractValidityEndDate.format(formatter))
           } else {
             when (val nbTicketsLeft = contract.nbTicketsLeft ?: 0) {
               0 -> context.getString(R.string.card_content_description_multi_trip_zero)

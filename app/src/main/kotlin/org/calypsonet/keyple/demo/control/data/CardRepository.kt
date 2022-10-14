@@ -11,6 +11,7 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.data
 
+import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.common.model.EventStructure
@@ -30,13 +31,12 @@ import org.calypsonet.terminal.calypso.card.CalypsoCard
 import org.calypsonet.terminal.calypso.transaction.CardSecuritySetting
 import org.calypsonet.terminal.reader.CardReader
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
-import org.joda.time.DateTime
 import timber.log.Timber
 
 class CardRepository {
 
   fun executeControlProcedure(
-      now: DateTime,
+      controlDateTime: LocalDateTime,
       cardReader: CardReader,
       calypsoCard: CalypsoCard,
       cardSecuritySettings: CardSecuritySetting?,
@@ -96,8 +96,7 @@ class CardRepository {
 
       // Step 4 - If EnvEndDate points to a date in the past reject the card.
       // <Abort Secure Session if any>
-      val envEndDate = DateTime(env.envEndDate.date)
-      if (envEndDate.isBefore(now)) {
+      if (env.envEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
         if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
@@ -129,8 +128,8 @@ class CardRepository {
       var contractEventValid = true
       val contractUsed = event.eventContractUsed
 
-      val eventDateTime = DateTime(event.eventDatetime)
-      val eventValidityEndDate = eventDateTime.plusMinutes(AppSettings.validationPeriod)
+      val eventValidityEndDate =
+          event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
 
       // Step 7 - If EventLocation != value configured in the control terminal set the validated
       // contract valid flag as false and go to point CNT_READ.
@@ -139,14 +138,14 @@ class CardRepository {
       }
       // Step 8 - Else If EventDateStamp points to a date in the past
       // -> set the validated contract valid flag as false and go to point CNT_READ.
-      else if (eventDateTime.withTimeAtStartOfDay().isBefore(now.withTimeAtStartOfDay())) {
+      else if (event.eventDatetime.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
 
       // Step 9 - Else If (EventTimeStamp + Validation period configure in the control terminal) <
       // current time of the control terminal
       //  -> set the validated contract valid flag as false.
-      else if (eventValidityEndDate.isBefore(now)) {
+      else if (eventValidityEndDate.isBefore(controlDateTime.toLocalDate().atStartOfDay())) {
         contractEventValid = false
       }
 
@@ -217,8 +216,7 @@ class CardRepository {
           }
           // Step 16 - If ContractValidityEndDate points to a date in the past mark contract as
           // expired.
-          val contractValidityEndDate = DateTime(contract.contractValidityEndDate.date)
-          if (contractValidityEndDate.isBefore(now)) {
+          if (contract.contractValidityEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
             contractExpired = true
           }
 
@@ -228,9 +226,9 @@ class CardRepository {
             contractValidated = true
           }
 
-          var validationDate: DateTime? = null
+          var validationDateTime: LocalDateTime? = null
           if (contractValidated && contractUsed == record) {
-            validationDate = eventDateTime
+            validationDateTime = event.eventDatetime
           }
 
           // Step 18 -   If the ContractTariff value for the contract is 2 or 3, unpack the counter
@@ -249,7 +247,7 @@ class CardRepository {
                   record = record,
                   contractExpired = contractExpired,
                   contractValidated = contractValidated,
-                  validationDate = validationDate,
+                  validationDateTime = validationDateTime,
                   nbTicketsLeft = nbTicketsLeft))
         }
       }

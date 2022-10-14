@@ -75,6 +75,7 @@
 
     <!--    Dialog-->
     <string name="permission_denied_message">You must accept the requested permissions to continue. Please relaunch the app.</string>
+    <string name="nfc_not_enabled">The NFC feature of the device does not seem to be available. Please activate the NFC function before continuing.</string>
 
     <!-- Test values-->
     <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>

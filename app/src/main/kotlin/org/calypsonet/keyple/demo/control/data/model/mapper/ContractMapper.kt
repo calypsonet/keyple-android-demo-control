@@ -11,9 +11,9 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.data.model.mapper
 
+import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.model.ContractStructure
 import org.calypsonet.keyple.demo.control.data.model.Contract
-import org.joda.time.DateTime
 
 object ContractMapper {
   fun map(
@@ -21,17 +21,17 @@ object ContractMapper {
       record: Int,
       contractValidated: Boolean,
       contractExpired: Boolean,
-      validationDate: DateTime?,
+      validationDateTime: LocalDateTime?,
       nbTicketsLeft: Int?
   ): Contract {
     return Contract(
         name = contract.contractTariff.value,
         valid = contractValidated,
         record = record,
-        validationDate = validationDate,
+        validationDateTime = validationDateTime,
         expired = contractExpired,
-        contractValidityStartDate = DateTime(contract.contractSaleDate.date),
-        contractValidityEndDate = DateTime(contract.contractValidityEndDate.date),
+        contractValidityStartDate = contract.contractSaleDate.getDate(),
+        contractValidityEndDate = contract.contractValidityEndDate.getDate(),
         nbTicketsLeft = nbTicketsLeft)
   }
 }
