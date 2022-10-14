@@ -42,7 +42,7 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
       val context = view.context
       val titleDescription =
           if (contract.name == PriorityCode.SEASON_PASS.value) {
-            val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault())
+            val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
             context.getString(
                 R.string.card_content_description_season_pass,
                 contract.contractValidityStartDate.format(formatter),
