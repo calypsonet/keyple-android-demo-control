@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         applicationId("org.calypsonet.keyple.demo.control")
-        minSdk = 26
+        minSdkVersion(26)
         targetSdkVersion(29)
         versionCode(6)
         versionName(project.version.toString())
