@@ -50,7 +50,7 @@
     <string name="calypso">Calypso Networks Association</string>
 
     <!-- Present screen -->
-    <string name="present_support_label">Please present your contactless support</string>
+    <string name="present_support_label">Please present a contactless support to be controlled</string>
     <string name="valid">Valid</string>
     <string name="invalid">Invalid</string>
 
@@ -59,7 +59,7 @@
     <string name="secure_session_mode_disabled">Calypso Secure Session disabled</string>
     <string name="content_title">Content</string>
     <string name="last_validation_title">Last validation</string>
-    <string name="present_again">Present again</string>
+    <string name="new_control">New control</string>
     <string name="empty_contract_list">No contract available</string>
     <string name="card_content_description_season_pass">From %s\n to %s</string>
     <string name="card_content_description_multi_trip_zero">no trip left</string>

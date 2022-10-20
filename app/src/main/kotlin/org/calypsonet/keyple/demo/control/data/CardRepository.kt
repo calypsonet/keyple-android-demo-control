@@ -273,7 +273,7 @@ class CardRepository {
       return CardReaderResponse(
           status = status, lastValidationsList = validationList, titlesList = displayedContract)
     } catch (e: Exception) {
-      errorMessage = e.message
+      errorMessage = e.cause?.message
       Timber.e(e)
       when (e) {
         is EnvironmentException -> {}

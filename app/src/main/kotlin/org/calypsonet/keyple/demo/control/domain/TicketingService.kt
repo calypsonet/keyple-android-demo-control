@@ -188,17 +188,19 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     calypsoCard = cardSelectionResult.activeSmartCard as CalypsoCard
     // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
     if ((cardSelectionResult.activeSelectionIndex == indexOfKeypleGenericCardSelection &&
-        !calypsoCard.dfName.contentEquals(CardConstant.DFNAME_KEYPLE_GENERIC)) ||
+        !CardConstant.aidMatch(CardConstant.AID_KEYPLE_GENERIC, calypsoCard.dfName)) ||
         (cardSelectionResult.activeSelectionIndex == indexOfCdLightGtmlCardSelection &&
-            !calypsoCard.dfName.contentEquals(CardConstant.DFNAME_CD_LIGHT_GTML)) ||
+            !CardConstant.aidMatch(CardConstant.AID_CD_LIGHT_GTML, calypsoCard.dfName)) ||
         (cardSelectionResult.activeSelectionIndex == indexOfCalypsoLightCardSelection &&
-            !calypsoCard.dfName.contentEquals(CardConstant.DFNAME_CALYPSO_LIGHT)) ||
+            !CardConstant.aidMatch(CardConstant.AID_CALYPSO_LIGHT, calypsoCard.dfName)) ||
         (cardSelectionResult.activeSelectionIndex == indexOfNavigoIdfCardSelection &&
-            !calypsoCard.dfName.contentEquals(CardConstant.DFNAME_NORMALIZED_IDF))) {
+            !CardConstant.aidMatch(CardConstant.AID_NORMALIZED_IDF, calypsoCard.dfName))) {
       return "Unexpected DF name."
     }
     if (calypsoCard.applicationSubtype !in CardConstant.ALLOWED_FILE_STRUCTURES) {
-      return "File structure " + HexUtil.toHex(calypsoCard.applicationSubtype) + "h not supported"
+      return "Invalid card\nFile structure " +
+          HexUtil.toHex(calypsoCard.applicationSubtype) +
+          "h not supported"
     }
     Timber.i("Card DF Name = %s", HexUtil.toHex(calypsoCard.dfName))
     return null

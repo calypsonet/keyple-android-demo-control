@@ -114,7 +114,7 @@
             android:background="@drawable/btn_blue"
             android:paddingTop="@dimen/main_btn_vertical_padding"
             android:paddingBottom="@dimen/main_btn_vertical_padding"
-            android:text="@string/present_again" />
+            android:text="@string/new_control" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
