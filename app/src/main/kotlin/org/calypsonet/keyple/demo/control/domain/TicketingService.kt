@@ -183,7 +183,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     val cardSelectionResult: CardSelectionResult =
         cardSelectionManager.parseScheduledCardSelectionsResponse(scheduledCardSelectionsResponse)
     if (cardSelectionResult.activeSelectionIndex == -1) {
-      return "No active card"
+      return "Selection error: AID not found"
     }
     calypsoCard = cardSelectionResult.activeSmartCard as CalypsoCard
     // check is the DF name is the expected one (Req. TL-SEL-AIDMATCH.1)
@@ -195,7 +195,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
             !CardConstant.aidMatch(CardConstant.AID_CALYPSO_LIGHT, calypsoCard.dfName)) ||
         (cardSelectionResult.activeSelectionIndex == indexOfNavigoIdfCardSelection &&
             !CardConstant.aidMatch(CardConstant.AID_NORMALIZED_IDF, calypsoCard.dfName))) {
-      return "Unexpected DF name."
+      return "Unexpected DF name"
     }
     if (calypsoCard.applicationSubtype !in CardConstant.ALLOWED_FILE_STRUCTURES) {
       return "Invalid card\nFile structure " +

@@ -69,8 +69,8 @@
 
     <!-- NetworkInvalid screen -->
     <string name="card_invalid_title">Not valid on this network</string>
-    <string name="card_invalid_aid">Selection error : AID not found.</string>
-    <string name="card_invalid_structure">Selection error : Unknown structure.</string>
+    <string name="card_invalid_aid">Selection error: AID not found.</string>
+    <string name="card_invalid_structure">Selection error: Unknown structure.</string>
     <string name="card_invalid_default">Invalid card</string>
 
     <!--    Dialog-->

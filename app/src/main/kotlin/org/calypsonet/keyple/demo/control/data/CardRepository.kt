@@ -43,7 +43,7 @@ class CardRepository {
       locations: List<Location>
   ): CardReaderResponse {
 
-    val errorMessage: String?
+    var errorMessage: String?
     val errorTitle: String? = null
     var validation: Validation? = null
     var status: Status = Status.ERROR
@@ -91,7 +91,7 @@ class CardRepository {
         if (isSecureSessionMode) {
           cardTransaction.processCancel()
         }
-        throw EnvironmentException("Wrong version number")
+        throw EnvironmentException("wrong version number")
       }
 
       // Step 4 - If EnvEndDate points to a date in the past reject the card.
@@ -252,7 +252,7 @@ class CardRepository {
         }
       }
 
-      Timber.i("Control procedure result : STATUS_OK")
+      Timber.i("Control procedure result: STATUS_OK")
       status = Status.TICKETS_FOUND
 
       // Step 20 - If isSecureSessionMode is true, Close the session
@@ -273,10 +273,12 @@ class CardRepository {
       return CardReaderResponse(
           status = status, lastValidationsList = validationList, titlesList = displayedContract)
     } catch (e: Exception) {
-      errorMessage = e.cause?.message
+      errorMessage = e.message
       Timber.e(e)
       when (e) {
-        is EnvironmentException -> {}
+        is EnvironmentException -> {
+          errorMessage = "Environment error: $errorMessage"
+        }
         is EventCleanCardException -> {
           status = Status.EMPTY_CARD
         }
@@ -306,7 +308,7 @@ class CardRepository {
 
   private class EnvironmentException(message: String) : RuntimeException(message)
 
-  private class EventCleanCardException : RuntimeException("Clean card")
+  private class EventCleanCardException : RuntimeException("clean card")
 
-  private class EventWrongVersionNumberException : RuntimeException("Wrong version number")
+  private class EventWrongVersionNumberException : RuntimeException("wrong version number")
 }

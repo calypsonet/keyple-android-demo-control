@@ -79,7 +79,7 @@ android {
         isAbortOnError = false
     }
 
-    // generate output aar with a qualified name : with version number
+    // generate output aar with a qualified name: with version number
     applicationVariants.all {
         outputs.forEach { output ->
             if (output is com.android.build.gradle.internal.api.BaseVariantOutputImpl) {

@@ -32,6 +32,6 @@ class ReaderModule {
   @AppScoped
   fun provideCardReaderObservationExceptionHandlerSpi(): CardReaderObservationExceptionHandlerSpi =
       CardReaderObservationExceptionHandlerSpi { pluginName, readerName, e ->
-        Timber.e("An unexpected reader error occurred: $pluginName:$readerName : $e")
+        Timber.e("An unexpected reader error occurred: $pluginName:$readerName: $e")
       }
 }
