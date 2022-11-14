@@ -21,7 +21,6 @@
         style="@style/smallerRegularBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/card_validation_title_left_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/date"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -31,7 +30,7 @@
 
     <TextView
         android:id="@+id/date"
-        style="@style/smallestRegularBlue"
+        style="@style/smallerRegularBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

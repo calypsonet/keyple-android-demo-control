@@ -42,5 +42,9 @@
   {
     "id": 10,
     "name": "Venice"
+  },
+  {
+    "id": 11,
+    "name": "Barcelona"
   }
 ]
