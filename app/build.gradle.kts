@@ -101,12 +101,12 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
     // Keyple core
-    implementation("org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.1.0")
-    implementation("org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.4.1")
+    implementation("org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.2.0")
+    implementation("org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.6.0")
     implementation("org.eclipse.keyple:keyple-common-java-api:2.0.0")
     implementation("org.eclipse.keyple:keyple-util-java-lib:2.3.0")
-    implementation("org.eclipse.keyple:keyple-service-java-lib:2.1.1")
-    implementation("org.eclipse.keyple:keyple-card-calypso-java-lib:2.2.5")
+    implementation("org.eclipse.keyple:keyple-service-java-lib:2.1.3")
+    implementation("org.eclipse.keyple:keyple-card-calypso-java-lib:2.3.2")
 
     // Keyple reader plugins
     implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.1")
@@ -141,7 +141,7 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxandroid:2.0.2")
 
     // Google GSON
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Devnied - Byte Utils
     implementation("com.github.devnied:bit-lib4j:1.4.5") {

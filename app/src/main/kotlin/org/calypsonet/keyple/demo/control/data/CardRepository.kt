@@ -69,17 +69,16 @@ class CardRepository {
             calypsoExtensionService.createCardTransactionWithoutSecurity(cardReader, calypsoCard)
           }
 
-      // Step 2 - Read and unpack environment structure from the binary present in the environment
-      // record.
-      cardTransaction.prepareReadRecord(CardConstant.SFI_ENVIRONMENT_AND_HOLDER, 1)
-
       if (isSecureSessionMode) {
         // Open a transaction to read/write the Calypso Card and read the Environment file
-        cardTransaction.processOpening(WriteAccessLevel.DEBIT)
-      } else {
-        // Just read the Environment file
-        cardTransaction.processCommands()
+        cardTransaction.prepareOpenSecureSession(WriteAccessLevel.DEBIT)
       }
+
+      // Step 2 - Read and unpack environment structure from the binary present in the environment
+      // record.
+      cardTransaction
+          .prepareReadRecord(CardConstant.SFI_ENVIRONMENT_AND_HOLDER, 1)
+          .processCommands(false)
 
       val efEnvironmentHolder = calypsoCard.getFileBySfi(CardConstant.SFI_ENVIRONMENT_AND_HOLDER)
       val env = EnvironmentHolderStructureParser().parse(efEnvironmentHolder.data.content)
@@ -89,7 +88,7 @@ class CardRepository {
       // <Abort Secure Session if any>
       if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
         if (isSecureSessionMode) {
-          cardTransaction.processCancel()
+          cardTransaction.prepareCancelSecureSession().processCommands(true)
         }
         throw EnvironmentException("wrong version number")
       }
@@ -98,14 +97,13 @@ class CardRepository {
       // <Abort Secure Session if any>
       if (env.envEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
         if (isSecureSessionMode) {
-          cardTransaction.processCancel()
+          cardTransaction.prepareCancelSecureSession().processCommands(true)
         }
         throw EnvironmentException("End date expired")
       }
 
       // Step 5 - Read and unpack the last event record.
-      cardTransaction.prepareReadRecord(CardConstant.SFI_EVENTS_LOG, 1)
-      cardTransaction.processCommands()
+      cardTransaction.prepareReadRecord(CardConstant.SFI_EVENTS_LOG, 1).processCommands(false)
 
       val efEventLog = calypsoCard.getFileBySfi(CardConstant.SFI_EVENTS_LOG)
       val event = EventStructureParser().parse(efEventLog.data.content)
@@ -116,7 +114,7 @@ class CardRepository {
       val eventVersionNumber = event.eventVersionNumber
       if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
         if (isSecureSessionMode) {
-          cardTransaction.processCancel()
+          cardTransaction.prepareCancelSecureSession().processCommands(true)
         }
         if (eventVersionNumber == VersionNumber.UNDEFINED) {
           throw EventCleanCardException()
@@ -157,10 +155,14 @@ class CardRepository {
           }
 
       // Step 10 - CNT_READ: Read all contracts and the counter file
-      cardTransaction.prepareReadRecords(
-          CardConstant.SFI_CONTRACTS, 1, nbContractRecords, CardConstant.CONTRACT_RECORD_SIZE_BYTES)
-      cardTransaction.prepareReadCounter(CardConstant.SFI_COUNTERS, nbContractRecords)
-      cardTransaction.processCommands()
+      cardTransaction
+          .prepareReadRecords(
+              CardConstant.SFI_CONTRACTS,
+              1,
+              nbContractRecords,
+              CardConstant.CONTRACT_RECORD_SIZE_BYTES)
+          .prepareReadCounter(CardConstant.SFI_COUNTERS, nbContractRecords)
+          .processCommands(false)
 
       val efCounters = calypsoCard.getFileBySfi(CardConstant.SFI_COUNTERS)
 
@@ -227,7 +229,7 @@ class CardRepository {
           }
 
           var validationDateTime: LocalDateTime? = null
-          if (contractValidated && contractUsed == record) {
+          if (contractValidated) {
             validationDateTime = event.eventDatetime
           }
 
@@ -257,11 +259,7 @@ class CardRepository {
 
       // Step 20 - If isSecureSessionMode is true, Close the session
       if (isSecureSessionMode) {
-        if (status == Status.TICKETS_FOUND) {
-          cardTransaction.processClosing()
-        } else {
-          cardTransaction.processCancel()
-        }
+        cardTransaction.prepareCloseSecureSession().processCommands(true)
       }
 
       var validationList: ArrayList<Validation>? = null
