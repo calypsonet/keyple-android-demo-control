@@ -25,19 +25,19 @@ SPDX-License-Identifier: EPL-2.0
    
 ## Third-party Content
 
-Google Gson (2.8.9)
+Google Gson
 
  * License: Apache License, 2.0
 
-SLF4J API (1.7.32)
+SLF4J API
 
  * License: MIT License
 
-Junit (4.13.2)
+Junit
 
  * License: Eclipse Public License, 2.0
 
-RxJava: Reactive Extensions for Java (2.1.13):
+RxJava: Reactive Extensions for Java
 
  * Licence: Apache Software License, 2.0
 
@@ -47,36 +47,34 @@ Android Open Source Project
 
  * License: Apache Software License, 2.0
 
-Timber (4.7.1):
+Timber
 
  * Licence: Apache Software License, 2.0
 
-slf4j Timber (3.1):
+slf4j Timber
 
  * Licence: Apache Software License, 2.0
 
-Kotlin Standard Library (1.7.0):
+Kotlin Standard Library
 
   * Licence: Apache Software License, 2.0
 
-Kotlinx Coroutines core (1.3.3):
+Kotlinx Coroutines core
 
  * Licence: Apache Software License, 2.0
 
-Lottie for Android (3.4.4):
+Lottie for Android
 
  * Licence: Apache Software License, 2.0
 
-RxAndroid: Reactive Extensions for Android (2.0.2):
+RxAndroid: Reactive Extensions for Android
 
  * Licence: Apache Software License, 2.0
 
-Bit-lib4j (1.4.5):
+Bit-lib4j
 
  * Licence: Apache Software License, 2.0
 
-Dagger (2.19):
+Dagger
 
  * Licence: Apache Software License, 2.0
-
- 
