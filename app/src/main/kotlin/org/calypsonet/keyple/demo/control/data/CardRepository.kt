@@ -26,11 +26,14 @@ import org.calypsonet.keyple.demo.control.data.model.Status
 import org.calypsonet.keyple.demo.control.data.model.Validation
 import org.calypsonet.keyple.demo.control.data.model.mapper.ContractMapper
 import org.calypsonet.keyple.demo.control.data.model.mapper.ValidationMapper
-import org.calypsonet.terminal.calypso.WriteAccessLevel
-import org.calypsonet.terminal.calypso.card.CalypsoCard
-import org.calypsonet.terminal.calypso.transaction.CardSecuritySetting
-import org.calypsonet.terminal.reader.CardReader
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
+import org.eclipse.keypop.calypso.card.WriteAccessLevel
+import org.eclipse.keypop.calypso.card.card.CalypsoCard
+import org.eclipse.keypop.calypso.card.transaction.ChannelControl
+import org.eclipse.keypop.calypso.card.transaction.SecureRegularModeTransactionManager
+import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
+import org.eclipse.keypop.calypso.card.transaction.TransactionManager
+import org.eclipse.keypop.reader.CardReader
 import timber.log.Timber
 
 class CardRepository {
@@ -39,7 +42,7 @@ class CardRepository {
       controlDateTime: LocalDateTime,
       cardReader: CardReader,
       calypsoCard: CalypsoCard,
-      cardSecuritySettings: CardSecuritySetting?,
+      cardSecuritySettings: SymmetricCryptoSecuritySetting?,
       locations: List<Location>
   ): CardReaderResponse {
 
@@ -48,28 +51,28 @@ class CardRepository {
     var validation: Validation? = null
     var status: Status = Status.ERROR
     val isSecureSessionMode = cardSecuritySettings != null
-    val calypsoExtensionService = CalypsoExtensionService.getInstance()
+    val calypsoCardApiFactory = CalypsoExtensionService.getInstance().calypsoCardApiFactory
 
     try {
-      val cardTransaction =
+      val cardTransaction: TransactionManager<*> =
           try {
             if (isSecureSessionMode) {
               // Step 1.1
               // The transaction will be certified by the SAM in a secure session.
-              calypsoExtensionService.createCardTransaction(
+              calypsoCardApiFactory.createSecureRegularModeTransactionManager(
                   cardReader, calypsoCard, cardSecuritySettings)
             } else {
               // Step 1.2
               // The transaction will take place without being certified by a SAM
-              calypsoExtensionService.createCardTransactionWithoutSecurity(cardReader, calypsoCard)
+              calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
             }
           } catch (e: Exception) {
             // TODO check which condition could lead here
             Timber.w(e)
-            calypsoExtensionService.createCardTransactionWithoutSecurity(cardReader, calypsoCard)
+            calypsoCardApiFactory.createFreeTransactionManager(cardReader, calypsoCard)
           }
 
-      if (isSecureSessionMode) {
+      if (cardTransaction is SecureRegularModeTransactionManager) {
         // Open a transaction to read/write the Calypso Card and read the Environment file
         cardTransaction.prepareOpenSecureSession(WriteAccessLevel.DEBIT)
       }
@@ -78,7 +81,7 @@ class CardRepository {
       // record.
       cardTransaction
           .prepareReadRecord(CardConstant.SFI_ENVIRONMENT_AND_HOLDER, 1)
-          .processCommands(false)
+          .processCommands(ChannelControl.KEEP_OPEN)
 
       val efEnvironmentHolder = calypsoCard.getFileBySfi(CardConstant.SFI_ENVIRONMENT_AND_HOLDER)
       val env = EnvironmentHolderStructureParser().parse(efEnvironmentHolder.data.content)
@@ -87,8 +90,8 @@ class CardRepository {
       // the current version) reject the card.
       // <Abort Secure Session if any>
       if (env.envVersionNumber != VersionNumber.CURRENT_VERSION) {
-        if (isSecureSessionMode) {
-          cardTransaction.prepareCancelSecureSession().processCommands(true)
+        if (cardTransaction is SecureRegularModeTransactionManager) {
+          cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
         }
         throw EnvironmentException("wrong version number")
       }
@@ -96,14 +99,16 @@ class CardRepository {
       // Step 4 - If EnvEndDate points to a date in the past reject the card.
       // <Abort Secure Session if any>
       if (env.envEndDate.getDate().isBefore(controlDateTime.toLocalDate())) {
-        if (isSecureSessionMode) {
-          cardTransaction.prepareCancelSecureSession().processCommands(true)
+        if (cardTransaction is SecureRegularModeTransactionManager) {
+          cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
         }
         throw EnvironmentException("End date expired")
       }
 
       // Step 5 - Read and unpack the last event record.
-      cardTransaction.prepareReadRecord(CardConstant.SFI_EVENTS_LOG, 1).processCommands(false)
+      cardTransaction
+          .prepareReadRecord(CardConstant.SFI_EVENTS_LOG, 1)
+          .processCommands(ChannelControl.KEEP_OPEN)
 
       val efEventLog = calypsoCard.getFileBySfi(CardConstant.SFI_EVENTS_LOG)
       val event = EventStructureParser().parse(efEventLog.data.content)
@@ -113,8 +118,8 @@ class CardRepository {
       // <Abort Secure Session if any>
       val eventVersionNumber = event.eventVersionNumber
       if (eventVersionNumber != VersionNumber.CURRENT_VERSION) {
-        if (isSecureSessionMode) {
-          cardTransaction.prepareCancelSecureSession().processCommands(true)
+        if (cardTransaction is SecureRegularModeTransactionManager) {
+          cardTransaction.prepareCancelSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
         }
         if (eventVersionNumber == VersionNumber.UNDEFINED) {
           throw EventCleanCardException()
@@ -162,7 +167,7 @@ class CardRepository {
               nbContractRecords,
               CardConstant.CONTRACT_RECORD_SIZE_BYTES)
           .prepareReadCounter(CardConstant.SFI_COUNTERS, nbContractRecords)
-          .processCommands(false)
+          .processCommands(ChannelControl.KEEP_OPEN)
 
       val efCounters = calypsoCard.getFileBySfi(CardConstant.SFI_COUNTERS)
 
@@ -208,7 +213,7 @@ class CardRepository {
           // of the value
           // by using the PSO Verify Signature command of the SAM.
           @Suppress("ControlFlowWithEmptyBody")
-          if (isSecureSessionMode && contract.contractAuthenticator != 0) {
+          if (contract.contractAuthenticator != 0) {
             // Step 15.1 - If the value is wrong reject the card.
             // <Abort Secure Session if any>
             // Step 15.2 - If the value of ContractSaleSam is present in the SAM Black List reject
@@ -258,8 +263,8 @@ class CardRepository {
       status = Status.TICKETS_FOUND
 
       // Step 20 - If isSecureSessionMode is true, Close the session
-      if (isSecureSessionMode) {
-        cardTransaction.prepareCloseSecureSession().processCommands(true)
+      if (cardTransaction is SecureRegularModeTransactionManager) {
+        cardTransaction.prepareCloseSecureSession().processCommands(ChannelControl.CLOSE_AFTER)
       }
 
       var validationList: ArrayList<Validation>? = null

@@ -101,12 +101,14 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
     // Keyple core
-    implementation("org.calypsonet.terminal:calypsonet-terminal-reader-java-api:1.3.0")
-    implementation("org.calypsonet.terminal:calypsonet-terminal-calypso-java-api:1.8.0")
+    implementation("org.eclipse.keypop:keypop-reader-java-api:2.0.0")
+    implementation("org.eclipse.keypop:keypop-calypso-card-java-api:2.0.0")
+    implementation("org.eclipse.keypop:keypop-calypso-crypto-legacysam-java-api:0.3.0")
     implementation("org.eclipse.keyple:keyple-common-java-api:2.0.0")
-    implementation("org.eclipse.keyple:keyple-util-java-lib:2.3.0")
-    implementation("org.eclipse.keyple:keyple-service-java-lib:2.3.1")
-    implementation("org.eclipse.keyple:keyple-card-calypso-java-lib:2.3.5")
+    implementation("org.eclipse.keyple:keyple-util-java-lib:2.3.1")
+    implementation("org.eclipse.keyple:keyple-service-java-lib:3.0.0")
+    implementation("org.eclipse.keyple:keyple-card-calypso-java-lib:3.0.0")
+    implementation("org.eclipse.keyple:keyple-card-calypso-crypto-legacysam-java-lib:0.4.0")
 
     // Keyple reader plugins
     implementation("org.eclipse.keyple:keyple-plugin-android-nfc-java-lib:2.0.1")

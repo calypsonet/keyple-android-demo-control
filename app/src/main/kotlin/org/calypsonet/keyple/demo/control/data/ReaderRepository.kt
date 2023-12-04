@@ -36,16 +36,16 @@ import org.calypsonet.keyple.plugin.flowbird.contact.FlowbirdContactReader
 import org.calypsonet.keyple.plugin.flowbird.contact.SamSlot
 import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdContactlessReader
 import org.calypsonet.keyple.plugin.flowbird.contactless.FlowbirdSupportContactlessProtocols
-import org.calypsonet.terminal.reader.CardReader
-import org.calypsonet.terminal.reader.ConfigurableCardReader
-import org.calypsonet.terminal.reader.ObservableCardReader
-import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.Plugin
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPlugin
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcPluginFactoryProvider
 import org.eclipse.keyple.plugin.android.nfc.AndroidNfcReader
+import org.eclipse.keypop.reader.CardReader
+import org.eclipse.keypop.reader.ConfigurableCardReader
+import org.eclipse.keypop.reader.ObservableCardReader
+import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 
 class ReaderRepository
 @Inject

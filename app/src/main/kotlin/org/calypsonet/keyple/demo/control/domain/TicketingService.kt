@@ -21,29 +21,36 @@ import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Location
 import org.calypsonet.keyple.demo.control.data.model.ReaderType
 import org.calypsonet.keyple.demo.control.di.scope.AppScoped
-import org.calypsonet.terminal.calypso.WriteAccessLevel
-import org.calypsonet.terminal.calypso.card.CalypsoCard
-import org.calypsonet.terminal.calypso.sam.CalypsoSam
-import org.calypsonet.terminal.calypso.transaction.CardSecuritySetting
-import org.calypsonet.terminal.reader.CardReader
-import org.calypsonet.terminal.reader.ObservableCardReader
-import org.calypsonet.terminal.reader.selection.CardSelectionManager
-import org.calypsonet.terminal.reader.selection.CardSelectionResult
-import org.calypsonet.terminal.reader.selection.ScheduledCardSelectionsResponse
-import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi
 import org.eclipse.keyple.card.calypso.CalypsoExtensionService
+import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamExtensionService
+import org.eclipse.keyple.card.calypso.crypto.legacysam.LegacySamUtil
 import org.eclipse.keyple.core.service.KeyplePluginException
 import org.eclipse.keyple.core.service.SmartCardServiceProvider
 import org.eclipse.keyple.core.util.HexUtil
+import org.eclipse.keypop.calypso.card.CalypsoCardApiFactory
+import org.eclipse.keypop.calypso.card.WriteAccessLevel
+import org.eclipse.keypop.calypso.card.card.CalypsoCard
+import org.eclipse.keypop.calypso.card.transaction.SymmetricCryptoSecuritySetting
+import org.eclipse.keypop.calypso.crypto.legacysam.sam.LegacySam
+import org.eclipse.keypop.reader.CardReader
+import org.eclipse.keypop.reader.ObservableCardReader
+import org.eclipse.keypop.reader.ReaderApiFactory
+import org.eclipse.keypop.reader.selection.CardSelectionManager
+import org.eclipse.keypop.reader.selection.CardSelectionResult
+import org.eclipse.keypop.reader.selection.ScheduledCardSelectionsResponse
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 
 @AppScoped
 class TicketingService @Inject constructor(private var readerRepository: ReaderRepository) {
 
+  private val readerApiFactory: ReaderApiFactory =
+      SmartCardServiceProvider.getService().readerApiFactory
   private val calypsoExtensionService: CalypsoExtensionService =
       CalypsoExtensionService.getInstance()
-
-  private lateinit var calypsoSam: CalypsoSam
+  private val calypsoCardApiFactory: CalypsoCardApiFactory =
+      calypsoExtensionService.calypsoCardApiFactory
+  private lateinit var legacySam: LegacySam
   private lateinit var calypsoCard: CalypsoCard
   private lateinit var cardSelectionManager: CardSelectionManager
 
@@ -135,44 +142,47 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
     smartCardService.checkCardExtension(calypsoExtensionService)
 
     // Get a new card selection manager
-    cardSelectionManager = smartCardService.createCardSelectionManager()
+    cardSelectionManager = readerApiFactory.createCardSelectionManager()
 
     // Prepare card selection case #1: Keyple generic
     indexOfKeypleGenericCardSelection =
         cardSelectionManager.prepareSelection(
-            calypsoExtensionService
-                .createCardSelection()
+            readerApiFactory
+                .createIsoCardSelector()
                 .filterByDfName(CardConstant.AID_KEYPLE_GENERIC)
-                .filterByCardProtocol(readerRepository.getCardReaderProtocolLogicalName()))
+                .filterByCardProtocol(readerRepository.getCardReaderProtocolLogicalName()),
+            calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #2: CD LIGHT/GTML
     indexOfCdLightGtmlCardSelection =
         cardSelectionManager.prepareSelection(
-            calypsoExtensionService
-                .createCardSelection()
+            readerApiFactory
+                .createIsoCardSelector()
                 .filterByDfName(CardConstant.AID_CD_LIGHT_GTML)
-                .filterByCardProtocol(readerRepository.getCardReaderProtocolLogicalName()))
+                .filterByCardProtocol(readerRepository.getCardReaderProtocolLogicalName()),
+            calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #3: CALYPSO LIGHT
     indexOfCalypsoLightCardSelection =
         cardSelectionManager.prepareSelection(
-            calypsoExtensionService
-                .createCardSelection()
+            readerApiFactory
+                .createIsoCardSelector()
                 .filterByDfName(CardConstant.AID_CALYPSO_LIGHT)
-                .filterByCardProtocol(readerRepository.getCardReaderProtocolLogicalName()))
+                .filterByCardProtocol(readerRepository.getCardReaderProtocolLogicalName()),
+            calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Prepare card selection case #4: Navigo IDF
     indexOfNavigoIdfCardSelection =
         cardSelectionManager.prepareSelection(
-            calypsoExtensionService
-                .createCardSelection()
+            readerApiFactory
+                .createIsoCardSelector()
                 .filterByDfName(CardConstant.AID_NORMALIZED_IDF)
-                .filterByCardProtocol(readerRepository.getCardReaderProtocolLogicalName()))
+                .filterByCardProtocol(readerRepository.getCardReaderProtocolLogicalName()),
+            calypsoCardApiFactory.createCalypsoCardSelectionExtension())
 
     // Schedule the execution of the prepared card selection scenario as soon as a card is presented
     cardSelectionManager.scheduleCardSelectionScenario(
         readerRepository.getCardReader() as ObservableCardReader,
-        ObservableCardReader.DetectionMode.REPEATING,
         ObservableCardReader.NotificationMode.ALWAYS)
   }
 
@@ -216,10 +226,13 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
             controlDateTime = LocalDateTime.now())
   }
 
-  private fun getSecuritySettings(): CardSecuritySetting? {
-    return calypsoExtensionService
-        .createCardSecuritySetting()
-        .setControlSamResource(readerRepository.getSamReader(), calypsoSam)
+  private fun getSecuritySettings(): SymmetricCryptoSecuritySetting? {
+    return calypsoCardApiFactory
+        .createSymmetricCryptoSecuritySetting(
+            LegacySamExtensionService.getInstance()
+                .getLegacySamApiFactory()
+                .createSymmetricCryptoCardTransactionManagerFactory(
+                    readerRepository.getSamReader(), legacySam))
         .assignDefaultKif(
             WriteAccessLevel.PERSONALIZATION, CardConstant.DEFAULT_KIF_PERSONALIZATION)
         .assignDefaultKif(WriteAccessLevel.LOAD, CardConstant.DEFAULT_KIF_LOAD)
@@ -228,23 +241,25 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
   }
 
   private fun selectSam(samReader: CardReader): Boolean {
-    // Get the Keyple main service
-    val smartCardService = SmartCardServiceProvider.getService()
 
     // Create a SAM selection manager.
-    val samSelectionManager: CardSelectionManager = smartCardService.createCardSelectionManager()
+    val samSelectionManager: CardSelectionManager = readerApiFactory.createCardSelectionManager()
 
     // Create a SAM selection using the Calypso card extension.
     samSelectionManager.prepareSelection(
-        calypsoExtensionService
-            .createSamSelection()
-            .filterByProductType(CalypsoSam.ProductType.SAM_C1))
+        readerApiFactory
+            .createBasicCardSelector()
+            .filterByPowerOnData(
+                LegacySamUtil.buildPowerOnDataFilter(LegacySam.ProductType.SAM_C1, null)),
+        LegacySamExtensionService.getInstance()
+            .legacySamApiFactory
+            .createLegacySamSelectionExtension())
     try {
       // SAM communication: run the selection scenario.
       val samSelectionResult = samSelectionManager.processCardSelectionScenario(samReader)
 
       // Get the Calypso SAM SmartCard resulting of the selection.
-      calypsoSam = samSelectionResult.activeSmartCard!! as CalypsoSam
+      legacySam = samSelectionResult.activeSmartCard!! as LegacySam
       return true
     } catch (e: Exception) {
       Timber.e(e)

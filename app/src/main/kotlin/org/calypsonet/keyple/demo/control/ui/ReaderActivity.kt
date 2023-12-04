@@ -27,8 +27,8 @@ import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Status
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.control.ui.cardcontent.CardContentActivity
-import org.calypsonet.terminal.reader.CardReaderEvent
-import org.calypsonet.terminal.reader.spi.CardReaderObserverSpi
+import org.eclipse.keypop.reader.CardReaderEvent
+import org.eclipse.keypop.reader.spi.CardReaderObserverSpi
 import timber.log.Timber
 
 @ActivityScoped

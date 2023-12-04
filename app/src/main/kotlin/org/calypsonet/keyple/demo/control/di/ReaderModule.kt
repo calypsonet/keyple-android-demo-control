@@ -15,7 +15,7 @@ import dagger.Module
 import dagger.Provides
 import org.calypsonet.keyple.demo.control.data.ReaderRepository
 import org.calypsonet.keyple.demo.control.di.scope.AppScoped
-import org.calypsonet.terminal.reader.spi.CardReaderObservationExceptionHandlerSpi
+import org.eclipse.keypop.reader.spi.CardReaderObservationExceptionHandlerSpi
 import timber.log.Timber
 
 @Suppress("unused")
