@@ -7,8 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Upgraded
 - Calypsonet Terminal Reader API `1.3.0` -> Keypop Reader API `2.0.0`
 - Calypsonet Terminal Calypso API `1.8.0` -> Keypop Calypso Card API `2.0.0`
-- Keyple Service Library `2.3.1` -> `3.0.0`
-- Keyple Calypso Card Library `2.3.5` -> `3.0.0`
+- Keyple Service Library `2.3.1` -> `3.0.1`
+- Keyple Calypso Card Library `2.3.5` -> `3.0.1`
 - Keyple Util Library `2.3.0` -> `2.3.1`
 
 ### Added
