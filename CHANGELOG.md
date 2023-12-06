@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [2023.12.06]
 ### Upgraded
 - Calypsonet Terminal Reader API `1.3.0` -> Keypop Reader API `2.0.0`
 - Calypsonet Terminal Calypso API `1.8.0` -> Keypop Calypso Card API `2.0.0`
@@ -55,7 +57,8 @@ New dependencies
 - `keyple-plugin-cna-flowbird-android-java-lib-2.0.2-mock` (mocked library)
 - `keyple-util-java-lib:2.3.0`
 
-[Unreleased]: https://github.com/calypsonet/keyple-android-demo-control/compare/2023.06.01...HEAD
+[Unreleased]: https://github.com/calypsonet/keyple-android-demo-control/compare/2023.12.06...HEAD
+[2023.12.06]: https://github.com/calypsonet/keyple-android-demo-control/compare/2023.06.01...2023.12.06
 [2023.06.01]: https://github.com/calypsonet/keyple-android-demo-control/compare/2023.02.24...2023.06.01
 [2023.02.24]: https://github.com/calypsonet/keyple-android-demo-control/compare/2022.11.18...2023.02.24
 [2022.11.18]: https://github.com/calypsonet/keyple-android-demo-control/compare/v2021.11...2022.11.18
