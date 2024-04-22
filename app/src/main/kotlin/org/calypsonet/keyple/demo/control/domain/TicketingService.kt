@@ -56,6 +56,7 @@ class TicketingService @Inject constructor(private var readerRepository: ReaderR
 
   var readersInitialized = false
     private set
+
   var isSecureSessionMode: Boolean = false
     private set
 

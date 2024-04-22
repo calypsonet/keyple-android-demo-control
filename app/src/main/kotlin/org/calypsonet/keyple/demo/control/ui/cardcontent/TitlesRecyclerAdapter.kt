@@ -11,35 +11,32 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.ui.cardcontent
 
-import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlinx.android.synthetic.main.title_recycler_row.view.titleDescription
-import kotlinx.android.synthetic.main.title_recycler_row.view.titleName
-import kotlinx.android.synthetic.main.title_recycler_row.view.validImg
 import org.calypsonet.keyple.demo.common.model.type.PriorityCode
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.Contract
-import org.calypsonet.keyple.demo.control.inflate
+import org.calypsonet.keyple.demo.control.databinding.TitleRecyclerRowBinding
 
 class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
     RecyclerView.Adapter<TitlesRecyclerAdapter.TitleHolder>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TitleHolder {
-    val inflatedView = parent.inflate(R.layout.title_recycler_row, false)
-    return TitleHolder(inflatedView)
+    val binding =
+        TitleRecyclerRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    return TitleHolder(binding)
   }
 
-  class TitleHolder(v: View) : RecyclerView.ViewHolder(v) {
+  class TitleHolder(private val binding: TitleRecyclerRowBinding) :
+      RecyclerView.ViewHolder(binding.root) {
 
-    private var view: View = v
     private var title: Contract? = null
 
     fun bindItem(contract: Contract) {
-      val context = view.context
+      val context = binding.root.context
       val titleDescription =
           if (contract.name == PriorityCode.SEASON_PASS.value) {
             val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
@@ -59,9 +56,10 @@ class TitlesRecyclerAdapter(private val titles: ArrayList<Contract>) :
             }
           }
       this.title = contract
-      view.titleName.text = contract.name
-      view.titleDescription.text = titleDescription
-      view.validImg.setImageResource(if (contract.valid) R.drawable.ic_tick else R.drawable.ic_fail)
+      binding.titleName.text = contract.name
+      binding.titleDescription.text = titleDescription
+      binding.validImg.setImageResource(
+          if (contract.valid) R.drawable.ic_tick else R.drawable.ic_fail)
     }
   }
 

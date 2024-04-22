@@ -12,26 +12,28 @@
 package org.calypsonet.keyple.demo.control.ui
 
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_network_invalid.invalidDescription
-import kotlinx.android.synthetic.main.activity_network_invalid.invalid_title
-import kotlinx.android.synthetic.main.activity_network_invalid.presentBtn
-import kotlinx.android.synthetic.main.logo_toolbar.toolbarLogo
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
+import org.calypsonet.keyple.demo.control.databinding.ActivityNetworkInvalidBinding
+import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.ui.ReaderActivity.Companion.CARD_CONTENT
 import timber.log.Timber
 
 class NetworkInvalidActivity : BaseActivity() {
+  private lateinit var activityNetworkInvalidBinding: ActivityNetworkInvalidBinding
+  private lateinit var logoToolbarBinding: LogoToolbarBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_network_invalid)
-    setSupportActionBar(findViewById(R.id.toolbar))
-    toolbarLogo.setImageResource(R.drawable.ic_logo_white)
+    activityNetworkInvalidBinding = ActivityNetworkInvalidBinding.inflate(layoutInflater)
+    logoToolbarBinding = LogoToolbarBinding.inflate(layoutInflater)
+    setContentView(activityNetworkInvalidBinding.root)
+    setSupportActionBar(logoToolbarBinding.toolbar)
+    logoToolbarBinding.toolbarLogo.setImageResource(R.drawable.ic_logo_white)
     val cardContent: CardReaderResponse? = intent.getParcelableExtra(CARD_CONTENT)
-    cardContent?.errorTitle?.let { invalid_title.text = it }
-    invalidDescription.text = cardContent?.errorMessage
-    presentBtn.setOnClickListener { onBackPressed() }
+    cardContent?.errorTitle?.let { activityNetworkInvalidBinding.invalidTitle.text = it }
+    activityNetworkInvalidBinding.invalidDescription.text = cardContent?.errorMessage
+    activityNetworkInvalidBinding.presentBtn.setOnClickListener { onBackPressed() }
   }
 
   override fun onResume() {

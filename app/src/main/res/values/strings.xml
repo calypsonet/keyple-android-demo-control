@@ -61,7 +61,7 @@
     <string name="last_validation_title">Last validation</string>
     <string name="new_control">New control</string>
     <string name="empty_contract_list">No contract available</string>
-    <string name="card_content_description_season_pass">From %s\n to %s</string>
+    <string name="card_content_description_season_pass">From %1$s\n to %2$s</string>
     <string name="card_content_description_multi_trip_zero">no trip left</string>
     <string name="card_content_description_multi_trip_single">%d trip left</string>
     <string name="card_content_description_multi_trip_multiple">%d trips left</string>
@@ -78,7 +78,7 @@
     <string name="nfc_not_enabled">The NFC feature of the device does not seem to be available. Please activate the NFC function before continuing.</string>
 
     <!-- Test values-->
-    <string name="card_content_validation_title_placeholder">Multi Trip - Place d\'Italie</string>
+    <string name="card_content_validation_title_placeholder">Multi Trip - Place de la Bastille</string>
     <string name="card_content_title_placeholder">Multi Trip</string>
     <string name="card_content_validation_date_placeholder">JJ Month YYYY, HH:MM:SS</string>
 </resources>

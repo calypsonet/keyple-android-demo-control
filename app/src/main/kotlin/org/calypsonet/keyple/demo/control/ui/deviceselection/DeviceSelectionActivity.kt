@@ -18,10 +18,9 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.nfc.NfcManager
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_device_selection.*
-import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.ReaderType
+import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBinding
 import org.calypsonet.keyple.demo.control.ui.BaseActivity
 import org.calypsonet.keyple.demo.control.ui.SettingsActivity
 import org.calypsonet.keyple.plugin.bluebird.BluebirdPlugin
@@ -29,16 +28,19 @@ import org.calypsonet.keyple.plugin.flowbird.FlowbirdPlugin
 
 class DeviceSelectionActivity : BaseActivity() {
 
+  private lateinit var activityDeviceSelectionBinding: ActivityDeviceSelectionBinding
+
   private val mock: String = "Mock"
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_device_selection)
+    activityDeviceSelectionBinding = ActivityDeviceSelectionBinding.inflate(layoutInflater)
+    setContentView(activityDeviceSelectionBinding.root)
     // Bluebird
     if (BluebirdPlugin.PLUGIN_NAME.contains(mock)) {
-      bluebirdBtn.setBackgroundColor(Color.GRAY)
+      activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)
     } else {
-      bluebirdBtn.setOnClickListener {
+      activityDeviceSelectionBinding.bluebirdBtn.setOnClickListener {
         AppSettings.readerType = ReaderType.BLUEBIRD
         val permissions: MutableList<String> =
             mutableListOf(
@@ -52,29 +54,29 @@ class DeviceSelectionActivity : BaseActivity() {
       }
     }
     // Coppernic
-    coppernicBtn.setOnClickListener {
+    activityDeviceSelectionBinding.coppernicBtn.setOnClickListener {
       AppSettings.readerType = ReaderType.COPPERNIC
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
     // Famoco
-    famocoBtn.setOnClickListener {
+    activityDeviceSelectionBinding.famocoBtn.setOnClickListener {
       AppSettings.readerType = ReaderType.FAMOCO
       startActivity(Intent(this, SettingsActivity::class.java))
       finish()
     }
     // Flowbird
     if (FlowbirdPlugin.PLUGIN_NAME.contains(mock)) {
-      flowbirdBtn.setBackgroundColor(Color.GRAY)
+      activityDeviceSelectionBinding.flowbirdBtn.setBackgroundColor(Color.GRAY)
     } else {
-      flowbirdBtn.setOnClickListener {
+      activityDeviceSelectionBinding.flowbirdBtn.setOnClickListener {
         AppSettings.readerType = ReaderType.FLOWBIRD
         startActivity(Intent(this, SettingsActivity::class.java))
         finish()
       }
     }
     // Standard NFC terminal
-    nfcTerminalBtn.setOnClickListener {
+    activityDeviceSelectionBinding.nfcTerminalBtn.setOnClickListener {
       val nfcManager = getSystemService(NFC_SERVICE) as NfcManager
       if (nfcManager.defaultAdapter?.isEnabled == true) {
         AppSettings.readerType = ReaderType.NFC_TERMINAL
