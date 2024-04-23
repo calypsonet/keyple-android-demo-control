@@ -11,7 +11,6 @@
  ************************************************************************************** */
 package org.calypsonet.keyple.demo.control.data
 
-import android.os.Build
 import java.time.LocalDateTime
 import org.calypsonet.keyple.demo.common.constant.CardConstant
 import org.calypsonet.keyple.demo.common.model.ContractStructure
@@ -133,11 +132,7 @@ class CardRepository {
       val contractUsed = event.eventContractUsed
 
       val eventValidityEndDate =
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
-          } else {
-            TODO("VERSION.SDK_INT < O")
-          }
+          event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
 
       // Step 7 - If EventLocation != value configured in the control terminal set the validated
       // contract valid flag as false and go to point CNT_READ.

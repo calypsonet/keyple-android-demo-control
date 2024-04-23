@@ -13,12 +13,11 @@ package org.calypsonet.keyple.demo.control.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.databinding.ActivityHomeBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseActivity() {
 
   private lateinit var activityHomeBinding: ActivityHomeBinding
   private lateinit var logoToolbarBinding: LogoToolbarBinding
