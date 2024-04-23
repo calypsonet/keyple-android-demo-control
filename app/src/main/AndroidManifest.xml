@@ -33,41 +33,41 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.cardcontent.CardContentActivity"
             android:label="@string/title_activity_card_content"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.ReaderActivity"
             android:label="@string/title_activity_card_reader"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.HomeActivity"
             android:label="@string/title_activity_home"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.SettingsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name="org.calypsonet.keyple.demo.control.ui.deviceselection.DeviceSelectionActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 </manifest>

@@ -16,14 +16,17 @@ import android.os.Bundle
 import java.util.Timer
 import java.util.TimerTask
 import org.calypsonet.keyple.demo.control.R
+import org.calypsonet.keyple.demo.control.databinding.ActivityMainBinding
 import org.calypsonet.keyple.demo.control.ui.deviceselection.DeviceSelectionActivity
 
 class MainActivity : BaseActivity() {
+    private lateinit var activityMainBinding: ActivityMainBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     // Make sure this is before calling super.onCreate
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+      activityMainBinding=ActivityMainBinding.inflate(layoutInflater)
+    setContentView(activityMainBinding.root)
     Timer()
         .schedule(
             object : TimerTask() {

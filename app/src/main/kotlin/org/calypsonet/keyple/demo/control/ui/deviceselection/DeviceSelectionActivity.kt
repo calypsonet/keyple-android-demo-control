@@ -18,6 +18,8 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.nfc.NfcManager
 import android.os.Bundle
+import org.calypsonet.keyple.demo.control.BuildConfig
+import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.ReaderType
 import org.calypsonet.keyple.demo.control.databinding.ActivityDeviceSelectionBinding
@@ -36,6 +38,7 @@ class DeviceSelectionActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     activityDeviceSelectionBinding = ActivityDeviceSelectionBinding.inflate(layoutInflater)
     setContentView(activityDeviceSelectionBinding.root)
+    activityDeviceSelectionBinding.appVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)
     // Bluebird
     if (BluebirdPlugin.PLUGIN_NAME.contains(mock)) {
       activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)

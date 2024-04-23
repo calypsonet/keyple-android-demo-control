@@ -53,7 +53,7 @@ class ReaderActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activityCardReaderBinding = ActivityCardReaderBinding.inflate(layoutInflater)
-    logoToolbarBinding = LogoToolbarBinding.inflate(layoutInflater)
+    logoToolbarBinding = activityCardReaderBinding.appBarLayout
     setContentView(activityCardReaderBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
     @Suppress("DEPRECATION")

@@ -31,7 +31,7 @@ class CardContentActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activityCardContentBinding = ActivityCardContentBinding.inflate(layoutInflater)
-    logoToolbarBinding = LogoToolbarBinding.inflate(layoutInflater)
+    logoToolbarBinding = activityCardContentBinding.appBarLayout
     setContentView(activityCardContentBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
     activityCardContentBinding.presentBtn.setOnClickListener { onBackPressed() }

@@ -26,7 +26,7 @@ class NetworkInvalidActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activityNetworkInvalidBinding = ActivityNetworkInvalidBinding.inflate(layoutInflater)
-    logoToolbarBinding = LogoToolbarBinding.inflate(layoutInflater)
+    logoToolbarBinding = activityNetworkInvalidBinding.appBarLayout
     setContentView(activityNetworkInvalidBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
     logoToolbarBinding.toolbarLogo.setImageResource(R.drawable.ic_logo_white)

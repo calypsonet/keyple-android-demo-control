@@ -82,7 +82,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = javaTargetLevel
     }
 
     packagingOptions {
@@ -92,6 +92,15 @@ android {
 
     lintOptions {
         isAbortOnError = false
+    }
+
+    // generate output aar with a qualified name: with version number
+    applicationVariants.all {
+        outputs.forEach { output ->
+            if (output is com.android.build.gradle.internal.api.BaseVariantOutputImpl) {
+                output.outputFileName = "${archivesBaseName}-${project.version}-${buildType.name}.${output.outputFile.extension}".replace("-SNAPSHOT", "")
+            }
+        }
     }
 
     /**
@@ -108,9 +117,7 @@ android {
 
 dependencies {
     // Demo common
-    implementation("org.calypsonet.keyple:keyple-demo-common-lib:2.0.0-SNAPSHOT") {
-        isChanging = true
-    }
+    implementation("org.calypsonet.keyple:keyple-demo-common-lib:2.0.1-SNAPSHOT") { isChanging = true }
 
     // Keyple reader plugins proprietary libs
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
@@ -191,4 +198,4 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.0")
 }
 
-apply(plugin = "org.eclipse.keyple")
+apply(plugin = "org.eclipse.keyple") // To do last

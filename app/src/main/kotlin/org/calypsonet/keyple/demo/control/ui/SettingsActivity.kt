@@ -31,7 +31,7 @@ class SettingsActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     activitySettingsBinding = ActivitySettingsBinding.inflate(layoutInflater)
-    logoToolbarBinding = LogoToolbarBinding.inflate(layoutInflater)
+    logoToolbarBinding = activitySettingsBinding.appBarLayout
     setContentView(activitySettingsBinding.root)
     setSupportActionBar(logoToolbarBinding.toolbar)
 
