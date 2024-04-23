@@ -13,18 +13,24 @@ package org.calypsonet.keyple.demo.control.ui
 
 import android.content.Intent
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_home.locationSelected
-import kotlinx.android.synthetic.main.activity_home.startBtn
-import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
+import org.calypsonet.keyple.demo.control.databinding.ActivityHomeBinding
+import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 
 class HomeActivity : BaseActivity() {
 
+  private lateinit var activityHomeBinding: ActivityHomeBinding
+  private lateinit var logoToolbarBinding: LogoToolbarBinding
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_home)
-    setSupportActionBar(findViewById(R.id.toolbar))
-    locationSelected.text = AppSettings.location.toString()
-    startBtn.setOnClickListener { startActivity(Intent(this, ReaderActivity::class.java)) }
+    activityHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
+    logoToolbarBinding = activityHomeBinding.appBarLayout
+    setContentView(activityHomeBinding.root)
+    setSupportActionBar(logoToolbarBinding.toolbar)
+    activityHomeBinding.locationSelected.text = AppSettings.location.toString()
+    activityHomeBinding.startBtn.setOnClickListener {
+      startActivity(Intent(this, ReaderActivity::class.java))
+    }
   }
 }

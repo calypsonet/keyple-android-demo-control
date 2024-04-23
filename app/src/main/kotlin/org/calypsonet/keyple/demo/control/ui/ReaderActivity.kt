@@ -16,7 +16,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import kotlinx.android.synthetic.main.activity_card_reader.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,6 +24,8 @@ import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.CardReaderResponse
 import org.calypsonet.keyple.demo.control.data.model.Status
+import org.calypsonet.keyple.demo.control.databinding.ActivityCardReaderBinding
+import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 import org.calypsonet.keyple.demo.control.di.scope.ActivityScoped
 import org.calypsonet.keyple.demo.control.ui.cardcontent.CardContentActivity
 import org.eclipse.keypop.reader.CardReaderEvent
@@ -33,6 +34,9 @@ import timber.log.Timber
 
 @ActivityScoped
 class ReaderActivity : BaseActivity() {
+
+  private lateinit var activityCardReaderBinding: ActivityCardReaderBinding
+  private lateinit var logoToolbarBinding: LogoToolbarBinding
 
   @Suppress("DEPRECATION") private lateinit var progress: ProgressDialog
   private var cardReaderObserver: CardReaderObserver? = null
@@ -48,18 +52,19 @@ class ReaderActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_card_reader)
-    setSupportActionBar(findViewById(R.id.toolbar))
+    activityCardReaderBinding = ActivityCardReaderBinding.inflate(layoutInflater)
+    logoToolbarBinding = activityCardReaderBinding.appBarLayout
+    setContentView(activityCardReaderBinding.root)
+    setSupportActionBar(logoToolbarBinding.toolbar)
     @Suppress("DEPRECATION")
     progress = ProgressDialog(this)
-    @Suppress("DEPRECATION")
-    progress.setMessage(getString(R.string.please_wait))
+    @Suppress("DEPRECATION") progress.setMessage(getString(R.string.please_wait))
     progress.setCancelable(false)
   }
 
   override fun onResume() {
     super.onResume()
-    loadingAnimation.playAnimation()
+    activityCardReaderBinding.loadingAnimation.playAnimation()
     if (!ticketingService.readersInitialized) {
       GlobalScope.launch {
         withContext(Dispatchers.Main) { showProgress() }
@@ -92,7 +97,7 @@ class ReaderActivity : BaseActivity() {
 
   override fun onPause() {
     super.onPause()
-    loadingAnimation.cancelAnimation()
+    activityCardReaderBinding.loadingAnimation.cancelAnimation()
     if (ticketingService.readersInitialized) {
       ticketingService.stopNfcDetection()
       Timber.d("stopNfcDetection")
@@ -116,7 +121,8 @@ class ReaderActivity : BaseActivity() {
     Timber.i(
         "Current state = $currentAppState, wanted new state = $newAppState, event = ${readerEvent?.type}")
     when (readerEvent?.type) {
-      CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
+      CardReaderEvent.Type.CARD_INSERTED,
+      CardReaderEvent.Type.CARD_MATCHED -> {
         if (newAppState == AppState.WAIT_SYSTEM_READY) {
           return
         }
@@ -141,13 +147,15 @@ class ReaderActivity : BaseActivity() {
       }
     }
     when (newAppState) {
-      AppState.WAIT_SYSTEM_READY, AppState.WAIT_CARD -> {
+      AppState.WAIT_SYSTEM_READY,
+      AppState.WAIT_CARD -> {
         currentAppState = newAppState
       }
       AppState.CARD_STATUS -> {
         currentAppState = newAppState
         when (readerEvent?.type) {
-          CardReaderEvent.Type.CARD_INSERTED, CardReaderEvent.Type.CARD_MATCHED -> {
+          CardReaderEvent.Type.CARD_INSERTED,
+          CardReaderEvent.Type.CARD_MATCHED -> {
             GlobalScope.launch {
               try {
                 // Launch the control procedure
@@ -187,14 +195,18 @@ class ReaderActivity : BaseActivity() {
 
   private fun displayResult(cardReaderResponse: CardReaderResponse?) {
     if (cardReaderResponse != null) {
-      runOnUiThread { loadingAnimation.cancelAnimation() }
+      runOnUiThread { activityCardReaderBinding.loadingAnimation.cancelAnimation() }
       when (cardReaderResponse.status) {
-        Status.TICKETS_FOUND, Status.EMPTY_CARD -> {
+        Status.TICKETS_FOUND,
+        Status.EMPTY_CARD -> {
           val intent = Intent(this@ReaderActivity, CardContentActivity::class.java)
           intent.putExtra(CARD_CONTENT, cardReaderResponse)
           startActivity(intent)
         }
-        Status.LOADING, Status.ERROR, Status.SUCCESS, Status.INVALID_CARD -> {
+        Status.LOADING,
+        Status.ERROR,
+        Status.SUCCESS,
+        Status.INVALID_CARD -> {
           ticketingService.displayResultFailed()
           val intent = Intent(this@ReaderActivity, NetworkInvalidActivity::class.java)
           intent.putExtra(CARD_CONTENT, cardReaderResponse)

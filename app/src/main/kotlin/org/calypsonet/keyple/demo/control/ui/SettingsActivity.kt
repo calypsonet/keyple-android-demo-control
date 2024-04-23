@@ -16,34 +16,40 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.widget.ArrayAdapter
-import kotlinx.android.synthetic.main.activity_settings.app_version
-import kotlinx.android.synthetic.main.activity_settings.spinnerLocationList
-import kotlinx.android.synthetic.main.activity_settings.startBtn
-import kotlinx.android.synthetic.main.activity_settings.timeBtn
-import kotlinx.android.synthetic.main.activity_settings.validationPeriodEdit
 import org.calypsonet.keyple.demo.control.BuildConfig
 import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.data.model.Location
+import org.calypsonet.keyple.demo.control.databinding.ActivitySettingsBinding
+import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
 
 class SettingsActivity : BaseActivity() {
 
+  private lateinit var activitySettingsBinding: ActivitySettingsBinding
+  private lateinit var logoToolbarBinding: LogoToolbarBinding
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_settings)
-    setSupportActionBar(findViewById(R.id.toolbar))
-    spinnerLocationList.adapter =
+    activitySettingsBinding = ActivitySettingsBinding.inflate(layoutInflater)
+    logoToolbarBinding = activitySettingsBinding.appBarLayout
+    setContentView(activitySettingsBinding.root)
+    setSupportActionBar(logoToolbarBinding.toolbar)
+
+    activitySettingsBinding.spinnerLocationList.adapter =
         ArrayAdapter(
             this,
             R.layout.spinner_item_location,
             R.id.spinner_item_text,
             locationRepository.locations)
-    validationPeriodEdit.text = Editable.Factory.getInstance().newEditable("10")
-    app_version.text = getString(R.string.version, BuildConfig.VERSION_NAME)
-    timeBtn.setOnClickListener { startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0) }
-    startBtn.setOnClickListener {
-      AppSettings.location = spinnerLocationList.selectedItem as Location
-      val validationPeriod = validationPeriodEdit.text.toString()
+    activitySettingsBinding.validationPeriodEdit.text =
+        Editable.Factory.getInstance().newEditable("10")
+    activitySettingsBinding.appVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+    activitySettingsBinding.timeBtn.setOnClickListener {
+      startActivityForResult(Intent(Settings.ACTION_DATE_SETTINGS), 0)
+    }
+    activitySettingsBinding.startBtn.setOnClickListener {
+      AppSettings.location = activitySettingsBinding.spinnerLocationList.selectedItem as Location
+      val validationPeriod = activitySettingsBinding.validationPeriodEdit.text.toString()
       if (validationPeriod.isNotBlank()) {
         AppSettings.validationPeriod = validationPeriod.toInt()
         startActivity(Intent(this, HomeActivity::class.java))

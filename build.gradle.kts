@@ -2,19 +2,21 @@
 //  GRADLE CONFIGURATION
 ///////////////////////////////////////////////////////////////////////////////
 plugins {
-    id("com.diffplug.spotless") version "5.10.2"
+    id("com.diffplug.spotless") version "6.25.0"
 }
+
 buildscript {
     val kotlinVersion: String by project
     repositories {
         mavenLocal()
-        maven(url = "https://repo.eclipse.org/service/local/repositories/maven_central/content")
         mavenCentral()
         google()
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.android.tools.build:gradle:4.1.3")
+        classpath("com.android.tools.build:gradle:7.4.2")
+        classpath("javax.xml.bind:jaxb-api:2.3.1")
+        classpath("com.sun.xml.bind:jaxb-impl:2.3.9")
         classpath("org.eclipse.keyple:keyple-gradle:0.2.+") { isChanging = true }
     }
 }
@@ -26,7 +28,6 @@ allprojects {
     group = "org.calypsonet.keyple"
     repositories {
         mavenLocal()
-        maven(url = "https://repo.eclipse.org/service/local/repositories/maven_central/content")
         mavenCentral()
         maven(url = "https://oss.sonatype.org/content/repositories/releases")
         maven(url = "https://s01.oss.sonatype.org/content/repositories/releases")

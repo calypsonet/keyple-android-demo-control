@@ -25,12 +25,11 @@ class PermissionDeniedDialog : DialogFragment() {
       val builder = AlertDialog.Builder(it)
       builder.setCancelable(false).setMessage(R.string.permission_denied_message).setPositiveButton(
           android.R.string.cancel) { _, _ ->
-        dismiss()
-        it.finish()
-      }
+            dismiss()
+            it.finish()
+          }
       // Create the AlertDialog object and return it
       builder.create()
-    }
-        ?: throw IllegalStateException("Activity cannot be null")
+    } ?: throw IllegalStateException("Activity cannot be null")
   }
 }

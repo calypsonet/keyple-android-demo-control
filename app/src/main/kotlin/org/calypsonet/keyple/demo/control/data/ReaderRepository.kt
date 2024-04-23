@@ -216,16 +216,14 @@ constructor(
               .getPlugin(samPluginName)
               ?.readers
               ?.filter { it.name == samReaderName }
-              ?.toMutableList()
-              ?: mutableListOf()
+              ?.toMutableList() ?: mutableListOf()
     } else {
       samReaders =
           SmartCardServiceProvider.getService()
               .getPlugin(samPluginName)
               ?.readers
               ?.filter { !it.isContactless }
-              ?.toMutableList()
-              ?: mutableListOf()
+              ?.toMutableList() ?: mutableListOf()
     }
     samReaders.forEach {
       if (it is ConfigurableCardReader) {
