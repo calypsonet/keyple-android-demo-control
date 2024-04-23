@@ -134,12 +134,12 @@ class CardRepository {
 
       val eventValidityEndDate =
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-              event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
+            event.eventDatetime.plusMinutes(AppSettings.validationPeriod.toLong())
           } else {
-              TODO("VERSION.SDK_INT < O")
+            TODO("VERSION.SDK_INT < O")
           }
 
-        // Step 7 - If EventLocation != value configured in the control terminal set the validated
+      // Step 7 - If EventLocation != value configured in the control terminal set the validated
       // contract valid flag as false and go to point CNT_READ.
       if (AppSettings.location.id != event.eventLocation) {
         contractEventValid = false

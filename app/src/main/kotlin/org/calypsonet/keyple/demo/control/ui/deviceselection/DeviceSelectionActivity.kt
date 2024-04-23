@@ -38,7 +38,8 @@ class DeviceSelectionActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     activityDeviceSelectionBinding = ActivityDeviceSelectionBinding.inflate(layoutInflater)
     setContentView(activityDeviceSelectionBinding.root)
-    activityDeviceSelectionBinding.appVersion.text = getString(R.string.version, BuildConfig.VERSION_NAME)
+    activityDeviceSelectionBinding.appVersion.text =
+        getString(R.string.version, BuildConfig.VERSION_NAME)
     // Bluebird
     if (BluebirdPlugin.PLUGIN_NAME.contains(mock)) {
       activityDeviceSelectionBinding.bluebirdBtn.setBackgroundColor(Color.GRAY)

@@ -14,8 +14,6 @@ package org.calypsonet.keyple.demo.control.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import org.calypsonet.keyple.demo.control.BuildConfig
-import org.calypsonet.keyple.demo.control.R
 import org.calypsonet.keyple.demo.control.data.model.AppSettings
 import org.calypsonet.keyple.demo.control.databinding.ActivityHomeBinding
 import org.calypsonet.keyple.demo.control.databinding.LogoToolbarBinding
