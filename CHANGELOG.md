@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+
+## [2024.04.23]
 ### Upgraded
 - keyple-demo-common-lib `2.0.0-SNAPSHOT` -> `2.0.1-SNAPSHOT`
 - All Keyple components (compiled to java 8)
@@ -70,7 +72,8 @@ New dependencies
 - `keyple-plugin-cna-flowbird-android-java-lib-2.0.2-mock` (mocked library)
 - `keyple-util-java-lib:2.3.0`
 
-[Unreleased]: https://github.com/calypsonet/keyple-android-demo-control/compare/2023.12.06...HEAD
+[Unreleased]: https://github.com/calypsonet/keyple-android-demo-control/compare/2024.04.23...HEAD
+[2024.04.23]: https://github.com/calypsonet/keyple-android-demo-control/compare/2023.12.06...2024.04.23
 [2023.12.06]: https://github.com/calypsonet/keyple-android-demo-control/compare/2023.06.01...2023.12.06
 [2023.06.01]: https://github.com/calypsonet/keyple-android-demo-control/compare/2023.02.24...2023.06.01
 [2023.02.24]: https://github.com/calypsonet/keyple-android-demo-control/compare/2022.11.18...2023.02.24
