@@ -57,8 +57,8 @@ android {
         minSdk = 24
         //noinspection ExpiredTargetSdkVersion
         targetSdk = 31
-        versionCode = 6
         versionName = project.version.toString()
+        versionCode = versionName!!.replace(".", "").toIntOrNull() ?: 1
     }
 
     buildTypes {
